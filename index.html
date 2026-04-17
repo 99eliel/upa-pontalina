@@ -161,6 +161,12 @@
         
         <div class="admin-section">
             <h4>Controle de Pacientes</h4>
+            
+            <div style="text-align: center; margin-bottom: 20px; background: var(--light); padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+                <span style="color: var(--gray); font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Fila Atual</span>
+                <div id="admin-val-pacientes" style="font-size: 3.5rem; font-weight: 700; color: var(--primary); line-height: 1; margin-top: 5px;">00</div>
+            </div>
+
             <div class="btn-group">
                 <button class="btn btn-minus" onclick="modificarPacientes(-1)"><i class="fa-solid fa-minus"></i> Saída</button>
                 <button class="btn btn-plus" onclick="modificarPacientes(1)"><i class="fa-solid fa-plus"></i> Entrada</button>
@@ -224,7 +230,12 @@
         salaCritica = data.salaVermelha;
         pausaAtiva = data.pausa;
 
+        // Atualiza a visão do público
         document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
+        
+        // Atualiza a visão do Admin (NOVO)
+        document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
+        
         document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos}`;
         
         let minutos = currentPacientes * 15;
