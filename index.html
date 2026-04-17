@@ -104,6 +104,31 @@
         .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; box-shadow: 0 0 15px rgba(220,53,69,0.3); animation: pulseRed 2s infinite; }
 
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); } 70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
+
+        /* Banner de Instalação PWA */
+        #install-banner {
+            display: none; /* Fica escondido por padrão */
+            background: linear-gradient(135deg, var(--success), #20c997);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+        }
+        #install-banner button {
+            background: white;
+            color: var(--success);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #install-banner button:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -116,6 +141,15 @@
 <div id="bar-pausa" class="alert-bar"><i class="fa-solid fa-triangle-exclamation"></i> ATENDIMENTO RESTRITO A EMERGÊNCIAS</div>
 
 <div id="aba-publico" class="content active">
+    
+    <div id="install-banner">
+        <div>
+            <strong style="display: block; font-size: 1.05rem;"><i class="fa-solid fa-mobile-screen-button"></i> Instalar App</strong>
+            <span style="font-size: 0.8rem; opacity: 0.9;">Tenha a fila da UPA no seu celular</span>
+        </div>
+        <button id="btn-instalar-pwa">Instalar</button>
+    </div>
+
     <div id="status-sala" class="sala-vermelha-status status-ok"><i class="fa-solid fa-heart-pulse"></i> SALA VERMELHA: DISPONÍVEL</div>
     
     <div class="card">
@@ -204,7 +238,59 @@
 </nav>
 
 <script>
-    // Configuração Firebase
+    // ==========================================
+    // 1. REGISTRO DO SERVICE WORKER (PWA Offline)
+    // ==========================================
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registrado!', reg))
+                .catch(err => console.log('Erro no Service Worker', err));
+        });
+    }
+
+    // ==========================================
+    // 2. LÓGICA DO BOTÃO DE INSTALAÇÃO MANUAL (PWA)
+    // ==========================================
+    let promptDeInstalacao = null;
+    const bannerInstalacao = document.getElementById('install-banner');
+    const btnInstalar = document.getElementById('btn-instalar-pwa');
+
+    // Escuta o evento do navegador que diz "Esse site pode ser instalado!"
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Impede o Chrome de mostrar aquele aviso automático e rápido demais na tela
+        e.preventDefault();
+        // Guarda o evento para usarmos quando o usuário clicar no nosso botão
+        promptDeInstalacao = e;
+        // Mostra o nosso banner verde bonito
+        bannerInstalacao.style.display = 'flex';
+    });
+
+    // Quando o usuário clica no nosso botão "Instalar"
+    btnInstalar.addEventListener('click', async () => {
+        if (!promptDeInstalacao) return;
+        // Mostra a janela real de instalação do celular
+        promptDeInstalacao.prompt();
+        // Espera a pessoa clicar em "Sim" ou "Não"
+        const resultado = await promptDeInstalacao.userChoice;
+        if (resultado.outcome === 'accepted') {
+            console.log('Usuário aceitou a instalação');
+            // Esconde o botão já que ele instalou
+            bannerInstalacao.style.display = 'none';
+        }
+        // Limpa a variável
+        promptDeInstalacao = null;
+    });
+
+    // Se o aplicativo já foi instalado, garante que o banner não apareça
+    window.addEventListener('appinstalled', () => {
+        bannerInstalacao.style.display = 'none';
+        promptDeInstalacao = null;
+    });
+
+    // ==========================================
+    // 3. CONFIGURAÇÃO DO FIREBASE (Banco de Dados)
+    // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
         authDomain: "upa-pontalina.firebaseapp.com",
@@ -230,12 +316,8 @@
         salaCritica = data.salaVermelha;
         pausaAtiva = data.pausa;
 
-        // Atualiza a visão do público
         document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
-        
-        // Atualiza a visão do Admin (NOVO)
         document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
-        
         document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos}`;
         
         let minutos = currentPacientes * 15;
@@ -258,6 +340,9 @@
         document.getElementById('btn-pausa').innerHTML = pausaAtiva ? "<i class='fa-solid fa-play'></i> Retomar Atendimentos" : "<i class='fa-solid fa-hand'></i> Restringir Atendimentos";
     });
 
+    // ==========================================
+    // 4. FUNÇÕES DE INTERFACE E ADMIN
+    // ==========================================
     function modificarPacientes(val) {
         let novoValor = Math.max(0, currentPacientes + val);
         db.ref('upa_status').update({ pacientes: novoValor });
