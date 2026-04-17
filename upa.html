@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPA Pontalina - Transparência</title>
+    <link rel="manifest" href="manifest.json">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root { 
+            --primary: #0056b3; 
+            --primary-light: #e6f0fa;
+            --success: #198754; 
+            --warning: #ffc107; 
+            --danger: #dc3545; 
+            --dark: #2c3e50; 
+            --light: #f4f7f6; 
+            --gray: #95a5a6;
+        }
+        
+        * { box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--light); color: var(--dark); padding-bottom: 80px; }
+        
+        /* Cabeçalho */
+        header { 
+            background: linear-gradient(135deg, var(--primary), #003d82); 
+            color: white; 
+            padding: 20px 15px; 
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+        header h3 { margin: 0; font-weight: 600; font-size: 1.3rem; letter-spacing: 1px; }
+        header span { font-size: 0.8rem; opacity: 0.8; font-weight: 300; }
+
+        .alert-bar { background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: 600; display: none; font-size: 0.9rem; animation: slideDown 0.3s ease-out; }
+
+        /* Abas e Animações */
+        .content { display: none; padding: 20px; max-width: 600px; margin: auto; animation: fadeIn 0.4s ease; }
+        .content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+        /* Cards Modernos */
+        .card { 
+            background: white; 
+            border-radius: 16px; 
+            padding: 25px 20px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04); 
+            margin-bottom: 20px; 
+            text-align: center; 
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .card-header { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--gray); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 15px; }
+        
+        .counter-box { background: var(--primary-light); padding: 20px; border-radius: 50%; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,86,179,0.15); }
+        .counter { font-size: 4rem; font-weight: 700; color: var(--primary); line-height: 1; }
+        
+        .info-badge { display: inline-block; background: #f8f9fa; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; color: #555; border: 1px solid #eee; margin-top: 10px; }
+        
+        /* Avisos */
+        .aviso-box { text-align: left; background: #fff3cd; border-left: 4px solid var(--warning); padding: 15px; border-radius: 8px; color: #856404; font-size: 0.95rem; }
+
+        /* Escala */
+        .medico-item { display: flex; align-items: center; gap: 15px; text-align: left; padding: 15px; border-bottom: 1px solid #eee; }
+        .medico-item:last-child { border-bottom: none; }
+        .avatar { background: var(--primary-light); color: var(--primary); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        
+        /* Admin */
+        .admin-section { text-align: left; margin-bottom: 25px; }
+        .admin-section h4 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 14px; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; transition: transform 0.1s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:active { transform: scale(0.96); }
+        .btn-plus { background: var(--primary); box-shadow: 0 4px 10px rgba(0,86,179,0.3); }
+        .btn-minus { background: white; color: var(--dark); border: 2px solid #ddd; }
+        .btn-danger { background: var(--danger); }
+        .btn-warning { background: var(--warning); color: #000; }
+        
+        input[type="text"] { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
+
+        /* Navegação Inferior Estilo App */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; height: 70px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        nav button { flex: 1; border: none; background: none; color: var(--gray); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: color 0.3s; }
+        nav button i { font-size: 1.4rem; transition: transform 0.3s; }
+        nav button.active { color: var(--primary); }
+        nav button.active i { transform: translateY(-3px); }
+
+        /* Alerta Sala Vermelha */
+        .sala-vermelha-status { padding: 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 700; text-align: center; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .status-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; box-shadow: 0 0 15px rgba(220,53,69,0.3); animation: pulseRed 2s infinite; }
+
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); } 70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h3><i class="fa-solid fa-house-medical"></i> UPA Pontalina</h3>
+    <span>Portal de Transparência</span>
+</header>
+
+<div id="bar-pausa" class="alert-bar"><i class="fa-solid fa-triangle-exclamation"></i> ATENDIMENTO RESTRITO A EMERGÊNCIAS</div>
+
+<div id="aba-publico" class="content active">
+    <div id="status-sala" class="sala-vermelha-status status-ok"><i class="fa-solid fa-heart-pulse"></i> SALA VERMELHA: DISPONÍVEL</div>
+    
+    <div class="card">
+        <div class="card-header"><i class="fa-solid fa-users"></i> Fila de Espera</div>
+        <div class="counter-box">
+            <div id="val-pacientes" class="counter">00</div>
+        </div>
+        <div style="color: var(--gray); font-size: 0.9rem;">Pacientes aguardando triagem/consulta</div>
+        <div class="info-badge" id="val-tempo"><i class="fa-regular fa-clock"></i> Espera est.: <b>-- min</b></div>
+    </div>
+
+    <div class="card" style="padding: 20px;">
+        <div class="card-header" style="justify-content: flex-start; margin-bottom: 10px;"><i class="fa-solid fa-bullhorn"></i> Quadro de Avisos</div>
+        <div id="lista-avisos" class="aviso-box">Carregando informações da unidade...</div>
+    </div>
+</div>
+
+<div id="aba-medicos" class="content">
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div style="background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: 600;">
+            <i class="fa-solid fa-user-doctor"></i> Plantão Atual
+        </div>
+        <div class="medico-item">
+            <div class="avatar"><i class="fa-solid fa-stethoscope"></i></div>
+            <div>
+                <strong style="display: block; font-size: 1.1rem;">Dr. Carlos Mendes</strong>
+                <span style="color: var(--gray); font-size: 0.85rem;">Clínico Geral</span>
+            </div>
+        </div>
+        <div class="medico-item">
+            <div class="avatar"><i class="fa-solid fa-baby"></i></div>
+            <div>
+                <strong style="display: block; font-size: 1.1rem;">Dra. Amanda Silva</strong>
+                <span style="color: var(--gray); font-size: 0.85rem;">Pediatra</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="aba-admin" class="content">
+    <div class="card">
+        <h3 style="margin-top: 0; color: var(--dark);"><i class="fa-solid fa-sliders"></i> Gestão de Fluxo</h3>
+        
+        <div class="admin-section">
+            <h4>Controle de Pacientes</h4>
+            <div class="btn-group">
+                <button class="btn btn-minus" onclick="modificarPacientes(-1)"><i class="fa-solid fa-minus"></i> Saída</button>
+                <button class="btn btn-plus" onclick="modificarPacientes(1)"><i class="fa-solid fa-plus"></i> Entrada</button>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h4>Avisos da Unidade</h4>
+            <input type="text" id="input-aviso" placeholder="Ex: Raio-X em manutenção...">
+            <button class="btn btn-plus" style="width: 100%; border-radius: 8px;" onclick="postarAviso()"><i class="fa-regular fa-paper-plane"></i> Atualizar Aviso Público</button>
+        </div>
+
+        <div class="admin-section">
+            <h4>Status Crítico</h4>
+            <button id="btn-sala-vermelha" class="btn btn-danger" style="width: 100%; margin-bottom: 10px;" onclick="toggleSalaVermelha()">
+                <i class="fa-solid fa-heart-crack"></i> Alertar Sala Vermelha
+            </button>
+            <button id="btn-pausa" class="btn btn-warning" style="width: 100%;" onclick="togglePausa()">
+                <i class="fa-solid fa-hand"></i> Restringir Atendimentos
+            </button>
+        </div>
+    </div>
+</div>
+
+<nav>
+    <button onclick="mudarAba('aba-publico', this)" class="active">
+        <i class="fa-solid fa-house"></i> Início
+    </button>
+    <button onclick="mudarAba('aba-medicos', this)">
+        <i class="fa-solid fa-user-doctor"></i> Escala
+    </button>
+    <button onclick="mudarAba('aba-admin', this)">
+        <i class="fa-solid fa-gear"></i> Admin
+    </button>
+</nav>
+
+<script>
+    // Configuração Firebase (Suas chaves)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
+        authDomain: "upa-pontalina.firebaseapp.com",
+        databaseURL: "https://upa-pontalina-default-rtdb.firebaseio.com",
+        projectId: "upa-pontalina",
+        storageBucket: "upa-pontalina.firebasestorage.app",
+        messagingSenderId: "881228406713",
+        appId: "1:881228406713:web:4a8637dc043c8be3d52068"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentPacientes = 0;
+    let salaCritica = false;
+    let pausaAtiva = false;
+
+    // Sincronização
+    db.ref('upa_status').on('value', (snapshot) => {
+        const data = snapshot.val() || { pacientes: 0, salaVermelha: false, pausa: false, avisos: "Nenhum aviso no momento." };
+        
+        currentPacientes = data.pacientes;
+        salaCritica = data.salaVermelha;
+        pausaAtiva = data.pausa;
+
+        document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
+        document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos}`;
+        
+        let minutos = currentPacientes * 15;
+        document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`;
+
+        const divSala = document.getElementById('status-sala');
+        if(salaCritica) {
+            divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO (ALTO FLUXO)";
+            divSala.className = "sala-vermelha-status status-critico";
+            document.getElementById('btn-sala-vermelha').innerHTML = "<i class='fa-solid fa-check'></i> Normalizar Sala Vermelha";
+            document.getElementById('btn-sala-vermelha').style.background = "var(--success)";
+        } else {
+            divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL";
+            divSala.className = "sala-vermelha-status status-ok";
+            document.getElementById('btn-sala-vermelha').innerHTML = "<i class='fa-solid fa-heart-crack'></i> Alertar Sala Vermelha";
+            document.getElementById('btn-sala-vermelha').style.background = "var(--danger)";
+        }
+
+        document.getElementById('bar-pausa').style.display = pausaAtiva ? 'block' : 'none';
+        document.getElementById('btn-pausa').innerHTML = pausaAtiva ? "<i class='fa-solid fa-play'></i> Retomar Atendimentos" : "<i class='fa-solid fa-hand'></i> Restringir Atendimentos";
+    });
+
+    function modificarPacientes(val) {
+        let novoValor = Math.max(0, currentPacientes + val);
+        db.ref('upa_status').update({ pacientes: novoValor });
+    }
+
+    function toggleSalaVermelha() {
+        db.ref('upa_status').update({ salaVermelha: !salaCritica });
+    }
+
+    function togglePausa() {
+        db.ref('upa_status').update({ pausa: !pausaAtiva });
+    }
+
+    function postarAviso() {
+        const txt = document.getElementById('input-aviso').value;
+        if(txt) {
+            db.ref('upa_status').update({ avisos: txt });
+            document.getElementById('input-aviso').value = "";
+        }
+    }
+
+    function mudarAba(id, btn) {
+        if(id === 'aba-admin') {
+            let pass = prompt("Senha Administrativa:");
+            if(pass !== "123") return alert("Senha incorreta. Acesso restrito.");
+        }
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
+</script>
+</body>
+</html>
