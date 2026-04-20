@@ -29,7 +29,6 @@
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--light); color: var(--dark); padding-bottom: 80px; }
         
-        /* Cabeçalho */
         header { 
             background: linear-gradient(135deg, var(--primary), #003d82); 
             color: white; 
@@ -47,22 +46,12 @@
 
         .alert-bar { background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: 600; display: none; font-size: 0.9rem; animation: slideDown 0.3s ease-out; }
 
-        /* Abas e Animações */
         .content { display: none; padding: 20px; max-width: 600px; margin: auto; animation: fadeIn 0.4s ease; }
         .content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
 
-        /* Cards Modernos */
-        .card { 
-            background: white; 
-            border-radius: 16px; 
-            padding: 25px 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.04); 
-            margin-bottom: 20px; 
-            text-align: center; 
-            border: 1px solid rgba(0,0,0,0.02);
-        }
+        .card { background: white; border-radius: 16px; padding: 25px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); margin-bottom: 20px; text-align: center; border: 1px solid rgba(0,0,0,0.02); }
         .card-header { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--gray); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 15px; }
         
         .counter-box { background: var(--primary-light); padding: 20px; border-radius: 50%; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,86,179,0.15); }
@@ -70,15 +59,12 @@
         
         .info-badge { display: inline-block; background: #f8f9fa; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; color: #555; border: 1px solid #eee; margin-top: 10px; }
         
-        /* Avisos */
         .aviso-box { text-align: left; background: #fff3cd; border-left: 4px solid var(--warning); padding: 15px; border-radius: 8px; color: #856404; font-size: 0.95rem; }
 
-        /* Escala */
         .medico-item { display: flex; align-items: center; gap: 15px; text-align: left; padding: 15px; border-bottom: 1px solid #eee; }
         .medico-item:last-child { border-bottom: none; }
         .avatar { background: var(--primary-light); color: var(--primary); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         
-        /* Admin */
         .admin-section { text-align: left; margin-bottom: 25px; }
         .admin-section h4 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; }
         .btn-group { display: flex; gap: 10px; }
@@ -91,14 +77,12 @@
         
         input[type="text"] { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
 
-        /* Navegação Inferior Estilo App */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; height: 70px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; height: 70px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 90;}
         nav button { flex: 1; border: none; background: none; color: var(--gray); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: color 0.3s; }
         nav button i { font-size: 1.4rem; transition: transform 0.3s; }
         nav button.active { color: var(--primary); }
         nav button.active i { transform: translateY(-3px); }
 
-        /* Alerta Sala Vermelha */
         .sala-vermelha-status { padding: 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 700; text-align: center; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .status-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; box-shadow: 0 0 15px rgba(220,53,69,0.3); animation: pulseRed 2s infinite; }
@@ -106,29 +90,27 @@
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); } 70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
 
         /* Banner de Instalação PWA */
-        #install-banner {
-            display: none; /* Fica escondido por padrão */
-            background: linear-gradient(135deg, var(--success), #20c997);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
-            align-items: center;
-            justify-content: space-between;
-            text-align: left;
-        }
-        #install-banner button {
-            background: white;
-            color: var(--success);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        #install-banner button:active { transform: scale(0.95); }
+        #install-banner { display: none; background: linear-gradient(135deg, var(--success), #20c997); color: white; padding: 15px 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2); align-items: center; justify-content: space-between; text-align: left; }
+        #install-banner button { background: white; color: var(--success); border: none; padding: 10px 20px; border-radius: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #install-banner-ios { display: none; background: #e6f0fa; color: var(--primary); border: 1px solid #b8daff; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-size: 0.9rem; }
+
+        /* ================= ESTILOS DO CHAT IA ================= */
+        .chat-fab { position: fixed; bottom: 85px; right: 20px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 5px 15px rgba(0,86,179,0.4); cursor: pointer; z-index: 100; transition: transform 0.2s; border: none; }
+        .chat-fab:active { transform: scale(0.9); }
+        
+        .chat-window { display: none; position: fixed; bottom: 155px; right: 20px; width: 320px; max-width: calc(100vw - 40px); background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 100; flex-direction: column; overflow: hidden; border: 1px solid #eee; }
+        .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header i { cursor: pointer; }
+        
+        .chat-body { height: 300px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9; }
+        .msg { padding: 10px 14px; border-radius: 15px; font-size: 0.9rem; max-width: 85%; word-wrap: break-word; }
+        .msg-ia { background: var(--primary-light); color: var(--dark); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg-user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        
+        .chat-input-area { display: flex; padding: 10px; background: white; border-top: 1px solid #eee; }
+        .chat-input-area input { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; font-family: 'Poppins', sans-serif; outline: none; margin-bottom: 0; }
+        .chat-input-area button { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .chat-typing { font-size: 0.8rem; color: #888; margin-left: 10px; font-style: italic; display: none; }
     </style>
 </head>
 <body>
@@ -148,6 +130,11 @@
             <span style="font-size: 0.8rem; opacity: 0.9;">Tenha a fila da UPA no seu celular</span>
         </div>
         <button id="btn-instalar-pwa">Instalar</button>
+    </div>
+
+    <div id="install-banner-ios">
+        <i class="fa-brands fa-apple" style="font-size: 1.5rem; margin-bottom: 5px; display: block;"></i>
+        Para instalar no iPhone, toque no ícone de <b>Compartilhar</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> e selecione <b>"Adicionar à Tela de Início"</b>.
     </div>
 
     <div id="status-sala" class="sala-vermelha-status status-ok"><i class="fa-solid fa-heart-pulse"></i> SALA VERMELHA: DISPONÍVEL</div>
@@ -225,6 +212,25 @@
     </div>
 </div>
 
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()">
+    <i class="fa-solid fa-robot"></i>
+</button>
+
+<div class="chat-window" id="chat-window">
+    <div class="chat-header">
+        <span><i class="fa-solid fa-robot"></i> Assistente UPA</span>
+        <i class="fa-solid fa-xmark" onclick="toggleChat()"></i>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="msg msg-ia">Olá! Sou o assistente virtual da UPA de Pontalina. Posso tirar suas dúvidas sobre nossos serviços. Como posso ajudar hoje?</div>
+    </div>
+    <span class="chat-typing" id="chat-typing">Digitando...</span>
+    <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Digite sua dúvida..." onkeypress="handleEnter(event)">
+        <button onclick="enviarMensagemGemini()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
 <nav>
     <button onclick="mudarAba('aba-publico', this)" class="active">
         <i class="fa-solid fa-house"></i> Início
@@ -239,57 +245,127 @@
 
 <script>
     // ==========================================
-    // 1. REGISTRO DO SERVICE WORKER (PWA Offline)
+    // 1. INTEGRAÇÃO COM GEMINI API
+    // ==========================================
+    
+    // COLOQUE SUA CHAVE AQUI PARA O PILOTO
+    const GEMINI_API_KEY = "AIzaSyDqmbXRTWB2CQSAp73y8iSeXpKH0YcxrAo"; 
+    
+    const chatWindow = document.getElementById('chat-window');
+    const chatBody = document.getElementById('chat-body');
+    const chatInput = document.getElementById('chat-input');
+    const chatTyping = document.getElementById('chat-typing');
+
+    function toggleChat() {
+        if(chatWindow.style.display === 'flex') {
+            chatWindow.style.display = 'none';
+        } else {
+            chatWindow.style.display = 'flex';
+            chatInput.focus();
+        }
+    }
+
+    function handleEnter(e) {
+        if(e.key === 'Enter') enviarMensagemGemini();
+    }
+
+    async function enviarMensagemGemini() {
+        const textoUser = chatInput.value.trim();
+        if(!textoUser) return;
+
+        // Adiciona a mensagem do usuário na tela
+        adicionarMensagem(textoUser, 'user');
+        chatInput.value = '';
+        chatTyping.style.display = 'block';
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Configura a requisição para o Google Gemini
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        
+        const payload = {
+            "system_instruction": {
+                "parts": { 
+                    "text": "Você é um assistente virtual prestativo e educado da UPA do município de Pontalina, Goiás. Responda de forma curta e direta. Responda apenas perguntas relacionadas à saúde pública, horários, vacinas e triagem. Se a pergunta for fora desse escopo, diga educadamente que só pode ajudar com assuntos da UPA." 
+                }
+            },
+            "contents": [
+                {
+                    "parts": [{ "text": textoUser }]
+                }
+            ]
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            
+            if(data.candidates && data.candidates.length > 0) {
+                const respostaIA = data.candidates[0].content.parts[0].text;
+                adicionarMensagem(respostaIA, 'ia');
+            } else {
+                adicionarMensagem("Desculpe, tive um problema de conexão. Tente de novo.", 'ia');
+            }
+        } catch (error) {
+            console.error(error);
+            adicionarMensagem("Erro ao conectar com o servidor da prefeitura.", 'ia');
+        } finally {
+            chatTyping.style.display = 'none';
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    }
+
+    function adicionarMensagem(texto, remetente) {
+        const div = document.createElement('div');
+        div.className = `msg msg-${remetente}`;
+        div.innerText = texto;
+        chatBody.appendChild(div);
+    }
+
+
+    // ==========================================
+    // 2. REGISTRO SERVICE WORKER & PWA
     // ==========================================
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado!', reg))
-                .catch(err => console.log('Erro no Service Worker', err));
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('Erro no Service Worker', err));
         });
     }
 
-    // ==========================================
-    // 2. LÓGICA DO BOTÃO DE INSTALAÇÃO MANUAL (PWA)
-    // ==========================================
+    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+    if (isIos && !isInStandaloneMode) { document.getElementById('install-banner-ios').style.display = 'block'; }
+
     let promptDeInstalacao = null;
     const bannerInstalacao = document.getElementById('install-banner');
     const btnInstalar = document.getElementById('btn-instalar-pwa');
 
-    // Escuta o evento do navegador que diz "Esse site pode ser instalado!"
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Impede o Chrome de mostrar aquele aviso automático e rápido demais na tela
         e.preventDefault();
-        // Guarda o evento para usarmos quando o usuário clicar no nosso botão
         promptDeInstalacao = e;
-        // Mostra o nosso banner verde bonito
         bannerInstalacao.style.display = 'flex';
     });
 
-    // Quando o usuário clica no nosso botão "Instalar"
     btnInstalar.addEventListener('click', async () => {
         if (!promptDeInstalacao) return;
-        // Mostra a janela real de instalação do celular
         promptDeInstalacao.prompt();
-        // Espera a pessoa clicar em "Sim" ou "Não"
         const resultado = await promptDeInstalacao.userChoice;
-        if (resultado.outcome === 'accepted') {
-            console.log('Usuário aceitou a instalação');
-            // Esconde o botão já que ele instalou
-            bannerInstalacao.style.display = 'none';
-        }
-        // Limpa a variável
+        if (resultado.outcome === 'accepted') { bannerInstalacao.style.display = 'none'; }
         promptDeInstalacao = null;
     });
 
-    // Se o aplicativo já foi instalado, garante que o banner não apareça
     window.addEventListener('appinstalled', () => {
         bannerInstalacao.style.display = 'none';
+        document.getElementById('install-banner-ios').style.display = 'none';
         promptDeInstalacao = null;
     });
 
     // ==========================================
-    // 3. CONFIGURAÇÃO DO FIREBASE (Banco de Dados)
+    // 3. FIREBASE CONFIG & LÓGICA
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -308,7 +384,6 @@
     let salaCritica = false;
     let pausaAtiva = false;
 
-    // Sincronização
     db.ref('upa_status').on('value', (snapshot) => {
         const data = snapshot.val() || { pacientes: 0, salaVermelha: false, pausa: false, avisos: "Nenhum aviso no momento." };
         
@@ -340,9 +415,6 @@
         document.getElementById('btn-pausa').innerHTML = pausaAtiva ? "<i class='fa-solid fa-play'></i> Retomar Atendimentos" : "<i class='fa-solid fa-hand'></i> Restringir Atendimentos";
     });
 
-    // ==========================================
-    // 4. FUNÇÕES DE INTERFACE E ADMIN
-    // ==========================================
     function modificarPacientes(val) {
         let novoValor = Math.max(0, currentPacientes + val);
         db.ref('upa_status').update({ pacientes: novoValor });
