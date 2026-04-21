@@ -84,14 +84,15 @@
         .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .app-card span { font-weight: 600; font-size: 0.95rem; color: var(--dark); line-height: 1.2; }
 
-        /* CORES */
-        .bg-saude { background: linear-gradient(135deg, var(--saude), #17a2b8); }
-        .bg-meioambiente { background: linear-gradient(135deg, var(--meioambiente), #20c997); }
-        .bg-educacao { background: linear-gradient(135deg, var(--educacao), #ffc107); }
-        .bg-financas { background: linear-gradient(135deg, var(--financas), #007bff); }
-        .bg-esporte { background: linear-gradient(135deg, #ff5722, #fd7e14); }
-        .bg-social { background: linear-gradient(135deg, var(--social), #d63384); }
-        .bg-obras { background: linear-gradient(135deg, var(--obras), #343a40); }
+        /* CORES CORRIGIDAS (AGORA COM FORÇA MÁXIMA PARA NÃO SUMIR) */
+        .bg-saude { background: linear-gradient(135deg, #20c997, #17a2b8) !important; color: white !important; }
+        .bg-meioambiente { background: linear-gradient(135deg, #198754, #20c997) !important; color: white !important; }
+        .bg-educacao { background: linear-gradient(135deg, #fd7e14, #ffc107) !important; color: white !important; }
+        .bg-financas { background: linear-gradient(135deg, #6f42c1, #007bff) !important; color: white !important; }
+        .bg-esporte { background: linear-gradient(135deg, #ff5722, #fd7e14) !important; color: white !important; }
+        .bg-social { background: linear-gradient(135deg, #e83e8c, #d63384) !important; color: white !important; }
+        .bg-obras { background: linear-gradient(135deg, #6c757d, #343a40) !important; color: white !important; }
+        .bg-danger { background: linear-gradient(135deg, #dc3545, #a71d2a) !important; color: white !important; }
 
         /* COMPONENTES */
         .card-info { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px; border-left: 5px solid var(--primary); }
@@ -103,6 +104,7 @@
         
         /* FORMULÁRIOS ADMIN */
         input[type="text"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
+        .label-escala { font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 2px; display: block; }
         
         /* ESCALA SEMANAL */
         .dia-semana { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
@@ -294,13 +296,13 @@
         <div class="card-info" style="padding: 0; overflow: hidden; border:none;">
             <div style="background: var(--dark); color: white; padding: 15px; text-align: center; font-weight: 600;"><i class="fa-regular fa-calendar-days"></i> Escala da Semana</div>
             <div id="tabela-semana">
-                <div class="dia-semana" id="dia-1"><span>Segunda-feira</span><span>Dr. André / Dra. Carla</span></div>
-                <div class="dia-semana" id="dia-2"><span>Terça-feira</span><span>Dra. Beatriz / Dr. Marcos</span></div>
-                <div class="dia-semana" id="dia-3"><span>Quarta-feira</span><span>Dr. Carlos / Dra. Julia</span></div>
-                <div class="dia-semana" id="dia-4"><span>Quinta-feira</span><span>Dra. Daniela / Dr. Paulo</span></div>
-                <div class="dia-semana" id="dia-5"><span>Sexta-feira</span><span>Dr. Eduardo / Dra. Ana</span></div>
-                <div class="dia-semana" id="dia-6"><span>Sábado</span><span>Plantão Fim de Semana</span></div>
-                <div class="dia-semana" id="dia-0"><span>Domingo</span><span>Plantão Fim de Semana</span></div>
+                <div class="dia-semana" id="dia-1"><span>Segunda-feira</span><span id="pub-seg">Carregando...</span></div>
+                <div class="dia-semana" id="dia-2"><span>Terça-feira</span><span id="pub-ter">Carregando...</span></div>
+                <div class="dia-semana" id="dia-3"><span>Quarta-feira</span><span id="pub-qua">Carregando...</span></div>
+                <div class="dia-semana" id="dia-4"><span>Quinta-feira</span><span id="pub-qui">Carregando...</span></div>
+                <div class="dia-semana" id="dia-5"><span>Sexta-feira</span><span id="pub-sex">Carregando...</span></div>
+                <div class="dia-semana" id="dia-6"><span>Sábado</span><span id="pub-sab">Carregando...</span></div>
+                <div class="dia-semana" id="dia-0"><span>Domingo</span><span id="pub-dom">Carregando...</span></div>
             </div>
         </div>
     </div>
@@ -319,17 +321,44 @@
             
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
             
-            <h4>Editar Médicos do Plantão Atual</h4>
-            <input type="text" id="input-clinico" placeholder="Nome do Clínico Geral">
-            <input type="text" id="input-pediatra" placeholder="Nome do Pediatra">
-            <button class="btn-action" style="background:var(--primary); color:white; margin-top:0; margin-bottom:20px;" onclick="salvarMedicosUpa()">Atualizar Médicos</button>
-
-            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-
             <h4>Avisos e Emergência</h4>
             <input type="text" id="input-aviso" placeholder="Novo aviso público...">
             <button class="btn-action" style="background:var(--success); color:white; margin-top:0; margin-bottom:15px;" onclick="postarAviso()">Atualizar Aviso</button>
             <button id="btn-sala-vermelha" class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="toggleSalaVermelha()">Alertar Sala Vermelha</button>
+
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+            <h4><i class="fa-solid fa-user-doctor"></i> Editar Plantão Atual</h4>
+            <input type="text" id="input-clinico" placeholder="Nome do Clínico Geral">
+            <input type="text" id="input-pediatra" placeholder="Nome do Pediatra">
+            <button class="btn-action" style="background:var(--primary); color:white; margin-top:0; margin-bottom:20px;" onclick="salvarMedicosUpa()">Atualizar Agora</button>
+
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+            <h4><i class="fa-solid fa-calendar-week"></i> Editar Escala da Semana</h4>
+            
+            <span class="label-escala">Segunda-feira</span>
+            <input type="text" id="edit-seg">
+            
+            <span class="label-escala">Terça-feira</span>
+            <input type="text" id="edit-ter">
+            
+            <span class="label-escala">Quarta-feira</span>
+            <input type="text" id="edit-qua">
+            
+            <span class="label-escala">Quinta-feira</span>
+            <input type="text" id="edit-qui">
+            
+            <span class="label-escala">Sexta-feira</span>
+            <input type="text" id="edit-sex">
+            
+            <span class="label-escala">Sábado</span>
+            <input type="text" id="edit-sab">
+            
+            <span class="label-escala">Domingo</span>
+            <input type="text" id="edit-dom">
+            
+            <button class="btn-action" style="background:var(--dark); color:white; margin-top:0; margin-bottom:20px;" onclick="salvarEscalaSemana()">Salvar Semana</button>
         </div>
     </div>
 </div>
@@ -362,10 +391,10 @@
                 <option value="esf305">ESF 305 - Aluísio Borges</option>
             </select>
 
-            <label style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Médico Responsável:</label>
+            <span class="label-escala">Médico Responsável:</span>
             <input type="text" id="input-posto-medico" placeholder="Ex: Dr. João Pedro">
             
-            <label style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Horário de Atendimento:</label>
+            <span class="label-escala">Horário de Atendimento:</span>
             <input type="text" id="input-posto-horario" placeholder="Ex: Seg a Sex: 07h às 17h">
             
             <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarDadosPosto()"><i class="fa-solid fa-check"></i> Salvar Alterações</button>
@@ -501,7 +530,6 @@
 
     function goHome() { openScreen('screen-home'); }
 
-    // Registro do Service Worker de forma tradicional e segura
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { 
             navigator.serviceWorker.register('./sw.js').then(reg => {
@@ -516,13 +544,9 @@
                 };
             }).catch(err => console.log('Erro SW', err)); 
         });
-        
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) {
-                window.location.reload();
-                refreshing = true;
-            }
+            if (!refreshing) { window.location.reload(); refreshing = true; }
         });
     }
 
@@ -590,7 +614,7 @@
     const db = firebase.database();
 
     // ==========================================
-    // 4. LÓGICA DA UPA (FILA E MÉDICOS)
+    // 4. LÓGICA DA UPA (FILA E MÉDICOS DA SEMANA)
     // ==========================================
     function mudarAbaUpa(idAba) {
         if(idAba === 'upa-admin') {
@@ -606,7 +630,8 @@
         if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active');
     }
 
-    const diaHoje = new Date().getDay();
+    // Destaca o dia de hoje na escala da semana
+    const diaHoje = new Date().getDay(); // 0 é domingo, 1 é segunda...
     const linhaHoje = document.getElementById('dia-' + diaHoje);
     if(linhaHoje) linhaHoje.classList.add('dia-ativo');
 
@@ -614,23 +639,50 @@
     let salaCritica = false;
 
     db.ref('upa_status').on('value', (snapshot) => {
-        const data = snapshot.val() || { pacientes: 0, salaVermelha: false, avisos: "Nenhum aviso.", clinico: "Dr. Carlos Mendes", pediatra: "Dra. Amanda Silva" };
+        const data = snapshot.val() || {};
         
-        currentPacientes = data.pacientes;
-        salaCritica = data.salaVermelha;
+        currentPacientes = data.pacientes || 0;
+        salaCritica = data.salaVermelha || false;
 
+        // Fila e Avisos
         document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
-        document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos}`;
-        
-        document.getElementById('display-clinico').innerText = data.clinico || "Não informado";
-        document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado";
-        document.getElementById('input-clinico').value = data.clinico || "";
-        document.getElementById('input-pediatra').value = data.pediatra || "";
+        document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos || "Nenhum aviso no momento."}`;
         
         let minutos = currentPacientes * 15;
         document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`;
 
+        // Plantão Agora
+        document.getElementById('display-clinico').innerText = data.clinico || "Não informado";
+        document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado";
+        document.getElementById('input-clinico').value = data.clinico || "";
+        document.getElementById('input-pediatra').value = data.pediatra || "";
+
+        // Escala da Semana (Lê do Firebase ou usa um padrão se estiver vazio)
+        const escala = data.escala || {
+            seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia",
+            qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana"
+        };
+
+        // Atualiza a tabela pública da semana
+        document.getElementById('pub-seg').innerText = escala.seg;
+        document.getElementById('pub-ter').innerText = escala.ter;
+        document.getElementById('pub-qua').innerText = escala.qua;
+        document.getElementById('pub-qui').innerText = escala.qui;
+        document.getElementById('pub-sex').innerText = escala.sex;
+        document.getElementById('pub-sab').innerText = escala.sab;
+        document.getElementById('pub-dom').innerText = escala.dom;
+
+        // Atualiza os formulários (inputs) na tela de Admin da semana
+        document.getElementById('edit-seg').value = escala.seg;
+        document.getElementById('edit-ter').value = escala.ter;
+        document.getElementById('edit-qua').value = escala.qua;
+        document.getElementById('edit-qui').value = escala.qui;
+        document.getElementById('edit-sex').value = escala.sex;
+        document.getElementById('edit-sab').value = escala.sab;
+        document.getElementById('edit-dom').value = escala.dom;
+
+        // Sala Vermelha
         const divSala = document.getElementById('status-sala');
         const btnSala = document.getElementById('btn-sala-vermelha');
         if(salaCritica) {
@@ -660,7 +712,20 @@
         const clinico = document.getElementById('input-clinico').value;
         const pediatra = document.getElementById('input-pediatra').value;
         db.ref('upa_status').update({ clinico: clinico, pediatra: pediatra });
-        alert("Escala atualizada com sucesso!");
+        alert("Plantão de Agora atualizado com sucesso!");
+    }
+    function salvarEscalaSemana() {
+        const novaEscala = {
+            seg: document.getElementById('edit-seg').value,
+            ter: document.getElementById('edit-ter').value,
+            qua: document.getElementById('edit-qua').value,
+            qui: document.getElementById('edit-qui').value,
+            sex: document.getElementById('edit-sex').value,
+            sab: document.getElementById('edit-sab').value,
+            dom: document.getElementById('edit-dom').value
+        };
+        db.ref('upa_status/escala').update(novaEscala);
+        alert("Escala Semanal atualizada para toda a população!");
     }
 
     // ==========================================
