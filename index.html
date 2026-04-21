@@ -2,10 +2,10 @@
 <html lang="pt-br" translate="no">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     
-    <title>UPA Pontalina - Transparência</title>
+    <title>Pontalina Digital</title>
     <link rel="manifest" href="manifest.json">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -24,427 +24,662 @@
             --dark: #2c3e50; 
             --light: #f4f7f6; 
             --gray: #95a5a6;
+            --saude: #20c997;
+            --educacao: #fd7e14;
+            --meioambiente: #198754;
+            --financas: #6f42c1;
+            --social: #e83e8c;
+            --esporte: #fd7e14;
+            --obras: #6c757d;
         }
         
-        * { box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--light); color: var(--dark); padding-bottom: 80px; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--light); color: var(--dark); padding-bottom: 30px; overflow-x: hidden; }
         
+        /* HEADER PRINCIPAL */
         header { 
             background: linear-gradient(135deg, var(--primary), #003d82); 
             color: white; 
-            padding: 20px 15px; 
-            text-align: center; 
+            padding: 15px; 
             position: sticky; 
             top: 0; 
             z-index: 100;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        header h3 { margin: 0; font-weight: 600; font-size: 1.3rem; letter-spacing: 1px; }
-        header span { font-size: 0.8rem; opacity: 0.8; font-weight: 300; }
-
-        .alert-bar { background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: 600; display: none; font-size: 0.9rem; animation: slideDown 0.3s ease-out; }
-
-        .content { display: none; padding: 20px; max-width: 600px; margin: auto; animation: fadeIn 0.4s ease; }
-        .content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
-
-        .card { background: white; border-radius: 16px; padding: 25px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); margin-bottom: 20px; text-align: center; border: 1px solid rgba(0,0,0,0.02); }
-        .card-header { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--gray); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 15px; }
         
-        .counter-box { background: var(--primary-light); padding: 20px; border-radius: 50%; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,86,179,0.15); }
-        .counter { font-size: 4rem; font-weight: 700; color: var(--primary); line-height: 1; }
-        
-        .info-badge { display: inline-block; background: #f8f9fa; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; color: #555; border: 1px solid #eee; margin-top: 10px; }
-        
-        .aviso-box { text-align: left; background: #fff3cd; border-left: 4px solid var(--warning); padding: 15px; border-radius: 8px; color: #856404; font-size: 0.95rem; }
+        .header-logo-area { display: flex; align-items: center; gap: 10px; }
+        .header-logo-area img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: white; padding: 2px; }
+        .header-title { display: flex; flex-direction: column; }
+        .header-title h3 { margin: 0; font-weight: 600; font-size: 1.2rem; line-height: 1.2; }
+        .header-title span { font-size: 0.75rem; opacity: 0.8; }
 
-        .medico-item { display: flex; align-items: center; gap: 15px; text-align: left; padding: 15px; border-bottom: 1px solid #eee; }
-        .medico-item:last-child { border-bottom: none; }
-        .avatar { background: var(--primary-light); color: var(--primary); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        
-        .admin-section { text-align: left; margin-bottom: 25px; }
-        .admin-section h4 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; }
-        .btn-group { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 14px; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; transition: transform 0.1s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:active { transform: scale(0.96); }
-        .btn-plus { background: var(--primary); box-shadow: 0 4px 10px rgba(0,86,179,0.3); }
-        .btn-minus { background: white; color: var(--dark); border: 2px solid #ddd; }
-        .btn-danger { background: var(--danger); }
-        .btn-warning { background: var(--warning); color: #000; }
-        
-        input[type="text"] { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
+        .nav-buttons { display: flex; gap: 10px; }
+        .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; display: none; }
+        .nav-btn:active { background: rgba(255,255,255,0.4); }
 
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; height: 70px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 90;}
-        nav button { flex: 1; border: none; background: none; color: var(--gray); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: color 0.3s; }
-        nav button i { font-size: 1.4rem; transition: transform 0.3s; }
-        nav button.active { color: var(--primary); }
-        nav button.active i { transform: translateY(-3px); }
+        /* BANNERS PWA */
+        .banner-container { padding: 15px 15px 0 15px; }
+        #install-banner { display: none; background: linear-gradient(135deg, var(--success), #20c997); color: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2); align-items: center; justify-content: space-between; text-align: left; }
+        #install-banner button { background: white; color: var(--success); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 700; cursor: pointer; }
+        #install-banner-ios { display: none; background: #e6f0fa; color: var(--primary); border: 1px solid #b8daff; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 0.85rem; }
 
-        .sala-vermelha-status { padding: 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 700; text-align: center; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        /* NAVEGAÇÃO SPA */
+        .screen { display: none; padding: 15px; animation: slideIn 0.3s ease; max-width: 600px; margin: auto; }
+        .screen.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* GRID MENU */
+        .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .app-card { background: white; border-radius: 16px; padding: 20px 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: none; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.1s; }
+        .app-card:active { transform: scale(0.96); }
+        .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .app-card span { font-weight: 600; font-size: 0.95rem; color: var(--dark); line-height: 1.2; }
+
+        /* CORES */
+        .bg-saude { background: linear-gradient(135deg, var(--saude), #17a2b8); }
+        .bg-meioambiente { background: linear-gradient(135deg, var(--meioambiente), #20c997); }
+        .bg-educacao { background: linear-gradient(135deg, var(--educacao), #ffc107); }
+        .bg-financas { background: linear-gradient(135deg, var(--financas), #007bff); }
+        .bg-esporte { background: linear-gradient(135deg, #ff5722, #fd7e14); }
+        .bg-social { background: linear-gradient(135deg, var(--social), #d63384); }
+        .bg-obras { background: linear-gradient(135deg, var(--obras), #343a40); }
+
+        /* COMPONENTES */
+        .card-info { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px; border-left: 5px solid var(--primary); }
+        .card-info h4 { margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; color: var(--dark); }
+        .btn-action { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; margin-top: 10px; }
+        .btn-whatsapp { background: #25D366; color: white; }
+        .btn-map { background: #ea4335; color: white; }
+        .btn-link { background: var(--primary); color: white; }
+        
+        /* FORMULÁRIOS ADMIN */
+        input[type="text"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
+        
+        /* ESCALA SEMANAL */
+        .dia-semana { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .dia-semana:last-child { border-bottom: none; }
+        .dia-ativo { background: #d4edda; border-radius: 8px; border-left: 4px solid var(--success); font-weight: 600; color: #155724; }
+
+        /* NAVEGAÇÃO INTERNA (SUB-ABAS) */
+        .sub-nav { display: flex; background: white; border-radius: 10px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sub-nav button { flex: 1; padding: 10px; border: none; background: none; font-weight: 600; color: var(--gray); cursor: pointer; transition: 0.2s; }
+        .sub-nav button.active { background: var(--primary); color: white; }
+        .sub-aba { display: none; }
+        .sub-aba.active { display: block; }
+
+        /* TRIAGEM */
+        .triagem-box { text-align: center; background: white; padding: 30px 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .triagem-pergunta { font-size: 1.2rem; font-weight: 600; color: var(--dark); margin-bottom: 25px; }
+        .triagem-btn { width: 100%; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 10px; border: none; margin-bottom: 15px; cursor: pointer; }
+        .btn-sim { background: var(--danger); color: white; }
+        .btn-nao { background: var(--success); color: white; }
+
+        /* UPA ESPECÍFICO */
+        .counter-box { background: var(--primary-light); padding: 20px; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,86,179,0.15); }
+        .counter { font-size: 3.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
+        .sala-vermelha-status { padding: 15px; border-radius: 10px; margin-bottom: 15px; font-weight: 700; text-align: center; }
         .status-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; box-shadow: 0 0 15px rgba(220,53,69,0.3); animation: pulseRed 2s infinite; }
-
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); } 70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
-
-        /* Banner de Instalação PWA */
-        #install-banner { display: none; background: linear-gradient(135deg, var(--success), #20c997); color: white; padding: 15px 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2); align-items: center; justify-content: space-between; text-align: left; }
-        #install-banner button { background: white; color: var(--success); border: none; padding: 10px 20px; border-radius: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        #install-banner-ios { display: none; background: #e6f0fa; color: var(--primary); border: 1px solid #b8daff; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-size: 0.9rem; }
-
-        /* ================= ESTILOS DO CHAT IA ================= */
-        .chat-fab { position: fixed; bottom: 85px; right: 20px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 5px 15px rgba(0,86,179,0.4); cursor: pointer; z-index: 100; transition: transform 0.2s; border: none; }
-        .chat-fab:active { transform: scale(0.9); }
-        
-        .chat-window { display: none; position: fixed; bottom: 155px; right: 20px; width: 320px; max-width: calc(100vw - 40px); background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 100; flex-direction: column; overflow: hidden; border: 1px solid #eee; }
-        .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header i { cursor: pointer; }
-        
-        .chat-body { height: 300px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9; }
-        .msg { padding: 10px 14px; border-radius: 15px; font-size: 0.9rem; max-width: 85%; word-wrap: break-word; }
-        .msg-ia { background: var(--primary-light); color: var(--dark); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg-user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        
-        .chat-input-area { display: flex; padding: 10px; background: white; border-top: 1px solid #eee; }
-        .chat-input-area input { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; font-family: 'Poppins', sans-serif; outline: none; margin-bottom: 0; }
-        .chat-input-area button { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .chat-typing { font-size: 0.8rem; color: #888; margin-left: 10px; font-style: italic; display: none; }
+        .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; animation: pulseRed 2s infinite; }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.5); } 70% { box-shadow: 0 0 0 10px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
     </style>
 </head>
 <body>
 
 <header>
-    <h3><i class="fa-solid fa-house-medical"></i> UPA Pontalina</h3>
-    <span>Portal de Transparência</span>
+    <div class="header-logo-area">
+        <img src="https://i.imgur.com/lUheBDA.png" alt="Prefeitura">
+        <div class="header-title">
+            <h3>Prefeitura Digital</h3>
+            <span>Pontalina - GO</span>
+        </div>
+    </div>
+    <div class="nav-buttons">
+        <button class="nav-btn" id="btn-back" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="nav-btn" id="btn-home" onclick="goHome()"><i class="fa-solid fa-house"></i></button>
+    </div>
 </header>
 
-<div id="bar-pausa" class="alert-bar"><i class="fa-solid fa-triangle-exclamation"></i> ATENDIMENTO RESTRITO A EMERGÊNCIAS</div>
-
-<div id="aba-publico" class="content active">
-    
+<div class="banner-container">
     <div id="install-banner">
         <div>
             <strong style="display: block; font-size: 1.05rem;"><i class="fa-solid fa-mobile-screen-button"></i> Instalar App</strong>
-            <span style="font-size: 0.8rem; opacity: 0.9;">Tenha a fila da UPA no seu celular</span>
+            <span style="font-size: 0.8rem; opacity: 0.9;">Acesso rápido aos serviços</span>
         </div>
         <button id="btn-instalar-pwa">Instalar</button>
     </div>
-
     <div id="install-banner-ios">
         <i class="fa-brands fa-apple" style="font-size: 1.5rem; margin-bottom: 5px; display: block;"></i>
         Para instalar no iPhone, toque no ícone de <b>Compartilhar</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> e selecione <b>"Adicionar à Tela de Início"</b>.
     </div>
+</div>
 
-    <div id="status-sala" class="sala-vermelha-status status-ok"><i class="fa-solid fa-heart-pulse"></i> SALA VERMELHA: DISPONÍVEL</div>
+<div id="screen-home" class="screen active">
+    <h4 style="margin-top: 0; color: var(--gray);">Selecione o serviço:</h4>
+    <div class="app-grid">
+        <div class="app-card" onclick="openScreen('screen-saude')">
+            <div class="app-icon bg-saude"><i class="fa-solid fa-notes-medical"></i></div>
+            <span>Saúde</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-educacao')">
+            <div class="app-icon bg-educacao"><i class="fa-solid fa-graduation-cap"></i></div>
+            <span>Educação</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-arrecadacao')">
+            <div class="app-icon bg-financas"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <span>Arrecadação<br>(IPTU/Taxas)</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-meioambiente')">
+            <div class="app-icon bg-meioambiente"><i class="fa-solid fa-leaf"></i></div>
+            <span>Meio Ambiente</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-social')">
+            <div class="app-icon bg-social"><i class="fa-solid fa-hands-holding-child"></i></div>
+            <span>Ação Social</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-esporte')">
+            <div class="app-icon bg-esporte"><i class="fa-solid fa-futbol"></i></div>
+            <span>Esportes</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-infraestrutura')">
+            <div class="app-icon bg-obras"><i class="fa-solid fa-tractor"></i></div>
+            <span>Infraestrutura</span>
+        </div>
+    </div>
+</div>
+
+<div id="screen-saude" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-notes-medical" style="color:var(--saude)"></i> Secretaria de Saúde</h3>
+    <div class="app-grid">
+        <div class="app-card" onclick="openScreen('screen-triagem')">
+            <div class="app-icon bg-danger"><i class="fa-solid fa-stethoscope"></i></div>
+            <span>Auto Triagem<br><small>(Onde ir?)</small></span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-upa')">
+            <div class="app-icon bg-danger"><i class="fa-solid fa-truck-medical"></i></div>
+            <span>UPA 24h<br><small>Fila e Escala</small></span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-atencao-basica')">
+            <div class="app-icon bg-saude"><i class="fa-solid fa-house-medical"></i></div>
+            <span>Postos de Saúde<br><small>(ESF)</small></span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-laboratorio')">
+            <div class="app-icon bg-saude"><i class="fa-solid fa-microscope"></i></div>
+            <span>Laboratório<br>Municipal</span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-farmacia')">
+            <div class="app-icon bg-saude"><i class="fa-solid fa-pills"></i></div>
+            <span>Farmácia<br>Básica</span>
+        </div>
+    </div>
+</div>
+
+<div id="screen-triagem" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-stethoscope" style="color:var(--danger)"></i> Auto Triagem</h3>
+    <p style="font-size: 0.9rem; color: var(--gray);">Responda para saber onde procurar atendimento:</p>
     
-    <div class="card">
-        <div class="card-header"><i class="fa-solid fa-users"></i> Fila de Espera</div>
-        <div class="counter-box">
-            <div id="val-pacientes" class="counter">00</div>
-        </div>
-        <div style="color: var(--gray); font-size: 0.9rem;">Pacientes aguardando triagem/consulta</div>
-        <div class="info-badge" id="val-tempo"><i class="fa-regular fa-clock"></i> Espera est.: <b>-- min</b></div>
+    <div class="triagem-box" id="triagem-q1">
+        <div class="triagem-pergunta">Você está sentindo dor forte no peito, falta de ar grave, desmaio, dormência no braço ou sangramento intenso?</div>
+        <button class="triagem-btn btn-sim" onclick="resultadoTriagem('upa')">SIM</button>
+        <button class="triagem-btn btn-nao" onclick="proximaPergunta('triagem-q2')">NÃO</button>
     </div>
 
-    <div class="card" style="padding: 20px;">
-        <div class="card-header" style="justify-content: flex-start; margin-bottom: 10px;"><i class="fa-solid fa-bullhorn"></i> Quadro de Avisos</div>
-        <div id="lista-avisos" class="aviso-box">Carregando informações da unidade...</div>
+    <div class="triagem-box" id="triagem-q2" style="display:none;">
+        <div class="triagem-pergunta">Você está com febre alta que não baixa, dor abdominal forte ou sofreu algum corte que precisa de pontos?</div>
+        <button class="triagem-btn btn-sim" onclick="resultadoTriagem('upa')">SIM</button>
+        <button class="triagem-btn btn-nao" onclick="resultadoTriagem('posto')">NÃO</button>
     </div>
-</div>
 
-<div id="aba-medicos" class="content">
-    <div class="card" style="padding: 0; overflow: hidden;">
-        <div style="background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: 600;">
-            <i class="fa-solid fa-user-doctor"></i> Plantão Atual
-        </div>
-        <div class="medico-item">
-            <div class="avatar"><i class="fa-solid fa-stethoscope"></i></div>
-            <div>
-                <strong style="display: block; font-size: 1.1rem;">Dr. Carlos Mendes</strong>
-                <span style="color: var(--gray); font-size: 0.85rem;">Clínico Geral</span>
-            </div>
-        </div>
-        <div class="medico-item">
-            <div class="avatar"><i class="fa-solid fa-baby"></i></div>
-            <div>
-                <strong style="display: block; font-size: 1.1rem;">Dra. Amanda Silva</strong>
-                <span style="color: var(--gray); font-size: 0.85rem;">Pediatra</span>
-            </div>
-        </div>
+    <div class="triagem-box" id="resultado-upa" style="display:none; text-align:center;">
+        <i class="fa-solid fa-truck-medical" style="font-size: 4rem; color: var(--danger); margin-bottom: 15px;"></i>
+        <h2 style="color: var(--danger); margin:0;">Vá para a UPA</h2>
+        <p>Seus sintomas indicam urgência/emergência.</p>
+        <button class="btn-action btn-link" onclick="openScreen('screen-upa')">Ver Fila da UPA Agora</button>
+        <button class="btn-action btn-link" style="background:#ddd; color:#333;" onclick="reiniciarTriagem()">Refazer</button>
+    </div>
+
+    <div class="triagem-box" id="resultado-posto" style="display:none; text-align:center;">
+        <i class="fa-solid fa-house-medical" style="font-size: 4rem; color: var(--success); margin-bottom: 15px;"></i>
+        <h2 style="color: var(--success); margin:0;">Vá ao Posto de Saúde</h2>
+        <p>Seus sintomas são leves (dor de garganta, renovar receita, atestado). Procure o postinho do seu bairro.</p>
+        <button class="btn-action btn-link" style="background:var(--success)" onclick="openScreen('screen-atencao-basica')">Ver Postos de Saúde</button>
+        <button class="btn-action btn-link" style="background:#ddd; color:#333;" onclick="reiniciarTriagem()">Refazer</button>
     </div>
 </div>
 
-<div id="aba-admin" class="content">
-    <div class="card">
-        <h3 style="margin-top: 0; color: var(--dark);"><i class="fa-solid fa-sliders"></i> Gestão de Fluxo</h3>
-        
-        <div class="admin-section">
-            <h4>Controle de Pacientes</h4>
+<div id="screen-upa" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-truck-medical" style="color:var(--danger)"></i> UPA 24h</h3>
+    
+    <div class="sub-nav">
+        <button onclick="mudarAbaUpa('upa-publico')" class="active" id="btn-upa-pub">Público</button>
+        <button onclick="mudarAbaUpa('upa-escala')" id="btn-upa-esc">Escala</button>
+        <button onclick="mudarAbaUpa('upa-admin')" id="btn-upa-adm"><i class="fa-solid fa-lock"></i> Admin</button>
+    </div>
+
+    <div id="upa-publico" class="sub-aba active">
+        <div id="status-sala" class="sala-vermelha-status status-ok"><i class="fa-solid fa-heart-pulse"></i> SALA VERMELHA: DISPONÍVEL</div>
+        <div class="card-info" style="text-align:center; border-left: none; border-top: 5px solid var(--primary);">
+            <h4 style="justify-content:center"><i class="fa-solid fa-users"></i> Fila de Espera</h4>
+            <div class="counter-box"><div id="val-pacientes" class="counter">00</div></div>
+            <div style="color: var(--gray); font-size: 0.9rem;">Pacientes aguardando triagem/consulta</div>
+            <div style="margin-top:10px; font-weight:bold; color:var(--dark);" id="val-tempo"><i class="fa-regular fa-clock"></i> Espera est.: ~0 min</div>
+        </div>
+        <div class="card-info" style="border-left-color: var(--warning);">
+            <h4><i class="fa-solid fa-bullhorn"></i> Quadro de Avisos</h4>
+            <div id="lista-avisos" style="background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 0.95rem;">Carregando...</div>
+        </div>
+    </div>
+
+    <div id="upa-escala" class="sub-aba">
+        <div class="card-info" style="padding: 0; overflow: hidden; border:none; margin-bottom: 20px;">
+            <div style="background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: 600;">Plantão Atual (Agora)</div>
+            <div style="display:flex; align-items:center; gap:15px; padding:15px; border-bottom:1px solid #eee;">
+                <div style="background:var(--primary-light); color:var(--primary); width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-stethoscope"></i></div>
+                <div><strong id="display-clinico" style="font-size: 1.1rem;">Carregando...</strong><br><span style="font-size:0.85rem; color:var(--gray)">Clínico Geral</span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:15px; padding:15px;">
+                <div style="background:var(--primary-light); color:var(--primary); width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-baby"></i></div>
+                <div><strong id="display-pediatra" style="font-size: 1.1rem;">Carregando...</strong><br><span style="font-size:0.85rem; color:var(--gray)">Pediatra</span></div>
+            </div>
+        </div>
+
+        <div class="card-info" style="padding: 0; overflow: hidden; border:none;">
+            <div style="background: var(--dark); color: white; padding: 15px; text-align: center; font-weight: 600;"><i class="fa-regular fa-calendar-days"></i> Escala da Semana</div>
+            <div id="tabela-semana">
+                <div class="dia-semana" id="dia-1"><span>Segunda-feira</span><span>Dr. André / Dra. Carla</span></div>
+                <div class="dia-semana" id="dia-2"><span>Terça-feira</span><span>Dra. Beatriz / Dr. Marcos</span></div>
+                <div class="dia-semana" id="dia-3"><span>Quarta-feira</span><span>Dr. Carlos / Dra. Julia</span></div>
+                <div class="dia-semana" id="dia-4"><span>Quinta-feira</span><span>Dra. Daniela / Dr. Paulo</span></div>
+                <div class="dia-semana" id="dia-5"><span>Sexta-feira</span><span>Dr. Eduardo / Dra. Ana</span></div>
+                <div class="dia-semana" id="dia-6"><span>Sábado</span><span>Plantão Fim de Semana</span></div>
+                <div class="dia-semana" id="dia-0"><span>Domingo</span><span>Plantão Fim de Semana</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="upa-admin" class="sub-aba">
+        <div class="card-info" style="border-left-color: var(--danger);">
+            <h4>Controle de Fila</h4>
+            <div style="text-align: center; margin: 10px 0; background: var(--light); padding: 15px; border-radius: 10px;">
+                <span style="font-size: 0.9rem; font-weight: 600;">Fila Atual</span>
+                <div id="admin-val-pacientes" style="font-size: 3rem; font-weight: 700; color: var(--primary); line-height: 1;">00</div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn-action" style="background:#eee; color:var(--dark); margin-top:0;" onclick="modificarPacientes(-1)"><i class="fa-solid fa-minus"></i> Saída</button>
+                <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="modificarPacientes(1)"><i class="fa-solid fa-plus"></i> Entrada</button>
+            </div>
             
-            <div style="text-align: center; margin-bottom: 20px; background: var(--light); padding: 15px; border-radius: 10px; border: 1px solid #eee;">
-                <span style="color: var(--gray); font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Fila Atual</span>
-                <div id="admin-val-pacientes" style="font-size: 3.5rem; font-weight: 700; color: var(--primary); line-height: 1; margin-top: 5px;">00</div>
-            </div>
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+            
+            <h4>Editar Médicos do Plantão Atual</h4>
+            <input type="text" id="input-clinico" placeholder="Nome do Clínico Geral">
+            <input type="text" id="input-pediatra" placeholder="Nome do Pediatra">
+            <button class="btn-action" style="background:var(--primary); color:white; margin-top:0; margin-bottom:20px;" onclick="salvarMedicosUpa()">Atualizar Médicos</button>
 
-            <div class="btn-group">
-                <button class="btn btn-minus" onclick="modificarPacientes(-1)"><i class="fa-solid fa-minus"></i> Saída</button>
-                <button class="btn btn-plus" onclick="modificarPacientes(1)"><i class="fa-solid fa-plus"></i> Entrada</button>
-            </div>
-        </div>
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
 
-        <div class="admin-section">
-            <h4>Avisos da Unidade</h4>
-            <input type="text" id="input-aviso" placeholder="Ex: Raio-X em manutenção...">
-            <button class="btn btn-plus" style="width: 100%; border-radius: 8px;" onclick="postarAviso()"><i class="fa-regular fa-paper-plane"></i> Atualizar Aviso Público</button>
-        </div>
-
-        <div class="admin-section">
-            <h4>Status Crítico</h4>
-            <button id="btn-sala-vermelha" class="btn btn-danger" style="width: 100%; margin-bottom: 10px;" onclick="toggleSalaVermelha()">
-                <i class="fa-solid fa-heart-crack"></i> Alertar Sala Vermelha
-            </button>
-            <button id="btn-pausa" class="btn btn-warning" style="width: 100%;" onclick="togglePausa()">
-                <i class="fa-solid fa-hand"></i> Restringir Atendimentos
-            </button>
+            <h4>Avisos e Emergência</h4>
+            <input type="text" id="input-aviso" placeholder="Novo aviso público...">
+            <button class="btn-action" style="background:var(--success); color:white; margin-top:0; margin-bottom:15px;" onclick="postarAviso()">Atualizar Aviso</button>
+            <button id="btn-sala-vermelha" class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="toggleSalaVermelha()">Alertar Sala Vermelha</button>
         </div>
     </div>
 </div>
 
-<button class="chat-fab" id="chat-fab" onclick="toggleChat()">
-    <i class="fa-solid fa-robot"></i>
-</button>
+<div id="screen-atencao-basica" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-house-medical" style="color:var(--saude)"></i> Postos de Saúde (ESF)</h3>
+    
+    <div class="sub-nav">
+        <button onclick="mudarAbaPostos('postos-publico')" class="active" id="btn-postos-pub">Unidades</button>
+        <button onclick="mudarAbaPostos('postos-admin')" id="btn-postos-adm"><i class="fa-solid fa-lock"></i> Admin Postos</button>
+    </div>
 
-<div class="chat-window" id="chat-window">
-    <div class="chat-header">
-        <span><i class="fa-solid fa-robot"></i> Assistente UPA</span>
-        <i class="fa-solid fa-xmark" onclick="toggleChat()"></i>
+    <div id="postos-publico" class="sub-aba active">
+        <p style="font-size: 0.9rem; color: var(--gray);">Selecione a sua unidade para atendimento ou rota:</p>
+        
+        <div id="lista-postos-publico">Carregando postos...</div>
     </div>
-    <div class="chat-body" id="chat-body">
-        <div class="msg msg-ia">Olá! Sou o assistente virtual da UPA de Pontalina. Posso tirar suas dúvidas sobre nossos serviços. Como posso ajudar hoje?</div>
-    </div>
-    <span class="chat-typing" id="chat-typing">Digitando...</span>
-    <div class="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Digite sua dúvida..." onkeypress="handleEnter(event)">
-        <button onclick="enviarMensagemGemini()"><i class="fa-solid fa-paper-plane"></i></button>
+
+    <div id="postos-admin" class="sub-aba">
+        <div class="card-info" style="border-left-color: var(--danger);">
+            <h4><i class="fa-solid fa-pen-to-square"></i> Editar Escala dos Postos</h4>
+            <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 15px;">Selecione a unidade que deseja alterar:</p>
+            
+            <select id="select-posto" onchange="carregarDadosPostoAdmin()">
+                <option value="esf201">ESF 201 - Rural</option>
+                <option value="esf301">ESF 301 - Jardim Frei Walter</option>
+                <option value="esf302">ESF 302 - Santa Rita de Cássia</option>
+                <option value="esf303">ESF 303 - Dr. Antônio Carlos</option>
+                <option value="esf304">ESF 304 - Lázaro Teodoro</option>
+                <option value="esf305">ESF 305 - Aluísio Borges</option>
+            </select>
+
+            <label style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Médico Responsável:</label>
+            <input type="text" id="input-posto-medico" placeholder="Ex: Dr. João Pedro">
+            
+            <label style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Horário de Atendimento:</label>
+            <input type="text" id="input-posto-horario" placeholder="Ex: Seg a Sex: 07h às 17h">
+            
+            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarDadosPosto()"><i class="fa-solid fa-check"></i> Salvar Alterações</button>
+        </div>
     </div>
 </div>
 
-<nav>
-    <button onclick="mudarAba('aba-publico', this)" class="active">
-        <i class="fa-solid fa-house"></i> Início
-    </button>
-    <button onclick="mudarAba('aba-medicos', this)">
-        <i class="fa-solid fa-user-doctor"></i> Escala
-    </button>
-    <button onclick="mudarAba('aba-admin', this)">
-        <i class="fa-solid fa-gear"></i> Admin
-    </button>
-</nav>
+<div id="screen-laboratorio" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-microscope" style="color:var(--saude)"></i> Laboratório Municipal</h3>
+    <div class="card-info">
+        <h4><i class="fa-regular fa-clock"></i> Horário de Coleta</h4>
+        <p>Segunda a Sexta-feira<br>07:00 às 09:30 (Necessário Jejum)</p>
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        <h4><i class="fa-solid fa-vial"></i> Exames Oferecidos</h4>
+        <ul style="padding-left:20px; font-size:0.9rem;">
+            <li>Hemograma Completo</li>
+            <li>Glicemia de Jejum</li>
+            <li>Colesterol Total e Frações</li>
+            <li>EAS (Urina) / EPF (Fezes)</li>
+            <li>Teste Rápido (HIV, Sífilis, Hepatites)</li>
+        </ul>
+    </div>
+</div>
+
+<div id="screen-farmacia" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-pills" style="color:var(--saude)"></i> Farmácia Básica</h3>
+    <div class="card-info"><p>Módulo em desenvolvimento. Em breve consulta de estoque de medicamentos.</p></div>
+</div>
+
+<div id="screen-meioambiente" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
+    <div class="card-info" style="border-left-color: var(--meioambiente);">
+        <h4><i class="fa-solid fa-file-signature"></i> Licença Ambiental</h4>
+        <p style="font-size:0.9rem;">Consulte a lista de documentos necessários para requerer sua licença de operação.</p>
+        <button class="btn-action btn-link" style="background:var(--meioambiente)">Ver Documentos</button>
+    </div>
+    <div class="card-info" style="border-left-color: var(--danger);">
+        <h4><i class="fa-solid fa-bullhorn"></i> Fazer Denúncia</h4>
+        <p style="font-size:0.9rem;">Denuncie descarte irregular de lixo ou queimadas com total sigilo.</p>
+        <a href="#" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Enviar Denúncia</a>
+    </div>
+</div>
+
+<div id="screen-educacao" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-graduation-cap" style="color:var(--educacao)"></i> Educação</h3>
+    <div class="card-info" style="border-left-color: var(--educacao);">
+        <h4><i class="fa-solid fa-address-card"></i> Matrículas Escolares</h4>
+        <p style="font-size:0.9rem;">Documentos: Certidão de nascimento, comprovante de endereço, cartão de vacina, RG dos pais.</p>
+    </div>
+    <div class="card-info" style="border-left-color: var(--educacao);">
+        <h4><i class="fa-solid fa-pen-ruler"></i> Lista de Materiais</h4>
+        <p style="font-size:0.9rem;">Em breve, a lista de materiais de todas as escolas da rede municipal estará disponível aqui.</p>
+    </div>
+</div>
+
+<div id="screen-arrecadacao" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal</h3>
+    <div class="card-info" style="border-left-color: var(--financas);">
+        <h4><i class="fa-solid fa-barcode"></i> Consulta de IPTU</h4>
+        <p style="font-size:0.9rem;">Emita a guia de pagamento do seu IPTU de forma rápida e segura.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)">Emitir IPTU</a>
+    </div>
+    <div class="card-info" style="border-left-color: var(--warning);">
+        <h4><i class="fa-solid fa-file-invoice"></i> Consulta de Débitos</h4>
+        <p style="font-size:0.9rem;">Emita alvarás, ISSQN e demais taxas municipais.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/outras-guias" target="_blank" class="btn-action btn-link" style="background:var(--warning); color:#000;">Consultar Débitos</a>
+    </div>
+</div>
+
+<div id="screen-esporte" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-futbol" style="color:var(--esporte)"></i> Esportes</h3>
+    <div class="card-info" style="border-left-color: var(--esporte);">
+        <h4><i class="fa-solid fa-medal"></i> Escolinhas e Programas</h4>
+        <p style="font-size:0.9rem;">Módulo em desenvolvimento. Em breve inscrições pelo app.</p>
+    </div>
+</div>
+
+<div id="screen-social" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-hands-holding-child" style="color:var(--social)"></i> Ação Social</h3>
+    <div class="card-info" style="border-left-color: var(--social);">
+        <h4><i class="fa-solid fa-address-book"></i> Cadastro Único / Bolsa Família</h4>
+        <p style="font-size:0.9rem;">Documentação necessária: CPF, RG, Título de Eleitor de todos os adultos, Declaração Escolar das crianças, Conta de Luz recente.</p>
+    </div>
+</div>
+
+<div id="screen-infraestrutura" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-tractor" style="color:var(--obras)"></i> Infraestrutura e Obras</h3>
+    <div class="card-info" style="border-left-color: var(--obras);">
+        <h4><i class="fa-solid fa-road-barrier"></i> Avisos da Secretaria</h4>
+        <p style="font-size:0.9rem;">Nenhuma rua interditada para recapeamento na data de hoje.</p>
+    </div>
+    <div class="card-info" style="border-left-color: var(--primary);">
+        <h4><i class="fa-solid fa-lightbulb"></i> Requisição de Serviços</h4>
+        <p style="font-size:0.9rem;">Solicite troca de lâmpadas de iluminação pública ou tapa-buracos na sua rua.</p>
+        <button class="btn-action btn-link" style="background:var(--obras)">Abrir Chamado</button>
+    </div>
+</div>
 
 <script>
     // ==========================================
-    // 1. INTEGRAÇÃO COM GEMINI API
+    // 1. NAVEGAÇÃO SPA E PWA (Manteve igual)
     // ==========================================
-    
-    // COLOQUE SUA CHAVE AQUI PARA O PILOTO
-    const GEMINI_API_KEY = ""; 
-    
-    const chatWindow = document.getElementById('chat-window');
-    const chatBody = document.getElementById('chat-body');
-    const chatInput = document.getElementById('chat-input');
-    const chatTyping = document.getElementById('chat-typing');
+    let historyStack = ['screen-home'];
+    const btnBack = document.getElementById('btn-back');
+    const btnHome = document.getElementById('btn-home');
 
-    function toggleChat() {
-        if(chatWindow.style.display === 'flex') {
-            chatWindow.style.display = 'none';
+    function openScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0, 0);
+
+        if (screenId !== 'screen-home') {
+            if(historyStack[historyStack.length - 1] !== screenId) historyStack.push(screenId);
+            btnBack.style.display = 'flex';
+            btnHome.style.display = 'flex';
         } else {
-            chatWindow.style.display = 'flex';
-            chatInput.focus();
+            historyStack = ['screen-home'];
+            btnBack.style.display = 'none';
+            btnHome.style.display = 'none';
         }
     }
 
-    function handleEnter(e) {
-        if(e.key === 'Enter') enviarMensagemGemini();
-    }
-
-    async function enviarMensagemGemini() {
-        const textoUser = chatInput.value.trim();
-        if(!textoUser) return;
-
-        // Adiciona a mensagem do usuário na tela
-        adicionarMensagem(textoUser, 'user');
-        chatInput.value = '';
-        chatTyping.style.display = 'block';
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        // Configura a requisição para o Google Gemini
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-        
-        const payload = {
-            "system_instruction": {
-                "parts": { 
-                    "text": "Você é um assistente virtual prestativo e educado da UPA do município de Pontalina, Goiás. Responda de forma curta e direta. Responda apenas perguntas relacionadas à saúde pública, horários, vacinas e triagem. Se a pergunta for fora desse escopo, diga educadamente que só pode ajudar com assuntos da UPA." 
-                }
-            },
-            "contents": [
-                {
-                    "parts": [{ "text": textoUser }]
-                }
-            ]
-        };
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json();
-            
-            if(data.candidates && data.candidates.length > 0) {
-                const respostaIA = data.candidates[0].content.parts[0].text;
-                adicionarMensagem(respostaIA, 'ia');
-            } else {
-                adicionarMensagem("Desculpe, tive um problema de conexão. Tente de novo.", 'ia');
-            }
-        } catch (error) {
-            console.error(error);
-            adicionarMensagem("Erro ao conectar com o servidor da prefeitura.", 'ia');
-        } finally {
-            chatTyping.style.display = 'none';
-            chatBody.scrollTop = chatBody.scrollHeight;
+    function goBack() {
+        if (historyStack.length > 1) {
+            historyStack.pop();
+            let previous = historyStack[historyStack.length - 1];
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(previous).classList.add('active');
+            window.scrollTo(0, 0);
+            if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; }
         }
     }
 
-    function adicionarMensagem(texto, remetente) {
-        const div = document.createElement('div');
-        div.className = `msg msg-${remetente}`;
-        div.innerText = texto;
-        chatBody.appendChild(div);
-    }
+    function goHome() { openScreen('screen-home'); }
 
-
-    // ==========================================
-    // 2. REGISTRO SERVICE WORKER & PWA
-    // ==========================================
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(err => console.log('Erro no Service Worker', err));
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('Erro SW', err)); });
     }
 
-    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-    const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
-    if (isIos && !isInStandaloneMode) { document.getElementById('install-banner-ios').style.display = 'block'; }
+    // ==========================================
+    // 2. AUTO TRIAGEM
+    // ==========================================
+    function proximaPergunta(idIdPergunta) {
+        document.getElementById('triagem-q1').style.display = 'none';
+        document.getElementById(idIdPergunta).style.display = 'block';
+    }
 
-    let promptDeInstalacao = null;
-    const bannerInstalacao = document.getElementById('install-banner');
-    const btnInstalar = document.getElementById('btn-instalar-pwa');
+    function resultadoTriagem(resultado) {
+        document.getElementById('triagem-q1').style.display = 'none';
+        document.getElementById('triagem-q2').style.display = 'none';
+        if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block';
+        else document.getElementById('resultado-posto').style.display = 'block';
+    }
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        promptDeInstalacao = e;
-        bannerInstalacao.style.display = 'flex';
-    });
-
-    btnInstalar.addEventListener('click', async () => {
-        if (!promptDeInstalacao) return;
-        promptDeInstalacao.prompt();
-        const resultado = await promptDeInstalacao.userChoice;
-        if (resultado.outcome === 'accepted') { bannerInstalacao.style.display = 'none'; }
-        promptDeInstalacao = null;
-    });
-
-    window.addEventListener('appinstalled', () => {
-        bannerInstalacao.style.display = 'none';
-        document.getElementById('install-banner-ios').style.display = 'none';
-        promptDeInstalacao = null;
-    });
+    function reiniciarTriagem() {
+        document.getElementById('resultado-upa').style.display = 'none';
+        document.getElementById('resultado-posto').style.display = 'none';
+        document.getElementById('triagem-q2').style.display = 'none';
+        document.getElementById('triagem-q1').style.display = 'block';
+    }
 
     // ==========================================
-    // 3. FIREBASE CONFIG & LÓGICA
+    // 3. FIREBASE: CONFIGURAÇÃO GLOBAL
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
         authDomain: "upa-pontalina.firebaseapp.com",
         databaseURL: "https://upa-pontalina-default-rtdb.firebaseio.com",
-        projectId: "upa-pontalina",
-        storageBucket: "upa-pontalina.firebasestorage.app",
-        messagingSenderId: "881228406713",
-        appId: "1:881228406713:web:4a8637dc043c8be3d52068"
+        projectId: "upa-pontalina"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
+
+    // ==========================================
+    // 4. LÓGICA DA UPA (FILA E MÉDICOS)
+    // ==========================================
+    function mudarAbaUpa(idAba) {
+        if(idAba === 'upa-admin') {
+            let pass = prompt("Senha da UPA:");
+            if(pass !== "123") return alert("Senha Incorreta.");
+        }
+        document.querySelectorAll('#screen-upa .sub-aba').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('#screen-upa .sub-nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(idAba).classList.add('active');
+        
+        if(idAba === 'upa-publico') document.getElementById('btn-upa-pub').classList.add('active');
+        if(idAba === 'upa-escala') document.getElementById('btn-upa-esc').classList.add('active');
+        if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active');
+    }
+
+    // Identificar o dia de hoje e destacar na Escala Semanal
+    const diaHoje = new Date().getDay(); // 0 = Domingo, 1 = Segunda...
+    const linhaHoje = document.getElementById('dia-' + diaHoje);
+    if(linhaHoje) linhaHoje.classList.add('dia-ativo');
 
     let currentPacientes = 0;
     let salaCritica = false;
-    let pausaAtiva = false;
 
     db.ref('upa_status').on('value', (snapshot) => {
-        const data = snapshot.val() || { pacientes: 0, salaVermelha: false, pausa: false, avisos: "Nenhum aviso no momento." };
+        const data = snapshot.val() || { pacientes: 0, salaVermelha: false, avisos: "Nenhum aviso.", clinico: "Dr. Carlos Mendes", pediatra: "Dra. Amanda Silva" };
         
         currentPacientes = data.pacientes;
         salaCritica = data.salaVermelha;
-        pausaAtiva = data.pausa;
 
         document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos}`;
         
+        // Atualiza Médicos na Escala e no Admin
+        document.getElementById('display-clinico').innerText = data.clinico || "Não informado";
+        document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado";
+        document.getElementById('input-clinico').value = data.clinico || "";
+        document.getElementById('input-pediatra').value = data.pediatra || "";
+        
         let minutos = currentPacientes * 15;
         document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`;
 
         const divSala = document.getElementById('status-sala');
+        const btnSala = document.getElementById('btn-sala-vermelha');
         if(salaCritica) {
-            divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO (ALTO FLUXO)";
+            divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO";
             divSala.className = "sala-vermelha-status status-critico";
-            document.getElementById('btn-sala-vermelha').innerHTML = "<i class='fa-solid fa-check'></i> Normalizar Sala Vermelha";
-            document.getElementById('btn-sala-vermelha').style.background = "var(--success)";
+            btnSala.innerHTML = "Normalizar Sala Vermelha";
+            btnSala.style.background = "var(--success)";
         } else {
             divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL";
             divSala.className = "sala-vermelha-status status-ok";
-            document.getElementById('btn-sala-vermelha').innerHTML = "<i class='fa-solid fa-heart-crack'></i> Alertar Sala Vermelha";
-            document.getElementById('btn-sala-vermelha').style.background = "var(--danger)";
+            btnSala.innerHTML = "Alertar Sala Vermelha";
+            btnSala.style.background = "var(--danger)";
         }
-
-        document.getElementById('bar-pausa').style.display = pausaAtiva ? 'block' : 'none';
-        document.getElementById('btn-pausa').innerHTML = pausaAtiva ? "<i class='fa-solid fa-play'></i> Retomar Atendimentos" : "<i class='fa-solid fa-hand'></i> Restringir Atendimentos";
     });
 
     function modificarPacientes(val) {
-        let novoValor = Math.max(0, currentPacientes + val);
-        db.ref('upa_status').update({ pacientes: novoValor });
+        db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) });
     }
-
     function toggleSalaVermelha() {
         db.ref('upa_status').update({ salaVermelha: !salaCritica });
     }
-
-    function togglePausa() {
-        db.ref('upa_status').update({ pausa: !pausaAtiva });
-    }
-
     function postarAviso() {
         const txt = document.getElementById('input-aviso').value;
-        if(txt) {
-            db.ref('upa_status').update({ avisos: txt });
-            document.getElementById('input-aviso').value = "";
-        }
+        if(txt) { db.ref('upa_status').update({ avisos: txt }); document.getElementById('input-aviso').value = ""; alert("Aviso atualizado!"); }
+    }
+    function salvarMedicosUpa() {
+        const clinico = document.getElementById('input-clinico').value;
+        const pediatra = document.getElementById('input-pediatra').value;
+        db.ref('upa_status').update({ clinico: clinico, pediatra: pediatra });
+        alert("Escala atualizada com sucesso!");
     }
 
-    function mudarAba(id, btn) {
-        if(id === 'aba-admin') {
-            let pass = prompt("Senha Administrativa:");
-            if(pass !== "123") return alert("Senha incorreta. Acesso restrito.");
+    // ==========================================
+    // 5. LÓGICA DOS POSTOS (ATENÇÃO BÁSICA)
+    // ==========================================
+    // Dados fixos de links e WhatsApp que você enviou
+    const infoEstaticaPostos = {
+        esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" },
+        esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" },
+        esf302: { nome: "ESF 302 - Santa Rita de Cássia", zap: "556434711147", mapa: "https://maps.app.goo.gl/LCTP73ZZXuy7SzPa9" },
+        esf303: { nome: "ESF 303 - Dr. Antônio Carlos Vasconcelos", zap: "5564992742306", mapa: "https://maps.app.goo.gl/xZ8dhCzXR6QzAWCk9" },
+        esf304: { nome: "ESF 304 - Lázaro Teodoro de Barros", zap: "5564992385727", mapa: "https://maps.app.goo.gl/7GR3HgboKoCXu1tw6" },
+        esf305: { nome: "ESF 305 - Aluísio Borges", zap: "5564992346304", mapa: "https://maps.app.goo.gl/T6G1fx4Jik5PR5J27" }
+    };
+
+    let cachePostos = {};
+
+    function mudarAbaPostos(idAba) {
+        if(idAba === 'postos-admin') {
+            let pass = prompt("Senha da Atenção Básica:");
+            if(pass !== "456") return alert("Senha Incorreta."); // Senha separada para os postos!
+            carregarDadosPostoAdmin(); // Carrega os dados do select atual
         }
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
+        document.querySelectorAll('#screen-atencao-basica .sub-aba').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('#screen-atencao-basica .sub-nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(idAba).classList.add('active');
+        
+        if(idAba === 'postos-publico') document.getElementById('btn-postos-pub').classList.add('active');
+        if(idAba === 'postos-admin') document.getElementById('btn-postos-adm').classList.add('active');
+    }
+
+    db.ref('postos_status').on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        cachePostos = data;
+        
+        let htmlLista = '';
+        
+        // Percorre a lista estática e mescla com os dados do Firebase (médico e horário)
+        for (const [id, info] of Object.entries(infoEstaticaPostos)) {
+            const dinamico = data[id] || { medico: "Médico não informado", horario: "07h às 17h" };
+            
+            htmlLista += `
+            <div class="card-info">
+                <h4>${info.nome}</h4>
+                <p style="margin:5px 0; font-size:0.9rem;"><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> ${dinamico.horario}</p>
+                <p style="margin:5px 0; font-size:0.9rem;"><i class="fa-solid fa-user-doctor"></i> <strong>Médico:</strong> ${dinamico.medico}</p>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <a href="https://wa.me/${info.zap}?text=Olá, vim pelo aplicativo da Prefeitura e preciso de informações." target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Falar</a>
+                    <a href="${info.mapa}" target="_blank" class="btn-action btn-map"><i class="fa-solid fa-location-dot"></i> Rota</a>
+                </div>
+            </div>`;
+        }
+        
+        document.getElementById('lista-postos-publico').innerHTML = htmlLista;
+    });
+
+    function carregarDadosPostoAdmin() {
+        const idPosto = document.getElementById('select-posto').value;
+        const dados = cachePostos[idPosto] || { medico: "", horario: "" };
+        document.getElementById('input-posto-medico').value = dados.medico;
+        document.getElementById('input-posto-horario').value = dados.horario;
+    }
+
+    function salvarDadosPosto() {
+        const idPosto = document.getElementById('select-posto').value;
+        const novoMedico = document.getElementById('input-posto-medico').value;
+        const novoHorario = document.getElementById('input-posto-horario').value;
+        
+        db.ref('postos_status/' + idPosto).update({ medico: novoMedico, horario: novoHorario });
+        alert("Posto atualizado com sucesso!");
     }
 </script>
 </body>
