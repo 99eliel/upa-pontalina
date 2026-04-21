@@ -466,7 +466,7 @@
 
 <script>
     // ==========================================
-    // 1. NAVEGAÇÃO SPA E PWA (AGORA COM AUTO-UPDATE)
+    // 1. NAVEGAÇÃO SPA E PWA (MÉTODO SEGURO SEM LOOP)
     // ==========================================
     let historyStack = ['screen-home'];
     const btnBack = document.getElementById('btn-back');
@@ -501,27 +501,28 @@
 
     function goHome() { openScreen('screen-home'); }
 
-    // Registro do Service Worker com verificador de atualizações
+    // Registro do Service Worker de forma tradicional e segura
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { 
-            // O "?v=" com o tempo atual obriga o navegador a sempre checar se o sw.js mudou
-            navigator.serviceWorker.register('./sw.js?v=' + new Date().getTime()).then(reg => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     installingWorker.onstatechange = () => {
-                        // Se encontrou uma atualização pronta, recarrega a página na marra
                         if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            console.log('Nova versão encontrada! Recarregando...');
-                            window.location.reload(true);
+                            console.log('Nova versão encontrada! Atualizando tela...');
+                            window.location.reload();
                         }
                     };
                 };
             }).catch(err => console.log('Erro SW', err)); 
         });
         
-        // Garante que se o SW assumir o controle (claim), a página atualize
+        let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            window.location.reload(true);
+            if (!refreshing) {
+                window.location.reload();
+                refreshing = true;
+            }
         });
     }
 
