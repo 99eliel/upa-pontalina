@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>Pontalina Digital</title>
     <link rel="manifest" href="manifest.json">
     
@@ -462,7 +466,7 @@
 
 <script>
     // ==========================================
-    // 1. NAVEGAÇÃO SPA E PWA (Manteve igual)
+    // 1. NAVEGAÇÃO SPA E PWA (AGORA COM AUTO-UPDATE)
     // ==========================================
     let historyStack = ['screen-home'];
     const btnBack = document.getElementById('btn-back');
@@ -497,9 +501,57 @@
 
     function goHome() { openScreen('screen-home'); }
 
+    // Registro do Service Worker com verificador de atualizações
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('Erro SW', err)); });
+        window.addEventListener('load', () => { 
+            // O "?v=" com o tempo atual obriga o navegador a sempre checar se o sw.js mudou
+            navigator.serviceWorker.register('./sw.js?v=' + new Date().getTime()).then(reg => {
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    installingWorker.onstatechange = () => {
+                        // Se encontrou uma atualização pronta, recarrega a página na marra
+                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            console.log('Nova versão encontrada! Recarregando...');
+                            window.location.reload(true);
+                        }
+                    };
+                };
+            }).catch(err => console.log('Erro SW', err)); 
+        });
+        
+        // Garante que se o SW assumir o controle (claim), a página atualize
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload(true);
+        });
     }
+
+    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+    if (isIos && !isInStandaloneMode) { document.getElementById('install-banner-ios').style.display = 'block'; }
+
+    let promptDeInstalacao = null;
+    const bannerInstalacao = document.getElementById('install-banner');
+    const btnInstalar = document.getElementById('btn-instalar-pwa');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        promptDeInstalacao = e;
+        bannerInstalacao.style.display = 'flex';
+    });
+
+    btnInstalar.addEventListener('click', async () => {
+        if (!promptDeInstalacao) return;
+        promptDeInstalacao.prompt();
+        const resultado = await promptDeInstalacao.userChoice;
+        if (resultado.outcome === 'accepted') { bannerInstalacao.style.display = 'none'; }
+        promptDeInstalacao = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        bannerInstalacao.style.display = 'none';
+        document.getElementById('install-banner-ios').style.display = 'none';
+    });
+
 
     // ==========================================
     // 2. AUTO TRIAGEM
@@ -553,8 +605,7 @@
         if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active');
     }
 
-    // Identificar o dia de hoje e destacar na Escala Semanal
-    const diaHoje = new Date().getDay(); // 0 = Domingo, 1 = Segunda...
+    const diaHoje = new Date().getDay();
     const linhaHoje = document.getElementById('dia-' + diaHoje);
     if(linhaHoje) linhaHoje.classList.add('dia-ativo');
 
@@ -571,7 +622,6 @@
         document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos}`;
         
-        // Atualiza Médicos na Escala e no Admin
         document.getElementById('display-clinico').innerText = data.clinico || "Não informado";
         document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado";
         document.getElementById('input-clinico').value = data.clinico || "";
@@ -615,7 +665,6 @@
     // ==========================================
     // 5. LÓGICA DOS POSTOS (ATENÇÃO BÁSICA)
     // ==========================================
-    // Dados fixos de links e WhatsApp que você enviou
     const infoEstaticaPostos = {
         esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" },
         esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" },
@@ -630,8 +679,8 @@
     function mudarAbaPostos(idAba) {
         if(idAba === 'postos-admin') {
             let pass = prompt("Senha da Atenção Básica:");
-            if(pass !== "456") return alert("Senha Incorreta."); // Senha separada para os postos!
-            carregarDadosPostoAdmin(); // Carrega os dados do select atual
+            if(pass !== "456") return alert("Senha Incorreta.");
+            carregarDadosPostoAdmin();
         }
         document.querySelectorAll('#screen-atencao-basica .sub-aba').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('#screen-atencao-basica .sub-nav button').forEach(b => b.classList.remove('active'));
@@ -647,7 +696,6 @@
         
         let htmlLista = '';
         
-        // Percorre a lista estática e mescla com os dados do Firebase (médico e horário)
         for (const [id, info] of Object.entries(infoEstaticaPostos)) {
             const dinamico = data[id] || { medico: "Médico não informado", horario: "07h às 17h" };
             
