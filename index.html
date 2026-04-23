@@ -107,6 +107,15 @@
         .btn-map { background: #ea4335; color: white; }
         .btn-link { background: var(--primary); color: white; }
         
+        /* BOTÕES PEQUENOS ADMIN */
+        .btn-small { padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .btn-group-small { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        
+        /* BADGE DE STATUS */
+        .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .badge-concluido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
         /* FORMULÁRIOS ADMIN */
         input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
         .label-escala { font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 2px; display: block; }
@@ -289,8 +298,8 @@
         <div class="card-info" id="consulta-passo2-existe" style="display:none; border-left-color: var(--success);">
             <h4 style="color: var(--success);"><i class="fa-solid fa-calendar-check"></i> Solicitação Recebida</h4>
             <p id="consulta-resultado-texto" style="font-size:0.95rem;"></p>
-            <p style="font-size:0.85rem; color:var(--gray);">Sua solicitação foi enviada. Aguarde o contato da recepção do seu posto (via WhatsApp) para confirmar a <b>Data e Horário</b>.</p>
-            <button class="btn-action" style="background:var(--danger); color:white; margin-top:15px;" onclick="cancelarConsulta()">Cancelar Pedido de Consulta</button>
+            <p style="font-size:0.85rem; color:var(--gray);">Sua solicitação foi enviada. Aguarde o contato da recepção do seu posto (via WhatsApp) para confirmar a data exata.</p>
+            <button class="btn-action" style="background:var(--danger); color:white; margin-top:15px;" onclick="cancelarConsulta()">Cancelar Pedido</button>
             <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaConsulta()">Voltar</button>
         </div>
     </div>
@@ -299,7 +308,6 @@
         <div class="card-info" style="border-left-color: var(--primary);">
             <h4><i class="fa-solid fa-list"></i> Solicitações Pendentes</h4>
             <p style="font-size: 0.85rem; color: var(--gray);">Selecione o seu posto para ver os pacientes da sua área:</p>
-            
             <select id="admin-filtro-posto" onchange="renderListaConsultas()" style="margin-bottom: 20px;">
                 <option value="TODOS">Ver Todos os Postos (Geral)</option>
                 <option value="ESF 201 - Rural">ESF 201 - Rural</option>
@@ -309,10 +317,7 @@
                 <option value="ESF 304 - Lázaro Teodoro">ESF 304 - Lázaro Teodoro</option>
                 <option value="ESF 305 - Aluísio Borges">ESF 305 - Aluísio Borges</option>
             </select>
-            
-            <div id="consulta-lista-pedidos" style="font-size:0.9rem; max-height:400px; overflow-y:auto;">
-                Carregando solicitações...
-            </div>
+            <div id="consulta-lista-pedidos" style="font-size:0.9rem; max-height:400px; overflow-y:auto; padding-right:5px;">Carregando solicitações...</div>
         </div>
     </div>
 </div>
@@ -413,21 +418,18 @@
             </div>
             
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-            
             <h4>Avisos e Emergência</h4>
             <input type="text" id="input-aviso" placeholder="Novo aviso público...">
             <button class="btn-action" style="background:var(--success); color:white; margin-top:0; margin-bottom:15px;" onclick="postarAviso()">Atualizar Aviso</button>
             <button id="btn-sala-vermelha" class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="toggleSalaVermelha()">Alertar Sala Vermelha</button>
 
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-
             <h4><i class="fa-solid fa-user-doctor"></i> Editar Plantão Atual</h4>
             <input type="text" id="input-clinico" placeholder="Nome do Clínico Geral">
             <input type="text" id="input-pediatra" placeholder="Nome do Pediatra">
             <button class="btn-action" style="background:var(--primary); color:white; margin-top:0; margin-bottom:20px;" onclick="salvarMedicosUpa()">Atualizar Agora</button>
 
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-
             <h4><i class="fa-solid fa-calendar-week"></i> Editar Escala da Semana</h4>
             <span class="label-escala">Segunda-feira</span><input type="text" id="edit-seg">
             <span class="label-escala">Terça-feira</span><input type="text" id="edit-ter">
@@ -454,7 +456,6 @@
     <div id="postos-admin" class="sub-aba">
         <div class="card-info" style="border-left-color: var(--danger);">
             <h4><i class="fa-solid fa-pen-to-square"></i> Editar Escala dos Postos</h4>
-            <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 15px;">Selecione a unidade que deseja alterar:</p>
             <select id="select-posto" onchange="carregarDadosPostoAdmin()">
                 <option value="esf201">ESF 201 - Rural</option>
                 <option value="esf301">ESF 301 - Jardim Frei Walter</option>
@@ -463,9 +464,9 @@
                 <option value="esf304">ESF 304 - Lázaro Teodoro</option>
                 <option value="esf305">ESF 305 - Aluísio Borges</option>
             </select>
-            <span class="label-escala">Médico Responsável:</span><input type="text" id="input-posto-medico" placeholder="Ex: Dr. João Pedro">
-            <span class="label-escala">Horário de Atendimento:</span><input type="text" id="input-posto-horario" placeholder="Ex: Seg a Sex: 07h às 17h">
-            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarDadosPosto()"><i class="fa-solid fa-check"></i> Salvar Alterações</button>
+            <span class="label-escala">Médico Responsável:</span><input type="text" id="input-posto-medico">
+            <span class="label-escala">Horário de Atendimento:</span><input type="text" id="input-posto-horario">
+            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarDadosPosto()">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -489,7 +490,7 @@
 
 <div id="screen-farmacia" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-pills" style="color:var(--saude)"></i> Farmácia Básica</h3>
-    <div class="card-info"><p>Módulo em desenvolvimento. Em breve consulta de estoque de medicamentos.</p></div>
+    <div class="card-info"><p>Módulo em desenvolvimento. Em breve consulta de estoque.</p></div>
 </div>
 
 <div id="screen-cetec" class="screen">
@@ -519,7 +520,7 @@
         </div>
 
         <div class="card-info" id="cetec-passo2-existe" style="display:none; border-left-color: var(--success);">
-            <h4 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Inscrição Ativa</h4>
+            <h4 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Inscrição Localizada</h4>
             <p id="cetec-resultado-texto" style="font-size:0.95rem;"></p>
             <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Voltar para o início</button>
         </div>
@@ -528,15 +529,48 @@
     <div id="cetec-admin" class="sub-aba">
         <div class="card-info" style="border-left-color: var(--primary);">
             <h4><i class="fa-solid fa-plus"></i> Adicionar Novo Curso</h4>
-            <p style="font-size: 0.85rem; color: var(--gray);">Este curso aparecerá na lista para a população.</p>
             <input type="text" id="cetec-novo-curso" placeholder="Nome do Curso (Ex: Informática Básica)">
             <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="adicionarCursoCetec()">Disponibilizar Curso</button>
         </div>
         
         <div class="card-info" style="border-left-color: var(--warning);">
             <h4><i class="fa-solid fa-users"></i> Lista de Inscritos</h4>
-            <div id="cetec-lista-inscritos" style="font-size:0.9rem; max-height:400px; overflow-y:auto;">Carregando inscritos...</div>
+            <div id="cetec-lista-inscritos" style="font-size:0.9rem; max-height:400px; overflow-y:auto; padding-right:5px;">Carregando inscritos...</div>
         </div>
+    </div>
+</div>
+
+<div id="screen-social" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-hands-holding-child" style="color:var(--social)"></i> Ação Social</h3>
+    
+    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--warning);">
+        <strong><i class="fa-solid fa-circle-exclamation"></i> Regra de Atendimento:</strong><br>
+        Os atendimentos sobre benefícios sociais serão prestados <b>exclusivamente para o responsável pelo cadastro</b> e de forma <b>presencial</b>.
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--social);">
+        <h4><i class="fa-solid fa-address-book"></i> Cadastro Único / Bolsa Família</h4>
+        
+        <p style="font-size: 0.9rem; color: var(--dark); font-weight: 600; margin-bottom: 5px;">Documentos do Responsável Familiar:</p>
+        <ul style="padding-left:20px; font-size:0.85rem; color: var(--gray); margin-top:0;">
+            <li>CPF</li>
+            <li>Documento com foto (preferencialmente RG)</li>
+            <li>Título de Eleitor</li>
+            <li>Comprovante de endereço (Talão de Energia)</li>
+        </ul>
+
+        <p style="font-size: 0.9rem; color: var(--dark); font-weight: 600; margin-bottom: 5px;">Dos demais componentes da família:</p>
+        <ul style="padding-left:20px; font-size:0.85rem; color: var(--gray); margin-top:0;">
+            <li>CPF</li>
+            <li>Título de Eleitor</li>
+            <li>Certidão de Nascimento ou Casamento</li>
+            <li>Carteira de Identidade (RG) ou CNH</li>
+        </ul>
+
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        <p style="font-size: 0.75rem; color: #aaa; margin: 0; text-align: center;">
+            <i>Referência legal: Portaria 889/23 e Informe Cadastro Único N: 08/22.</i>
+        </p>
     </div>
 </div>
 
@@ -588,14 +622,6 @@
     </div>
 </div>
 
-<div id="screen-social" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-hands-holding-child" style="color:var(--social)"></i> Ação Social</h3>
-    <div class="card-info" style="border-left-color: var(--social);">
-        <h4><i class="fa-solid fa-address-book"></i> Cadastro Único / Bolsa Família</h4>
-        <p style="font-size:0.9rem;">Documentação necessária: CPF, RG, Título de Eleitor de todos os adultos, Declaração Escolar das crianças, Conta de Luz recente.</p>
-    </div>
-</div>
-
 <div id="screen-infraestrutura" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-tractor" style="color:var(--obras)"></i> Infraestrutura e Obras</h3>
     <div class="card-info" style="border-left-color: var(--obras);">
@@ -631,6 +657,7 @@
             btnHome.style.display = 'none';
         }
     }
+
     function goBack() {
         if (historyStack.length > 1) {
             historyStack.pop();
@@ -641,6 +668,7 @@
             if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; }
         }
     }
+
     function goHome() { openScreen('screen-home'); }
 
     if ('serviceWorker' in navigator) {
@@ -702,7 +730,7 @@
 
 
     // ==========================================
-    // 3. LÓGICA CETEC (COM BOTÃO DO WHATSAPP)
+    // 3. LÓGICA CETEC (COM STATUS E EDIÇÃO)
     // ==========================================
     let cacheCursosCetec = [];
     let cacheInscricoesCetec = {};
@@ -729,18 +757,32 @@
         let htmlLista = '';
         for(let cpf in cacheInscricoesCetec) {
             let info = cacheInscricoesCetec[cpf];
-            
-            // Lógica para limpar e preparar o número de WhatsApp do Aluno
             let zapLimpo = info.zap.replace(/\D/g, '');
             if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo;
             let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`);
             
+            let badgeStatus = info.status === 'Realizada' 
+                ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' 
+                : '<span class="badge badge-pendente">Aguardando Confirmação</span>';
+            
             htmlLista += `
             <div style="border-bottom:1px solid #eee; padding:15px 0;">
-                <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong><br>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>
+                    ${badgeStatus}
+                </div>
                 <span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br>
                 <span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span>
-                <a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp</a>
+                
+                <div class="btn-group-small">
+                    <button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button>
+                    <button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                    <button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                
+                <a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;">
+                    <i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp
+                </a>
             </div>`;
         }
         if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>";
@@ -755,7 +797,8 @@
         
         if(cacheInscricoesCetec[cpfAtualCetec]) {
             let dadosUser = cacheInscricoesCetec[cpfAtualCetec];
-            document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> já está registrada no nosso sistema.`;
+            let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Confirmação)</span>";
+            document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`;
             document.getElementById('cetec-passo2-existe').style.display = 'block';
         } else {
             if(cacheCursosCetec.length === 0) { alert("Nenhum curso com vagas abertas no momento."); voltarBuscaCetec(); return; }
@@ -777,10 +820,9 @@
         let curso = document.getElementById('cetec-curso-select').value;
         if(!nome || !zap || !curso) return alert("Preencha todos os campos e selecione um curso!");
         
-        db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso });
+        db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso, status: "Pendente" });
         alert("Inscrição realizada com sucesso!");
-        document.getElementById('cetec-nome').value = '';
-        document.getElementById('cetec-zap').value = '';
+        document.getElementById('cetec-nome').value = ''; document.getElementById('cetec-zap').value = '';
         voltarBuscaCetec();
     }
 
@@ -793,9 +835,22 @@
         alert("Curso disponibilizado para a população!");
     }
 
+    function marcarStatusCetec(cpf, statusAtual) {
+        let novoStatus = statusAtual === 'Realizada' ? 'Pendente' : 'Realizada';
+        db.ref('cetec_inscricoes/' + cpf).update({ status: novoStatus });
+    }
+    function editarInscritoCetec(cpf, nomeAtual, zapAtual) {
+        let novoNome = prompt("Editar Nome do Aluno:", nomeAtual); if(novoNome === null) return;
+        let novoZap = prompt("Editar Celular/WhatsApp:", zapAtual); if(novoZap === null) return;
+        db.ref('cetec_inscricoes/' + cpf).update({ nome: novoNome, zap: novoZap });
+    }
+    function excluirInscritoCetec(cpf) {
+        if(confirm("Tem certeza que deseja APAGAR esta inscrição?")) { db.ref('cetec_inscricoes/' + cpf).remove(); }
+    }
+
 
     // ==========================================
-    // 4. AGENDAMENTO DE CONSULTAS (COM WHATSAPP)
+    // 4. AGENDAMENTO DE CONSULTAS (COM STATUS E EDIÇÃO)
     // ==========================================
     let cacheConsultas = {};
     let cpfAtualConsulta = "";
@@ -822,26 +877,37 @@
             let info = cacheConsultas[cpf];
             if(filtro === 'TODOS' || info.posto === filtro) {
                 let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR');
-                
-                // Lógica para limpar o número do paciente e gerar o link do WhatsApp
                 let zapLimpo = info.zap.replace(/\D/g, '');
                 if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo;
-                let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}. Referente ao seu pedido de consulta feito pelo aplicativo...`);
+                let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}. Referente ao seu pedido de consulta...`);
                 
+                let badgeStatus = info.status === 'Concluída' 
+                    ? '<span class="badge badge-concluido">Agendada / Concluída</span>' 
+                    : '<span class="badge badge-pendente">Aguardando Recepção</span>';
+
                 htmlLista += `
                 <div style="border-bottom:1px solid #eee; padding:15px 0;">
-                    <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong><br>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>
+                        ${badgeStatus}
+                    </div>
                     <span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br>
                     <span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br>
                     <span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span>
                     
+                    <div class="btn-group-small">
+                        <button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button>
+                        <button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                        <button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+
                     <a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;">
                         <i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp
                     </a>
                 </div>`;
             }
         }
-        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhuma solicitação encontrada para esta unidade.</p>";
+        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhuma solicitação encontrada para este filtro.</p>";
         const listaDiv = document.getElementById('consulta-lista-pedidos');
         if(listaDiv) listaDiv.innerHTML = htmlLista;
     }
@@ -854,7 +920,8 @@
         
         if(cacheConsultas[cpfAtualConsulta]) {
             let dadosUser = cacheConsultas[cpfAtualConsulta];
-            document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Você tem um pedido ativo de consulta para a unidade:<br><b>${dadosUser.posto}</b><br>Motivo: ${dadosUser.motivo}.`;
+            let txtStatus = dadosUser.status === 'Concluída' ? "<span style='color:var(--success)'>AGENDADA COM SUCESSO</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Recepção)</span>";
+            document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Você tem um pedido de consulta para a unidade:<br><b>${dadosUser.posto}</b><br><br>Status do Pedido: <b>${txtStatus}</b>`;
             document.getElementById('consulta-passo2-existe').style.display = 'block';
         } else {
             document.getElementById('consulta-passo2-novo').style.display = 'block';
@@ -876,22 +943,31 @@
         let motivo = document.getElementById('consulta-motivo-select').value;
         if(!nome || !zap || !posto || !motivo) return alert("Por favor, preencha seu nome, telefone, selecione o posto e o motivo!");
         
-        db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: nome, zap: zap, posto: posto, motivo: motivo, timestamp: new Date().toISOString() });
+        db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: nome, zap: zap, posto: posto, motivo: motivo, status: "Pendente", timestamp: new Date().toISOString() });
         alert("Sua solicitação de consulta foi enviada com sucesso! Aguarde o contato da recepção.");
         document.getElementById('consulta-nome').value = ''; document.getElementById('consulta-zap').value = ''; document.getElementById('consulta-posto-select').value = '';
         voltarBuscaConsulta();
     }
     
     function cancelarConsulta() {
-        if(confirm("Você tem certeza que deseja CANCELAR a sua solicitação de consulta?")) {
-            db.ref('consultas_pedidos/' + cpfAtualConsulta).remove();
-            alert("Sua solicitação foi cancelada com sucesso no sistema.");
-            voltarBuscaConsulta();
-        }
+        if(confirm("Você tem certeza que deseja CANCELAR a sua solicitação de consulta?")) { db.ref('consultas_pedidos/' + cpfAtualConsulta).remove(); alert("Sua solicitação foi cancelada."); voltarBuscaConsulta(); }
+    }
+
+    function marcarStatusConsulta(cpf, statusAtual) {
+        let novoStatus = statusAtual === 'Concluída' ? 'Pendente' : 'Concluída';
+        db.ref('consultas_pedidos/' + cpf).update({ status: novoStatus });
+    }
+    function editarConsulta(cpf, nomeAtual, zapAtual) {
+        let novoNome = prompt("Editar Nome do Paciente:", nomeAtual); if(novoNome === null) return;
+        let novoZap = prompt("Editar Celular/WhatsApp:", zapAtual); if(novoZap === null) return;
+        db.ref('consultas_pedidos/' + cpf).update({ nome: novoNome, zap: novoZap });
+    }
+    function excluirConsulta(cpf) {
+        if(confirm("Tem certeza que deseja APAGAR este pedido do sistema?")) { db.ref('consultas_pedidos/' + cpf).remove(); }
     }
 
     // ==========================================
-    // 5. AUTO TRIAGEM E OUTRAS LÓGICAS DA UPA/POSTO (Restante igual)
+    // 5. AUTO TRIAGEM E OUTRAS LÓGICAS DA UPA/POSTO
     // ==========================================
     function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; }
     function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; }
