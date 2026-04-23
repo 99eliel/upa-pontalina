@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     
+    <meta name="theme-color" content="#0056b3">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/lUheBDA.png">
+    <title>Pontalina Digital</title>
+    <link rel="manifest" href="manifest.json">
+    
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
-    <title>Pontalina Digital</title>
-    <link rel="manifest" href="manifest.json">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -84,7 +86,7 @@
         .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .app-card span { font-weight: 600; font-size: 0.95rem; color: var(--dark); line-height: 1.2; }
 
-        /* CORES CORRIGIDAS (AGORA COM FORÇA MÁXIMA PARA NÃO SUMIR) */
+        /* CORES CORRIGIDAS */
         .bg-saude { background: linear-gradient(135deg, #20c997, #17a2b8) !important; color: white !important; }
         .bg-meioambiente { background: linear-gradient(135deg, #198754, #20c997) !important; color: white !important; }
         .bg-educacao { background: linear-gradient(135deg, #fd7e14, #ffc107) !important; color: white !important; }
@@ -630,8 +632,7 @@
         if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active');
     }
 
-    // Destaca o dia de hoje na escala da semana
-    const diaHoje = new Date().getDay(); // 0 é domingo, 1 é segunda...
+    const diaHoje = new Date().getDay();
     const linhaHoje = document.getElementById('dia-' + diaHoje);
     if(linhaHoje) linhaHoje.classList.add('dia-ativo');
 
@@ -658,13 +659,12 @@
         document.getElementById('input-clinico').value = data.clinico || "";
         document.getElementById('input-pediatra').value = data.pediatra || "";
 
-        // Escala da Semana (Lê do Firebase ou usa um padrão se estiver vazio)
+        // Escala da Semana
         const escala = data.escala || {
             seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia",
             qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana"
         };
 
-        // Atualiza a tabela pública da semana
         document.getElementById('pub-seg').innerText = escala.seg;
         document.getElementById('pub-ter').innerText = escala.ter;
         document.getElementById('pub-qua').innerText = escala.qua;
@@ -673,7 +673,6 @@
         document.getElementById('pub-sab').innerText = escala.sab;
         document.getElementById('pub-dom').innerText = escala.dom;
 
-        // Atualiza os formulários (inputs) na tela de Admin da semana
         document.getElementById('edit-seg').value = escala.seg;
         document.getElementById('edit-ter').value = escala.ter;
         document.getElementById('edit-qua').value = escala.qua;
@@ -698,12 +697,8 @@
         }
     });
 
-    function modificarPacientes(val) {
-        db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) });
-    }
-    function toggleSalaVermelha() {
-        db.ref('upa_status').update({ salaVermelha: !salaCritica });
-    }
+    function modificarPacientes(val) { db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) }); }
+    function toggleSalaVermelha() { db.ref('upa_status').update({ salaVermelha: !salaCritica }); }
     function postarAviso() {
         const txt = document.getElementById('input-aviso').value;
         if(txt) { db.ref('upa_status').update({ avisos: txt }); document.getElementById('input-aviso').value = ""; alert("Aviso atualizado!"); }
