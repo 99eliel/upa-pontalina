@@ -7,12 +7,13 @@
     
     <meta name="theme-color" content="#0056b3">
     <link rel="apple-touch-icon" href="https://i.imgur.com/lUheBDA.png">
-    <title>Pontalina Digital</title>
-    <link rel="manifest" href="manifest.json">
     
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    
+    <title>Pontalina Digital</title>
+    <link rel="manifest" href="manifest.json">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -37,6 +38,7 @@
             --social: #e83e8c;
             --esporte: #fd7e14;
             --obras: #6c757d;
+            --cetec: #17a2b8;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -95,6 +97,7 @@
         .bg-social { background: linear-gradient(135deg, #e83e8c, #d63384) !important; color: white !important; }
         .bg-obras { background: linear-gradient(135deg, #6c757d, #343a40) !important; color: white !important; }
         .bg-danger { background: linear-gradient(135deg, #dc3545, #a71d2a) !important; color: white !important; }
+        .bg-cetec { background: linear-gradient(135deg, var(--cetec), #0d6efd) !important; color: white !important; }
 
         /* COMPONENTES */
         .card-info { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px; border-left: 5px solid var(--primary); }
@@ -105,7 +108,7 @@
         .btn-link { background: var(--primary); color: white; }
         
         /* FORMULÁRIOS ADMIN */
-        input[type="text"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
+        input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
         .label-escala { font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 2px; display: block; }
         
         /* ESCALA SEMANAL */
@@ -177,9 +180,13 @@
             <div class="app-icon bg-educacao"><i class="fa-solid fa-graduation-cap"></i></div>
             <span>Educação</span>
         </div>
+        <div class="app-card" onclick="openScreen('screen-cetec')">
+            <div class="app-icon bg-cetec"><i class="fa-solid fa-laptop-code"></i></div>
+            <span>Cursos<br>CETEC</span>
+        </div>
         <div class="app-card" onclick="openScreen('screen-arrecadacao')">
             <div class="app-icon bg-financas"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <span>Arrecadação<br>(IPTU/Taxas)</span>
+            <span>Arrecadação<br>(IPTU)</span>
         </div>
         <div class="app-card" onclick="openScreen('screen-meioambiente')">
             <div class="app-icon bg-meioambiente"><i class="fa-solid fa-leaf"></i></div>
@@ -199,6 +206,60 @@
         </div>
     </div>
 </div>
+
+<div id="screen-cetec" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-laptop-code" style="color:var(--cetec)"></i> CETEC - Cursos</h3>
+    
+    <div class="sub-nav">
+        <button onclick="mudarAbaCetec('cetec-publico')" class="active" id="btn-cetec-pub">Inscrição</button>
+        <button onclick="mudarAbaCetec('cetec-admin')" id="btn-cetec-adm"><i class="fa-solid fa-lock"></i> Admin</button>
+    </div>
+
+    <div id="cetec-publico" class="sub-aba active">
+        
+        <div class="card-info" id="cetec-passo1" style="border-left-color: var(--cetec);">
+            <h4><i class="fa-solid fa-magnifying-glass"></i> Consultar ou Nova Inscrição</h4>
+            <p style="font-size: 0.9rem; color: var(--gray);">Digite seu CPF para iniciar.</p>
+            <input type="tel" id="cetec-cpf-busca" placeholder="Digite apenas números (Ex: 12345678900)">
+            <button class="btn-action" style="background:var(--cetec); color:white;" onclick="buscarCpfCetec()">Continuar</button>
+        </div>
+
+        <div class="card-info" id="cetec-passo2-novo" style="display:none; border-left-color: var(--warning);">
+            <h4>Nova Inscrição</h4>
+            <input type="text" id="cetec-nome" placeholder="Nome Completo">
+            <input type="tel" id="cetec-zap" placeholder="Celular / WhatsApp com DDD">
+            <label class="label-escala" style="margin-top:10px;">Selecione o Curso:</label>
+            <select id="cetec-curso-select">
+                <option value="">Carregando cursos...</option>
+            </select>
+            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarInscricaoCetec()">Confirmar Inscrição</button>
+            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Cancelar</button>
+        </div>
+
+        <div class="card-info" id="cetec-passo2-existe" style="display:none; border-left-color: var(--success);">
+            <h4 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Inscrição Ativa</h4>
+            <p id="cetec-resultado-texto" style="font-size:0.95rem;"></p>
+            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Voltar para o início</button>
+        </div>
+    </div>
+
+    <div id="cetec-admin" class="sub-aba">
+        <div class="card-info" style="border-left-color: var(--primary);">
+            <h4><i class="fa-solid fa-plus"></i> Adicionar Novo Curso</h4>
+            <p style="font-size: 0.85rem; color: var(--gray);">Este curso aparecerá na lista para a população.</p>
+            <input type="text" id="cetec-novo-curso" placeholder="Nome do Curso (Ex: Informática Básica)">
+            <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="adicionarCursoCetec()">Disponibilizar Curso</button>
+        </div>
+        
+        <div class="card-info" style="border-left-color: var(--warning);">
+            <h4><i class="fa-solid fa-users"></i> Lista de Inscritos</h4>
+            <div id="cetec-lista-inscritos" style="font-size:0.9rem; max-height:400px; overflow-y:auto;">
+                Carregando inscritos...
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div id="screen-saude" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-notes-medical" style="color:var(--saude)"></i> Secretaria de Saúde</h3>
@@ -341,22 +402,16 @@
             
             <span class="label-escala">Segunda-feira</span>
             <input type="text" id="edit-seg">
-            
             <span class="label-escala">Terça-feira</span>
             <input type="text" id="edit-ter">
-            
             <span class="label-escala">Quarta-feira</span>
             <input type="text" id="edit-qua">
-            
             <span class="label-escala">Quinta-feira</span>
             <input type="text" id="edit-qui">
-            
             <span class="label-escala">Sexta-feira</span>
             <input type="text" id="edit-sex">
-            
             <span class="label-escala">Sábado</span>
             <input type="text" id="edit-sab">
-            
             <span class="label-escala">Domingo</span>
             <input type="text" id="edit-dom">
             
@@ -367,23 +422,18 @@
 
 <div id="screen-atencao-basica" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-house-medical" style="color:var(--saude)"></i> Postos de Saúde (ESF)</h3>
-    
     <div class="sub-nav">
         <button onclick="mudarAbaPostos('postos-publico')" class="active" id="btn-postos-pub">Unidades</button>
         <button onclick="mudarAbaPostos('postos-admin')" id="btn-postos-adm"><i class="fa-solid fa-lock"></i> Admin Postos</button>
     </div>
-
     <div id="postos-publico" class="sub-aba active">
         <p style="font-size: 0.9rem; color: var(--gray);">Selecione a sua unidade para atendimento ou rota:</p>
-        
         <div id="lista-postos-publico">Carregando postos...</div>
     </div>
-
     <div id="postos-admin" class="sub-aba">
         <div class="card-info" style="border-left-color: var(--danger);">
             <h4><i class="fa-solid fa-pen-to-square"></i> Editar Escala dos Postos</h4>
             <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 15px;">Selecione a unidade que deseja alterar:</p>
-            
             <select id="select-posto" onchange="carregarDadosPostoAdmin()">
                 <option value="esf201">ESF 201 - Rural</option>
                 <option value="esf301">ESF 301 - Jardim Frei Walter</option>
@@ -392,13 +442,10 @@
                 <option value="esf304">ESF 304 - Lázaro Teodoro</option>
                 <option value="esf305">ESF 305 - Aluísio Borges</option>
             </select>
-
             <span class="label-escala">Médico Responsável:</span>
             <input type="text" id="input-posto-medico" placeholder="Ex: Dr. João Pedro">
-            
             <span class="label-escala">Horário de Atendimento:</span>
             <input type="text" id="input-posto-horario" placeholder="Ex: Seg a Sex: 07h às 17h">
-            
             <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarDadosPosto()"><i class="fa-solid fa-check"></i> Salvar Alterações</button>
         </div>
     </div>
@@ -579,31 +626,8 @@
         document.getElementById('install-banner-ios').style.display = 'none';
     });
 
-
     // ==========================================
-    // 2. AUTO TRIAGEM
-    // ==========================================
-    function proximaPergunta(idIdPergunta) {
-        document.getElementById('triagem-q1').style.display = 'none';
-        document.getElementById(idIdPergunta).style.display = 'block';
-    }
-
-    function resultadoTriagem(resultado) {
-        document.getElementById('triagem-q1').style.display = 'none';
-        document.getElementById('triagem-q2').style.display = 'none';
-        if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block';
-        else document.getElementById('resultado-posto').style.display = 'block';
-    }
-
-    function reiniciarTriagem() {
-        document.getElementById('resultado-upa').style.display = 'none';
-        document.getElementById('resultado-posto').style.display = 'none';
-        document.getElementById('triagem-q2').style.display = 'none';
-        document.getElementById('triagem-q1').style.display = 'block';
-    }
-
-    // ==========================================
-    // 3. FIREBASE: CONFIGURAÇÃO GLOBAL
+    // 2. FIREBASE: CONFIGURAÇÃO GLOBAL
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -615,18 +639,147 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
+
     // ==========================================
-    // 4. LÓGICA DA UPA (FILA E MÉDICOS DA SEMANA)
+    // 3. LÓGICA CETEC (NOVO)
+    // ==========================================
+    let cacheCursosCetec = [];
+    let cacheInscricoesCetec = {};
+    let cpfAtualCetec = "";
+
+    function mudarAbaCetec(idAba) {
+        if(idAba === 'cetec-admin') {
+            let pass = prompt("Senha Admin CETEC:");
+            if(pass !== "789") return alert("Senha Incorreta.");
+        }
+        document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(idAba).classList.add('active');
+        
+        if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active');
+        if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active');
+    }
+
+    // Ouve Cursos Ativos
+    db.ref('cetec_cursos').on('value', (snapshot) => {
+        cacheCursosCetec = snapshot.val() || [];
+        let options = '<option value="">Selecione um curso disponível...</option>';
+        cacheCursosCetec.forEach(curso => {
+            options += `<option value="${curso}">${curso}</option>`;
+        });
+        document.getElementById('cetec-curso-select').innerHTML = options;
+    });
+
+    // Ouve Inscritos (Para Admin)
+    db.ref('cetec_inscricoes').on('value', (snapshot) => {
+        cacheInscricoesCetec = snapshot.val() || {};
+        let htmlLista = '';
+        for(let cpf in cacheInscricoesCetec) {
+            let info = cacheInscricoesCetec[cpf];
+            htmlLista += `
+            <div style="border-bottom:1px solid #eee; padding:10px 0;">
+                <strong style="color:var(--dark);">${info.nome}</strong><br>
+                <span style="color:var(--gray); font-size:0.8rem;">CPF: ${cpf} | Tel: ${info.zap}</span><br>
+                <span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span>
+            </div>`;
+        }
+        if(!htmlLista) htmlLista = "Nenhum inscrito no momento.";
+        document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista;
+    });
+
+    function buscarCpfCetec() {
+        let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); // Tira tudo que não é número
+        if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo (11 números).");
+        cpfAtualCetec = inputCpf;
+        
+        document.getElementById('cetec-passo1').style.display = 'none';
+        
+        // Verifica se a pessoa já existe no banco
+        if(cacheInscricoesCetec[cpfAtualCetec]) {
+            let dadosUser = cacheInscricoesCetec[cpfAtualCetec];
+            document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> já está registrada no nosso sistema.`;
+            document.getElementById('cetec-passo2-existe').style.display = 'block';
+        } else {
+            // Se for novo, mostra form de cadastro
+            if(cacheCursosCetec.length === 0) {
+                alert("Nenhum curso com vagas abertas no momento.");
+                voltarBuscaCetec();
+                return;
+            }
+            document.getElementById('cetec-passo2-novo').style.display = 'block';
+        }
+    }
+
+    function voltarBuscaCetec() {
+        document.getElementById('cetec-passo2-novo').style.display = 'none';
+        document.getElementById('cetec-passo2-existe').style.display = 'none';
+        document.getElementById('cetec-passo1').style.display = 'block';
+        document.getElementById('cetec-cpf-busca').value = '';
+        cpfAtualCetec = "";
+    }
+
+    function salvarInscricaoCetec() {
+        let nome = document.getElementById('cetec-nome').value;
+        let zap = document.getElementById('cetec-zap').value;
+        let curso = document.getElementById('cetec-curso-select').value;
+        
+        if(!nome || !zap || !curso) return alert("Preencha todos os campos e selecione um curso!");
+        
+        // Salva no banco usando o CPF como chave única
+        db.ref('cetec_inscricoes/' + cpfAtualCetec).set({
+            nome: nome,
+            zap: zap,
+            curso: curso
+        });
+        
+        alert("Inscrição realizada com sucesso!");
+        document.getElementById('cetec-nome').value = '';
+        document.getElementById('cetec-zap').value = '';
+        voltarBuscaCetec();
+    }
+
+    function adicionarCursoCetec() {
+        let novoCurso = document.getElementById('cetec-novo-curso').value;
+        if(!novoCurso) return alert("Digite o nome do curso.");
+        
+        // Pega os cursos que já existem e adiciona o novo na lista
+        let novaLista = [...cacheCursosCetec, novoCurso];
+        db.ref('cetec_cursos').set(novaLista);
+        
+        document.getElementById('cetec-novo-curso').value = '';
+        alert("Curso disponibilizado para a população!");
+    }
+
+
+    // ==========================================
+    // 4. AUTO TRIAGEM (Manteve igual)
+    // ==========================================
+    function proximaPergunta(idIdPergunta) {
+        document.getElementById('triagem-q1').style.display = 'none';
+        document.getElementById(idIdPergunta).style.display = 'block';
+    }
+    function resultadoTriagem(resultado) {
+        document.getElementById('triagem-q1').style.display = 'none';
+        document.getElementById('triagem-q2').style.display = 'none';
+        if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block';
+        else document.getElementById('resultado-posto').style.display = 'block';
+    }
+    function reiniciarTriagem() {
+        document.getElementById('resultado-upa').style.display = 'none';
+        document.getElementById('resultado-posto').style.display = 'none';
+        document.getElementById('triagem-q2').style.display = 'none';
+        document.getElementById('triagem-q1').style.display = 'block';
+    }
+
+
+    // ==========================================
+    // 5. LÓGICA DA UPA E POSTOS (Manteve igual)
     // ==========================================
     function mudarAbaUpa(idAba) {
-        if(idAba === 'upa-admin') {
-            let pass = prompt("Senha da UPA:");
-            if(pass !== "123") return alert("Senha Incorreta.");
-        }
+        if(idAba === 'upa-admin') { let pass = prompt("Senha da UPA:"); if(pass !== "123") return alert("Senha Incorreta."); }
         document.querySelectorAll('#screen-upa .sub-aba').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('#screen-upa .sub-nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(idAba).classList.add('active');
-        
         if(idAba === 'upa-publico') document.getElementById('btn-upa-pub').classList.add('active');
         if(idAba === 'upa-escala') document.getElementById('btn-upa-esc').classList.add('active');
         if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active');
@@ -641,11 +794,9 @@
 
     db.ref('upa_status').on('value', (snapshot) => {
         const data = snapshot.val() || {};
-        
         currentPacientes = data.pacientes || 0;
         salaCritica = data.salaVermelha || false;
 
-        // Fila e Avisos
         document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos || "Nenhum aviso no momento."}`;
@@ -653,143 +804,49 @@
         let minutos = currentPacientes * 15;
         document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`;
 
-        // Plantão Agora
         document.getElementById('display-clinico').innerText = data.clinico || "Não informado";
         document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado";
         document.getElementById('input-clinico').value = data.clinico || "";
         document.getElementById('input-pediatra').value = data.pediatra || "";
 
-        // Escala da Semana
-        const escala = data.escala || {
-            seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia",
-            qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana"
-        };
+        const escala = data.escala || { seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia", qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana" };
+        document.getElementById('pub-seg').innerText = escala.seg; document.getElementById('pub-ter').innerText = escala.ter; document.getElementById('pub-qua').innerText = escala.qua; document.getElementById('pub-qui').innerText = escala.qui; document.getElementById('pub-sex').innerText = escala.sex; document.getElementById('pub-sab').innerText = escala.sab; document.getElementById('pub-dom').innerText = escala.dom;
+        document.getElementById('edit-seg').value = escala.seg; document.getElementById('edit-ter').value = escala.ter; document.getElementById('edit-qua').value = escala.qua; document.getElementById('edit-qui').value = escala.qui; document.getElementById('edit-sex').value = escala.sex; document.getElementById('edit-sab').value = escala.sab; document.getElementById('edit-dom').value = escala.dom;
 
-        document.getElementById('pub-seg').innerText = escala.seg;
-        document.getElementById('pub-ter').innerText = escala.ter;
-        document.getElementById('pub-qua').innerText = escala.qua;
-        document.getElementById('pub-qui').innerText = escala.qui;
-        document.getElementById('pub-sex').innerText = escala.sex;
-        document.getElementById('pub-sab').innerText = escala.sab;
-        document.getElementById('pub-dom').innerText = escala.dom;
-
-        document.getElementById('edit-seg').value = escala.seg;
-        document.getElementById('edit-ter').value = escala.ter;
-        document.getElementById('edit-qua').value = escala.qua;
-        document.getElementById('edit-qui').value = escala.qui;
-        document.getElementById('edit-sex').value = escala.sex;
-        document.getElementById('edit-sab').value = escala.sab;
-        document.getElementById('edit-dom').value = escala.dom;
-
-        // Sala Vermelha
         const divSala = document.getElementById('status-sala');
         const btnSala = document.getElementById('btn-sala-vermelha');
-        if(salaCritica) {
-            divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO";
-            divSala.className = "sala-vermelha-status status-critico";
-            btnSala.innerHTML = "Normalizar Sala Vermelha";
-            btnSala.style.background = "var(--success)";
-        } else {
-            divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL";
-            divSala.className = "sala-vermelha-status status-ok";
-            btnSala.innerHTML = "Alertar Sala Vermelha";
-            btnSala.style.background = "var(--danger)";
-        }
+        if(salaCritica) { divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO"; divSala.className = "sala-vermelha-status status-critico"; btnSala.innerHTML = "Normalizar Sala Vermelha"; btnSala.style.background = "var(--success)"; } else { divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL"; divSala.className = "sala-vermelha-status status-ok"; btnSala.innerHTML = "Alertar Sala Vermelha"; btnSala.style.background = "var(--danger)"; }
     });
 
     function modificarPacientes(val) { db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) }); }
     function toggleSalaVermelha() { db.ref('upa_status').update({ salaVermelha: !salaCritica }); }
-    function postarAviso() {
-        const txt = document.getElementById('input-aviso').value;
-        if(txt) { db.ref('upa_status').update({ avisos: txt }); document.getElementById('input-aviso').value = ""; alert("Aviso atualizado!"); }
-    }
-    function salvarMedicosUpa() {
-        const clinico = document.getElementById('input-clinico').value;
-        const pediatra = document.getElementById('input-pediatra').value;
-        db.ref('upa_status').update({ clinico: clinico, pediatra: pediatra });
-        alert("Plantão de Agora atualizado com sucesso!");
-    }
-    function salvarEscalaSemana() {
-        const novaEscala = {
-            seg: document.getElementById('edit-seg').value,
-            ter: document.getElementById('edit-ter').value,
-            qua: document.getElementById('edit-qua').value,
-            qui: document.getElementById('edit-qui').value,
-            sex: document.getElementById('edit-sex').value,
-            sab: document.getElementById('edit-sab').value,
-            dom: document.getElementById('edit-dom').value
-        };
-        db.ref('upa_status/escala').update(novaEscala);
-        alert("Escala Semanal atualizada para toda a população!");
-    }
+    function postarAviso() { const txt = document.getElementById('input-aviso').value; if(txt) { db.ref('upa_status').update({ avisos: txt }); document.getElementById('input-aviso').value = ""; alert("Aviso atualizado!"); } }
+    function salvarMedicosUpa() { db.ref('upa_status').update({ clinico: document.getElementById('input-clinico').value, pediatra: document.getElementById('input-pediatra').value }); alert("Plantão atualizado!"); }
+    function salvarEscalaSemana() { db.ref('upa_status/escala').update({ seg: document.getElementById('edit-seg').value, ter: document.getElementById('edit-ter').value, qua: document.getElementById('edit-qua').value, qui: document.getElementById('edit-qui').value, sex: document.getElementById('edit-sex').value, sab: document.getElementById('edit-sab').value, dom: document.getElementById('edit-dom').value }); alert("Escala Semanal atualizada!"); }
 
-    // ==========================================
-    // 5. LÓGICA DOS POSTOS (ATENÇÃO BÁSICA)
-    // ==========================================
-    const infoEstaticaPostos = {
-        esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" },
-        esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" },
-        esf302: { nome: "ESF 302 - Santa Rita de Cássia", zap: "556434711147", mapa: "https://maps.app.goo.gl/LCTP73ZZXuy7SzPa9" },
-        esf303: { nome: "ESF 303 - Dr. Antônio Carlos Vasconcelos", zap: "5564992742306", mapa: "https://maps.app.goo.gl/xZ8dhCzXR6QzAWCk9" },
-        esf304: { nome: "ESF 304 - Lázaro Teodoro de Barros", zap: "5564992385727", mapa: "https://maps.app.goo.gl/7GR3HgboKoCXu1tw6" },
-        esf305: { nome: "ESF 305 - Aluísio Borges", zap: "5564992346304", mapa: "https://maps.app.goo.gl/T6G1fx4Jik5PR5J27" }
-    };
-
+    const infoEstaticaPostos = { esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf302: { nome: "ESF 302 - Santa Rita de Cássia", zap: "556434711147", mapa: "https://maps.app.goo.gl/LCTP73ZZXuy7SzPa9" }, esf303: { nome: "ESF 303 - Dr. Antônio Carlos Vasconcelos", zap: "5564992742306", mapa: "https://maps.app.goo.gl/xZ8dhCzXR6QzAWCk9" }, esf304: { nome: "ESF 304 - Lázaro Teodoro de Barros", zap: "5564992385727", mapa: "https://maps.app.goo.gl/7GR3HgboKoCXu1tw6" }, esf305: { nome: "ESF 305 - Aluísio Borges", zap: "5564992346304", mapa: "https://maps.app.goo.gl/T6G1fx4Jik5PR5J27" } };
     let cachePostos = {};
 
     function mudarAbaPostos(idAba) {
-        if(idAba === 'postos-admin') {
-            let pass = prompt("Senha da Atenção Básica:");
-            if(pass !== "456") return alert("Senha Incorreta.");
-            carregarDadosPostoAdmin();
-        }
+        if(idAba === 'postos-admin') { let pass = prompt("Senha da Atenção Básica:"); if(pass !== "456") return alert("Senha Incorreta."); carregarDadosPostoAdmin(); }
         document.querySelectorAll('#screen-atencao-basica .sub-aba').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('#screen-atencao-basica .sub-nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(idAba).classList.add('active');
-        
         if(idAba === 'postos-publico') document.getElementById('btn-postos-pub').classList.add('active');
         if(idAba === 'postos-admin') document.getElementById('btn-postos-adm').classList.add('active');
     }
 
     db.ref('postos_status').on('value', (snapshot) => {
-        const data = snapshot.val() || {};
-        cachePostos = data;
-        
-        let htmlLista = '';
-        
+        const data = snapshot.val() || {}; cachePostos = data; let htmlLista = '';
         for (const [id, info] of Object.entries(infoEstaticaPostos)) {
             const dinamico = data[id] || { medico: "Médico não informado", horario: "07h às 17h" };
-            
-            htmlLista += `
-            <div class="card-info">
-                <h4>${info.nome}</h4>
-                <p style="margin:5px 0; font-size:0.9rem;"><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> ${dinamico.horario}</p>
-                <p style="margin:5px 0; font-size:0.9rem;"><i class="fa-solid fa-user-doctor"></i> <strong>Médico:</strong> ${dinamico.medico}</p>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <a href="https://wa.me/${info.zap}?text=Olá, vim pelo aplicativo da Prefeitura e preciso de informações." target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Falar</a>
-                    <a href="${info.mapa}" target="_blank" class="btn-action btn-map"><i class="fa-solid fa-location-dot"></i> Rota</a>
-                </div>
-            </div>`;
+            htmlLista += `<div class="card-info"><h4>${info.nome}</h4><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> ${dinamico.horario}</p><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-solid fa-user-doctor"></i> <strong>Médico:</strong> ${dinamico.medico}</p><div style="display:flex; gap:10px; margin-top:15px;"><a href="https://wa.me/${info.zap}?text=Olá, vim pelo aplicativo da Prefeitura e preciso de informações." target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Falar</a><a href="${info.mapa}" target="_blank" class="btn-action btn-map"><i class="fa-solid fa-location-dot"></i> Rota</a></div></div>`;
         }
-        
         document.getElementById('lista-postos-publico').innerHTML = htmlLista;
     });
 
-    function carregarDadosPostoAdmin() {
-        const idPosto = document.getElementById('select-posto').value;
-        const dados = cachePostos[idPosto] || { medico: "", horario: "" };
-        document.getElementById('input-posto-medico').value = dados.medico;
-        document.getElementById('input-posto-horario').value = dados.horario;
-    }
-
-    function salvarDadosPosto() {
-        const idPosto = document.getElementById('select-posto').value;
-        const novoMedico = document.getElementById('input-posto-medico').value;
-        const novoHorario = document.getElementById('input-posto-horario').value;
-        
-        db.ref('postos_status/' + idPosto).update({ medico: novoMedico, horario: novoHorario });
-        alert("Posto atualizado com sucesso!");
-    }
+    function carregarDadosPostoAdmin() { const idPosto = document.getElementById('select-posto').value; const dados = cachePostos[idPosto] || { medico: "", horario: "" }; document.getElementById('input-posto-medico').value = dados.medico; document.getElementById('input-posto-horario').value = dados.horario; }
+    function salvarDadosPosto() { db.ref('postos_status/' + document.getElementById('select-posto').value).update({ medico: document.getElementById('input-posto-medico').value, horario: document.getElementById('input-posto-horario').value }); alert("Posto atualizado com sucesso!"); }
 </script>
 </body>
 </html>
