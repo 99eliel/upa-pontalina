@@ -207,66 +207,16 @@
     </div>
 </div>
 
-<div id="screen-cetec" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-laptop-code" style="color:var(--cetec)"></i> CETEC - Cursos</h3>
-    
-    <div class="sub-nav">
-        <button onclick="mudarAbaCetec('cetec-publico')" class="active" id="btn-cetec-pub">Inscrição</button>
-        <button onclick="mudarAbaCetec('cetec-admin')" id="btn-cetec-adm"><i class="fa-solid fa-lock"></i> Admin</button>
-    </div>
-
-    <div id="cetec-publico" class="sub-aba active">
-        
-        <div class="card-info" id="cetec-passo1" style="border-left-color: var(--cetec);">
-            <h4><i class="fa-solid fa-magnifying-glass"></i> Consultar ou Nova Inscrição</h4>
-            <p style="font-size: 0.9rem; color: var(--gray);">Digite seu CPF para iniciar.</p>
-            <input type="tel" id="cetec-cpf-busca" placeholder="Digite apenas números (Ex: 12345678900)">
-            <button class="btn-action" style="background:var(--cetec); color:white;" onclick="buscarCpfCetec()">Continuar</button>
-        </div>
-
-        <div class="card-info" id="cetec-passo2-novo" style="display:none; border-left-color: var(--warning);">
-            <h4>Nova Inscrição</h4>
-            <input type="text" id="cetec-nome" placeholder="Nome Completo">
-            <input type="tel" id="cetec-zap" placeholder="Celular / WhatsApp com DDD">
-            <label class="label-escala" style="margin-top:10px;">Selecione o Curso:</label>
-            <select id="cetec-curso-select">
-                <option value="">Carregando cursos...</option>
-            </select>
-            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarInscricaoCetec()">Confirmar Inscrição</button>
-            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Cancelar</button>
-        </div>
-
-        <div class="card-info" id="cetec-passo2-existe" style="display:none; border-left-color: var(--success);">
-            <h4 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Inscrição Ativa</h4>
-            <p id="cetec-resultado-texto" style="font-size:0.95rem;"></p>
-            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Voltar para o início</button>
-        </div>
-    </div>
-
-    <div id="cetec-admin" class="sub-aba">
-        <div class="card-info" style="border-left-color: var(--primary);">
-            <h4><i class="fa-solid fa-plus"></i> Adicionar Novo Curso</h4>
-            <p style="font-size: 0.85rem; color: var(--gray);">Este curso aparecerá na lista para a população.</p>
-            <input type="text" id="cetec-novo-curso" placeholder="Nome do Curso (Ex: Informática Básica)">
-            <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="adicionarCursoCetec()">Disponibilizar Curso</button>
-        </div>
-        
-        <div class="card-info" style="border-left-color: var(--warning);">
-            <h4><i class="fa-solid fa-users"></i> Lista de Inscritos</h4>
-            <div id="cetec-lista-inscritos" style="font-size:0.9rem; max-height:400px; overflow-y:auto;">
-                Carregando inscritos...
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div id="screen-saude" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-notes-medical" style="color:var(--saude)"></i> Secretaria de Saúde</h3>
     <div class="app-grid">
         <div class="app-card" onclick="openScreen('screen-triagem')">
             <div class="app-icon bg-danger"><i class="fa-solid fa-stethoscope"></i></div>
             <span>Auto Triagem<br><small>(Onde ir?)</small></span>
+        </div>
+        <div class="app-card" onclick="openScreen('screen-consulta')">
+            <div class="app-icon bg-saude"><i class="fa-solid fa-calendar-check"></i></div>
+            <span>Marcar<br>Consulta</span>
         </div>
         <div class="app-card" onclick="openScreen('screen-upa')">
             <div class="app-icon bg-danger"><i class="fa-solid fa-truck-medical"></i></div>
@@ -283,6 +233,88 @@
         <div class="app-card" onclick="openScreen('screen-farmacia')">
             <div class="app-icon bg-saude"><i class="fa-solid fa-pills"></i></div>
             <span>Farmácia<br>Básica</span>
+        </div>
+    </div>
+</div>
+
+<div id="screen-consulta" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-calendar-check" style="color:var(--saude)"></i> Agendar Consulta</h3>
+    
+    <div class="sub-nav">
+        <button onclick="mudarAbaConsulta('consulta-publico')" class="active" id="btn-consulta-pub">Agendar</button>
+        <button onclick="mudarAbaConsulta('consulta-admin')" id="btn-consulta-adm"><i class="fa-solid fa-lock"></i> Recepção</button>
+    </div>
+
+    <div id="consulta-publico" class="sub-aba active">
+        <div class="card-info" id="consulta-passo1" style="border-left-color: var(--saude);">
+            <h4><i class="fa-solid fa-magnifying-glass"></i> Iniciar Agendamento</h4>
+            <p style="font-size: 0.9rem; color: var(--gray);">Digite seu CPF para solicitar uma consulta.</p>
+            <input type="tel" id="consulta-cpf" placeholder="Digite apenas números (Ex: 12345678900)">
+            <button class="btn-action" style="background:var(--saude); color:white;" onclick="buscarCpfConsulta()">Continuar</button>
+        </div>
+
+        <div class="card-info" id="consulta-passo2-novo" style="display:none; border-left-color: var(--warning);">
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--warning);">
+                <strong><i class="fa-solid fa-triangle-exclamation"></i> ATENÇÃO:</strong> O agendamento só é válido se for feito na unidade (Postinho) referente ao seu bairro. <br><br>Se você escolher a unidade errada, a sua solicitação <b>não será validada</b> e a consulta será cancelada pela recepção.
+            </div>
+
+            <h4>Solicitar Consulta</h4>
+            <input type="text" id="consulta-nome" placeholder="Nome Completo do Paciente">
+            <input type="tel" id="consulta-zap" placeholder="Celular / WhatsApp com DDD">
+            
+            <label class="label-escala" style="margin-top:10px;">Selecione o Posto do seu Bairro:</label>
+            <select id="consulta-posto-select">
+                <option value="">Escolha seu posto...</option>
+                <option value="ESF 201 - Rural">ESF 201 - Rural</option>
+                <option value="ESF 301 - Jardim Frei Walter">ESF 301 - Jardim Frei Walter</option>
+                <option value="ESF 302 - Santa Rita de Cássia">ESF 302 - Santa Rita de Cássia</option>
+                <option value="ESF 303 - Dr. Antônio Carlos">ESF 303 - Dr. Antônio Carlos</option>
+                <option value="ESF 304 - Lázaro Teodoro">ESF 304 - Lázaro Teodoro</option>
+                <option value="ESF 305 - Aluísio Borges">ESF 305 - Aluísio Borges</option>
+            </select>
+            
+            <label class="label-escala" style="margin-top:10px;">Qual a necessidade da consulta?</label>
+            <select id="consulta-motivo-select">
+                <option value="Consulta de Rotina">Consulta de Rotina / Avaliação</option>
+                <option value="Renovação de Receita">Renovar Receita (Uso Contínuo)</option>
+                <option value="Pré-Natal">Pré-Natal</option>
+                <option value="Apresentar Exames">Apresentar Exames Prontos</option>
+                <option value="Outros">Outros motivos não urgentes</option>
+            </select>
+
+            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarConsulta()">Solicitar Agendamento</button>
+            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaConsulta()">Cancelar</button>
+        </div>
+
+        <div class="card-info" id="consulta-passo2-existe" style="display:none; border-left-color: var(--success);">
+            <h4 style="color: var(--success);"><i class="fa-solid fa-calendar-check"></i> Solicitação Recebida</h4>
+            <p id="consulta-resultado-texto" style="font-size:0.95rem;"></p>
+            <p style="font-size:0.85rem; color:var(--gray);">Sua solicitação foi enviada. Aguarde o contato da recepção do seu posto (via WhatsApp ou Ligação) para confirmar a <b>Data e o Horário exatos</b> da sua consulta.</p>
+            
+            <button class="btn-action" style="background:var(--danger); color:white; margin-top:15px;" onclick="cancelarConsulta()">Cancelar Pedido de Consulta</button>
+            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaConsulta()">Voltar para o início</button>
+        </div>
+    </div>
+
+    <div id="consulta-admin" class="sub-aba">
+        <div class="card-info" style="border-left-color: var(--primary);">
+            <h4><i class="fa-solid fa-list"></i> Solicitações Pendentes</h4>
+            <p style="font-size: 0.85rem; color: var(--gray);">Selecione o seu posto para ver os pacientes da sua área:</p>
+            
+            <select id="admin-filtro-posto" onchange="renderListaConsultas()" style="margin-bottom: 20px;">
+                <option value="TODOS">Ver Todos os Postos (Geral)</option>
+                <option value="ESF 201 - Rural">ESF 201 - Rural</option>
+                <option value="ESF 301 - Jardim Frei Walter">ESF 301 - Jardim Frei Walter</option>
+                <option value="ESF 302 - Santa Rita de Cássia">ESF 302 - Santa Rita de Cássia</option>
+                <option value="ESF 303 - Dr. Antônio Carlos">ESF 303 - Dr. Antônio Carlos</option>
+                <option value="ESF 304 - Lázaro Teodoro">ESF 304 - Lázaro Teodoro</option>
+                <option value="ESF 305 - Aluísio Borges">ESF 305 - Aluísio Borges</option>
+            </select>
+            
+            <div id="consulta-lista-pedidos" style="font-size:0.9rem; max-height:400px; overflow-y:auto;">
+                Carregando solicitações...
+            </div>
         </div>
     </div>
 </div>
@@ -473,6 +505,54 @@
     <div class="card-info"><p>Módulo em desenvolvimento. Em breve consulta de estoque de medicamentos.</p></div>
 </div>
 
+<div id="screen-cetec" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-laptop-code" style="color:var(--cetec)"></i> CETEC - Cursos</h3>
+    
+    <div class="sub-nav">
+        <button onclick="mudarAbaCetec('cetec-publico')" class="active" id="btn-cetec-pub">Inscrição</button>
+        <button onclick="mudarAbaCetec('cetec-admin')" id="btn-cetec-adm"><i class="fa-solid fa-lock"></i> Admin</button>
+    </div>
+
+    <div id="cetec-publico" class="sub-aba active">
+        <div class="card-info" id="cetec-passo1" style="border-left-color: var(--cetec);">
+            <h4><i class="fa-solid fa-magnifying-glass"></i> Consultar ou Nova Inscrição</h4>
+            <p style="font-size: 0.9rem; color: var(--gray);">Digite seu CPF para iniciar.</p>
+            <input type="tel" id="cetec-cpf-busca" placeholder="Digite apenas números (Ex: 12345678900)">
+            <button class="btn-action" style="background:var(--cetec); color:white;" onclick="buscarCpfCetec()">Continuar</button>
+        </div>
+
+        <div class="card-info" id="cetec-passo2-novo" style="display:none; border-left-color: var(--warning);">
+            <h4>Nova Inscrição</h4>
+            <input type="text" id="cetec-nome" placeholder="Nome Completo">
+            <input type="tel" id="cetec-zap" placeholder="Celular / WhatsApp com DDD">
+            <label class="label-escala" style="margin-top:10px;">Selecione o Curso:</label>
+            <select id="cetec-curso-select"><option value="">Carregando cursos...</option></select>
+            <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarInscricaoCetec()">Confirmar Inscrição</button>
+            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Cancelar</button>
+        </div>
+
+        <div class="card-info" id="cetec-passo2-existe" style="display:none; border-left-color: var(--success);">
+            <h4 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Inscrição Ativa</h4>
+            <p id="cetec-resultado-texto" style="font-size:0.95rem;"></p>
+            <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Voltar para o início</button>
+        </div>
+    </div>
+
+    <div id="cetec-admin" class="sub-aba">
+        <div class="card-info" style="border-left-color: var(--primary);">
+            <h4><i class="fa-solid fa-plus"></i> Adicionar Novo Curso</h4>
+            <p style="font-size: 0.85rem; color: var(--gray);">Este curso aparecerá na lista para a população.</p>
+            <input type="text" id="cetec-novo-curso" placeholder="Nome do Curso (Ex: Informática Básica)">
+            <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="adicionarCursoCetec()">Disponibilizar Curso</button>
+        </div>
+        
+        <div class="card-info" style="border-left-color: var(--warning);">
+            <h4><i class="fa-solid fa-users"></i> Lista de Inscritos</h4>
+            <div id="cetec-lista-inscritos" style="font-size:0.9rem; max-height:400px; overflow-y:auto;">Carregando inscritos...</div>
+        </div>
+    </div>
+</div>
+
 <div id="screen-meioambiente" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
     <div class="card-info" style="border-left-color: var(--meioambiente);">
@@ -641,7 +721,7 @@
 
 
     // ==========================================
-    // 3. LÓGICA CETEC (NOVO)
+    // 3. LÓGICA CETEC
     // ==========================================
     let cacheCursosCetec = [];
     let cacheInscricoesCetec = {};
@@ -660,17 +740,13 @@
         if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active');
     }
 
-    // Ouve Cursos Ativos
     db.ref('cetec_cursos').on('value', (snapshot) => {
         cacheCursosCetec = snapshot.val() || [];
         let options = '<option value="">Selecione um curso disponível...</option>';
-        cacheCursosCetec.forEach(curso => {
-            options += `<option value="${curso}">${curso}</option>`;
-        });
+        cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; });
         document.getElementById('cetec-curso-select').innerHTML = options;
     });
 
-    // Ouve Inscritos (Para Admin)
     db.ref('cetec_inscricoes').on('value', (snapshot) => {
         cacheInscricoesCetec = snapshot.val() || {};
         let htmlLista = '';
@@ -688,24 +764,17 @@
     });
 
     function buscarCpfCetec() {
-        let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); // Tira tudo que não é número
+        let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, '');
         if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo (11 números).");
         cpfAtualCetec = inputCpf;
-        
         document.getElementById('cetec-passo1').style.display = 'none';
         
-        // Verifica se a pessoa já existe no banco
         if(cacheInscricoesCetec[cpfAtualCetec]) {
             let dadosUser = cacheInscricoesCetec[cpfAtualCetec];
             document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> já está registrada no nosso sistema.`;
             document.getElementById('cetec-passo2-existe').style.display = 'block';
         } else {
-            // Se for novo, mostra form de cadastro
-            if(cacheCursosCetec.length === 0) {
-                alert("Nenhum curso com vagas abertas no momento.");
-                voltarBuscaCetec();
-                return;
-            }
+            if(cacheCursosCetec.length === 0) { alert("Nenhum curso com vagas abertas no momento."); voltarBuscaCetec(); return; }
             document.getElementById('cetec-passo2-novo').style.display = 'block';
         }
     }
@@ -722,16 +791,9 @@
         let nome = document.getElementById('cetec-nome').value;
         let zap = document.getElementById('cetec-zap').value;
         let curso = document.getElementById('cetec-curso-select').value;
-        
         if(!nome || !zap || !curso) return alert("Preencha todos os campos e selecione um curso!");
         
-        // Salva no banco usando o CPF como chave única
-        db.ref('cetec_inscricoes/' + cpfAtualCetec).set({
-            nome: nome,
-            zap: zap,
-            curso: curso
-        });
-        
+        db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso });
         alert("Inscrição realizada com sucesso!");
         document.getElementById('cetec-nome').value = '';
         document.getElementById('cetec-zap').value = '';
@@ -741,18 +803,121 @@
     function adicionarCursoCetec() {
         let novoCurso = document.getElementById('cetec-novo-curso').value;
         if(!novoCurso) return alert("Digite o nome do curso.");
-        
-        // Pega os cursos que já existem e adiciona o novo na lista
         let novaLista = [...cacheCursosCetec, novoCurso];
         db.ref('cetec_cursos').set(novaLista);
-        
         document.getElementById('cetec-novo-curso').value = '';
         alert("Curso disponibilizado para a população!");
     }
 
 
     // ==========================================
-    // 4. AUTO TRIAGEM (Manteve igual)
+    // 4. NOVO: AGENDAMENTO DE CONSULTAS
+    // ==========================================
+    let cacheConsultas = {};
+    let cpfAtualConsulta = "";
+
+    function mudarAbaConsulta(idAba) {
+        if(idAba === 'consulta-admin') {
+            let pass = prompt("Senha da Recepção:");
+            if(pass !== "147") return alert("Senha Incorreta."); // Senha da recepção: 147
+        }
+        document.querySelectorAll('#screen-consulta .sub-aba').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('#screen-consulta .sub-nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(idAba).classList.add('active');
+        
+        if(idAba === 'consulta-publico') document.getElementById('btn-consulta-pub').classList.add('active');
+        if(idAba === 'consulta-admin') document.getElementById('btn-consulta-adm').classList.add('active');
+    }
+
+    // Ouve os pedidos de consulta no banco
+    db.ref('consultas_pedidos').on('value', (snapshot) => {
+        cacheConsultas = snapshot.val() || {};
+        renderListaConsultas(); // Chama a função para desenhar a lista no painel admin
+    });
+
+    function renderListaConsultas() {
+        const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS';
+        let htmlLista = '';
+        
+        for(let cpf in cacheConsultas) {
+            let info = cacheConsultas[cpf];
+            // Filtra por posto selecionado pela recepcionista
+            if(filtro === 'TODOS' || info.posto === filtro) {
+                // Formata a data bonitinha
+                let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR');
+                
+                htmlLista += `
+                <div style="border-bottom:1px solid #eee; padding:15px 0;">
+                    <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong><br>
+                    <span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br>
+                    <span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br>
+                    <span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span>
+                </div>`;
+            }
+        }
+        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhuma solicitação encontrada para esta unidade.</p>";
+        const listaDiv = document.getElementById('consulta-lista-pedidos');
+        if(listaDiv) listaDiv.innerHTML = htmlLista;
+    }
+
+    function buscarCpfConsulta() {
+        let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, '');
+        if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo (11 números).");
+        cpfAtualConsulta = inputCpf;
+        
+        document.getElementById('consulta-passo1').style.display = 'none';
+        
+        if(cacheConsultas[cpfAtualConsulta]) {
+            let dadosUser = cacheConsultas[cpfAtualConsulta];
+            document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Você tem um pedido ativo de consulta para a unidade:<br><b>${dadosUser.posto}</b><br>Motivo: ${dadosUser.motivo}.`;
+            document.getElementById('consulta-passo2-existe').style.display = 'block';
+        } else {
+            document.getElementById('consulta-passo2-novo').style.display = 'block';
+        }
+    }
+
+    function voltarBuscaConsulta() {
+        document.getElementById('consulta-passo2-novo').style.display = 'none';
+        document.getElementById('consulta-passo2-existe').style.display = 'none';
+        document.getElementById('consulta-passo1').style.display = 'block';
+        document.getElementById('consulta-cpf').value = '';
+        cpfAtualConsulta = "";
+    }
+
+    function salvarConsulta() {
+        let nome = document.getElementById('consulta-nome').value;
+        let zap = document.getElementById('consulta-zap').value;
+        let posto = document.getElementById('consulta-posto-select').value;
+        let motivo = document.getElementById('consulta-motivo-select').value;
+        
+        if(!nome || !zap || !posto || !motivo) return alert("Por favor, preencha seu nome, telefone, selecione o posto e o motivo!");
+        
+        db.ref('consultas_pedidos/' + cpfAtualConsulta).set({
+            nome: nome,
+            zap: zap,
+            posto: posto,
+            motivo: motivo,
+            timestamp: new Date().toISOString()
+        });
+        
+        alert("Sua solicitação de consulta foi enviada com sucesso! Aguarde o contato da recepção.");
+        document.getElementById('consulta-nome').value = '';
+        document.getElementById('consulta-zap').value = '';
+        document.getElementById('consulta-posto-select').value = '';
+        voltarBuscaConsulta();
+    }
+    
+    function cancelarConsulta() {
+        if(confirm("Você tem certeza que deseja CANCELAR a sua solicitação de consulta?")) {
+            db.ref('consultas_pedidos/' + cpfAtualConsulta).remove();
+            alert("Sua solicitação foi cancelada com sucesso no sistema.");
+            voltarBuscaConsulta();
+        }
+    }
+
+
+    // ==========================================
+    // 5. AUTO TRIAGEM
     // ==========================================
     function proximaPergunta(idIdPergunta) {
         document.getElementById('triagem-q1').style.display = 'none';
@@ -773,7 +938,7 @@
 
 
     // ==========================================
-    // 5. LÓGICA DA UPA E POSTOS (Manteve igual)
+    // 6. LÓGICA DA UPA E POSTOS
     // ==========================================
     function mudarAbaUpa(idAba) {
         if(idAba === 'upa-admin') { let pass = prompt("Senha da UPA:"); if(pass !== "123") return alert("Senha Incorreta."); }
