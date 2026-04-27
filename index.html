@@ -35,7 +35,7 @@
             --educacao: #fd7e14;
             --meioambiente: #198754;
             --financas: #6f42c1;
-            --social: #e83e8c;
+            --engenharia: #d97706;
             --esporte: #fd7e14;
             --obras: #6c757d;
             --cetec: #17a2b8;
@@ -88,13 +88,13 @@
         .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .app-card span { font-weight: 600; font-size: 0.95rem; color: var(--dark); line-height: 1.2; }
 
-        /* CORES CORRIGIDAS */
+        /* CORES */
         .bg-saude { background: linear-gradient(135deg, #20c997, #17a2b8) !important; color: white !important; }
         .bg-meioambiente { background: linear-gradient(135deg, #198754, #20c997) !important; color: white !important; }
         .bg-educacao { background: linear-gradient(135deg, #fd7e14, #ffc107) !important; color: white !important; }
         .bg-financas { background: linear-gradient(135deg, #6f42c1, #007bff) !important; color: white !important; }
         .bg-esporte { background: linear-gradient(135deg, #ff5722, #fd7e14) !important; color: white !important; }
-        .bg-social { background: linear-gradient(135deg, #e83e8c, #d63384) !important; color: white !important; }
+        .bg-engenharia { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: white !important; }
         .bg-obras { background: linear-gradient(135deg, #6c757d, #343a40) !important; color: white !important; }
         .bg-danger { background: linear-gradient(135deg, #dc3545, #a71d2a) !important; color: white !important; }
         .bg-cetec { background: linear-gradient(135deg, var(--cetec), #0d6efd) !important; color: white !important; }
@@ -197,13 +197,13 @@
             <div class="app-icon bg-financas"><i class="fa-solid fa-file-invoice-dollar"></i></div>
             <span>Arrecadação<br><small style="font-weight:normal;">(IPTU, ISS, Alvarás...)</small></span>
         </div>
+        <div class="app-card" onclick="openScreen('screen-engenharia')">
+            <div class="app-icon bg-engenharia"><i class="fa-solid fa-ruler-combined"></i></div>
+            <span>Engenharia<br><small style="font-weight:normal;">(Alvarás e Projetos)</small></span>
+        </div>
         <div class="app-card" onclick="openScreen('screen-meioambiente')">
             <div class="app-icon bg-meioambiente"><i class="fa-solid fa-leaf"></i></div>
             <span>Meio Ambiente</span>
-        </div>
-        <div class="app-card" onclick="openScreen('screen-social')">
-            <div class="app-icon bg-social"><i class="fa-solid fa-hands-holding-child"></i></div>
-            <span>Ação Social</span>
         </div>
         <div class="app-card" onclick="openScreen('screen-esporte')">
             <div class="app-icon bg-esporte"><i class="fa-solid fa-futbol"></i></div>
@@ -215,6 +215,73 @@
         </div>
     </div>
 </div>
+
+<div id="screen-engenharia" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-ruler-combined" style="color:var(--engenharia)"></i> Serviços de Engenharia</h3>
+    
+    <div style="background: #e6f0fa; padding: 15px; border-radius: 8px; color: var(--primary); font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--primary); text-align: center;">
+        <strong><i class="fa-solid fa-cloud-arrow-up"></i> Em Breve no Aplicativo:</strong><br>
+        Você poderá enviar as fotos e PDFs dos seus projetos diretamente por aqui!
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--engenharia);">
+        <h4><i class="fa-solid fa-file-contract"></i> Aprovação e Alvará</h4>
+        <p style="font-size:0.9rem;">Documentos necessários para aprovação de projetos e emissão de alvará de construção.</p>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-alvara')">Ver Documentos Necessários</button>
+        
+        <div id="doc-alvara" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
+            <ul style="padding-left:20px; margin:0;">
+                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando aprovação, assinado pelo proprietário (contendo dados e endereço: quadra, lote e setor).</li>
+                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
+                <li style="margin-bottom:5px;"><b>Responsabilidade Técnica:</b> ART ou RRT assinado pelo engenheiro ou arquiteto.</li>
+                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
+                <li style="margin-bottom:5px;"><b>Projeto Arquitetônico (3 vias):</b> Impresso em A2, A1 ou A0. Deve conter: planta de situação, locação, baixa, cobertura, elevação das fachadas, cortes, legenda ABNT e adequação ao código de obras.</li>
+            </ul>
+            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; margin-top: 10px; font-size: 0.8rem;">
+                * Será cobrada taxa e o imóvel <b>não poderá conter débitos</b> municipais.<br>
+                * A critério do órgão, pode ser exigido projeto de prevenção contra incêndio (obrigatório para indústrias).
+            </div>
+        </div>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--engenharia);">
+        <h4><i class="fa-solid fa-house-circle-check"></i> Emissão de Habite-se</h4>
+        <p style="font-size:0.9rem;">Requisitos para liberação do documento após conclusão da obra.</p>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-habitese')">Ver Documentos Necessários</button>
+        
+        <div id="doc-habitese" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
+            <ul style="padding-left:20px; margin:0;">
+                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando o Habite-se, assinado pelo proprietário, com dados e endereço completo.</li>
+                <li style="margin-bottom:5px;"><b>Alvará:</b> Cópia do Alvará de Construção emitido pela prefeitura.</li>
+            </ul>
+            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; margin-top: 10px; font-size: 0.8rem;">
+                * Será cobrada taxa e o imóvel <b>não poderá conter débitos</b> municipais.
+            </div>
+        </div>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--engenharia);">
+        <h4><i class="fa-solid fa-object-ungroup"></i> Desmembramento e Retificação</h4>
+        <p style="font-size:0.9rem;">Documentação para amembramento, desmembramento ou retificação de área.</p>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-desmembramento')">Ver Documentos Necessários</button>
+        
+        <div id="doc-desmembramento" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
+            <ul style="padding-left:20px; margin:0;">
+                <li style="margin-bottom:5px;"><b>Requerimento:</b> Assinado pelo proprietário, com dados e endereço do imóvel.</li>
+                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
+                <li style="margin-bottom:5px;"><b>ART:</b> Assinado pelo engenheiro.</li>
+                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
+                <li style="margin-bottom:5px;"><b>Projeto e Memorial:</b> Projeto do antes e depois (2 vias) e Memorial Descritivo (2 vias) contendo as metragens de antes e depois.</li>
+                <li style="margin-bottom:5px;"><b>Para Retificação de Área:</b> Documento assinado pelos confrontantes declarando que não há invasão em nenhuma das partes.</li>
+                <li style="margin-bottom:5px;"><b>Se Espólio:</b> Apresentar escritura pública do inventariante.</li>
+            </ul>
+            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; margin-top: 10px; font-size: 0.8rem;">
+                * Será cobrada taxa e o imóvel <b>não poderá conter débitos</b> municipais.
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div id="screen-saude" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-notes-medical" style="color:var(--saude)"></i> Secretaria de Saúde</h3>
@@ -540,37 +607,29 @@
     </div>
 </div>
 
-<div id="screen-social" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-hands-holding-child" style="color:var(--social)"></i> Ação Social</h3>
-    
-    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--warning);">
-        <strong><i class="fa-solid fa-circle-exclamation"></i> Regra de Atendimento:</strong><br>
-        Os atendimentos sobre benefícios sociais serão prestados <b>exclusivamente para o responsável pelo cadastro</b> e de forma <b>presencial</b>.
+<div id="screen-meioambiente" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
+    <div class="card-info" style="border-left-color: var(--meioambiente);">
+        <h4><i class="fa-solid fa-file-signature"></i> Licença Ambiental</h4>
+        <p style="font-size:0.9rem;">Consulte a lista de documentos necessários para requerer sua licença de operação.</p>
+        <button class="btn-action btn-link" style="background:var(--meioambiente)">Ver Documentos</button>
     </div>
+    <div class="card-info" style="border-left-color: var(--danger);">
+        <h4><i class="fa-solid fa-bullhorn"></i> Fazer Denúncia</h4>
+        <p style="font-size:0.9rem;">Denuncie descarte irregular de lixo ou queimadas com total sigilo.</p>
+        <a href="#" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Enviar Denúncia</a>
+    </div>
+</div>
 
-    <div class="card-info" style="border-left-color: var(--social);">
-        <h4><i class="fa-solid fa-address-book"></i> Cadastro Único / Bolsa Família</h4>
-        
-        <p style="font-size: 0.9rem; color: var(--dark); font-weight: 600; margin-bottom: 5px;">Documentos do Responsável Familiar:</p>
-        <ul style="padding-left:20px; font-size:0.85rem; color: var(--gray); margin-top:0;">
-            <li>CPF</li>
-            <li>Documento com foto (preferencialmente RG)</li>
-            <li>Título de Eleitor</li>
-            <li>Comprovante de endereço (Talão de Energia)</li>
-        </ul>
-
-        <p style="font-size: 0.9rem; color: var(--dark); font-weight: 600; margin-bottom: 5px;">Dos demais componentes da família:</p>
-        <ul style="padding-left:20px; font-size:0.85rem; color: var(--gray); margin-top:0;">
-            <li>CPF</li>
-            <li>Título de Eleitor</li>
-            <li>Certidão de Nascimento ou Casamento</li>
-            <li>Carteira de Identidade (RG) ou CNH</li>
-        </ul>
-
-        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-        <p style="font-size: 0.75rem; color: #aaa; margin: 0; text-align: center;">
-            <i>Referência legal: Portaria 889/23 e Informe Cadastro Único N: 08/22.</i>
-        </p>
+<div id="screen-educacao" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-graduation-cap" style="color:var(--educacao)"></i> Educação</h3>
+    <div class="card-info" style="border-left-color: var(--educacao);">
+        <h4><i class="fa-solid fa-address-card"></i> Matrículas Escolares</h4>
+        <p style="font-size:0.9rem;">Documentos: Certidão de nascimento, comprovante de endereço, cartão de vacina, RG dos pais.</p>
+    </div>
+    <div class="card-info" style="border-left-color: var(--educacao);">
+        <h4><i class="fa-solid fa-pen-ruler"></i> Lista de Materiais</h4>
+        <p style="font-size:0.9rem;">Em breve, a lista de materiais de todas as escolas da rede municipal estará disponível aqui.</p>
     </div>
 </div>
 
@@ -611,32 +670,6 @@
     </div>
 </div>
 
-<div id="screen-meioambiente" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
-    <div class="card-info" style="border-left-color: var(--meioambiente);">
-        <h4><i class="fa-solid fa-file-signature"></i> Licença Ambiental</h4>
-        <p style="font-size:0.9rem;">Consulte a lista de documentos necessários para requerer sua licença de operação.</p>
-        <button class="btn-action btn-link" style="background:var(--meioambiente)">Ver Documentos</button>
-    </div>
-    <div class="card-info" style="border-left-color: var(--danger);">
-        <h4><i class="fa-solid fa-bullhorn"></i> Fazer Denúncia</h4>
-        <p style="font-size:0.9rem;">Denuncie descarte irregular de lixo ou queimadas com total sigilo.</p>
-        <a href="#" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Enviar Denúncia</a>
-    </div>
-</div>
-
-<div id="screen-educacao" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-graduation-cap" style="color:var(--educacao)"></i> Educação</h3>
-    <div class="card-info" style="border-left-color: var(--educacao);">
-        <h4><i class="fa-solid fa-address-card"></i> Matrículas Escolares</h4>
-        <p style="font-size:0.9rem;">Documentos: Certidão de nascimento, comprovante de endereço, cartão de vacina, RG dos pais.</p>
-    </div>
-    <div class="card-info" style="border-left-color: var(--educacao);">
-        <h4><i class="fa-solid fa-pen-ruler"></i> Lista de Materiais</h4>
-        <p style="font-size:0.9rem;">Em breve, a lista de materiais de todas as escolas da rede municipal estará disponível aqui.</p>
-    </div>
-</div>
-
 <div id="screen-esporte" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-futbol" style="color:var(--esporte)"></i> Esportes</h3>
     <div class="card-info" style="border-left-color: var(--esporte);">
@@ -659,6 +692,18 @@
 </div>
 
 <script>
+    // ==========================================
+    // 0. FUNÇÕES DE TOGGLE PARA ENGENHARIA (NOVO)
+    // ==========================================
+    function toggleDoc(id) {
+        let el = document.getElementById(id);
+        if(el.style.display === 'none') {
+            el.style.display = 'block';
+        } else {
+            el.style.display = 'none';
+        }
+    }
+
     // ==========================================
     // 1. NAVEGAÇÃO SPA E PWA
     // ==========================================
