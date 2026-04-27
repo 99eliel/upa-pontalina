@@ -195,7 +195,7 @@
         </div>
         <div class="app-card" onclick="openScreen('screen-arrecadacao')">
             <div class="app-icon bg-financas"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <span>Arrecadação<br>(IPTU)</span>
+            <span>Arrecadação<br><small style="font-weight:normal;">(IPTU, ISS, Alvarás...)</small></span>
         </div>
         <div class="app-card" onclick="openScreen('screen-meioambiente')">
             <div class="app-icon bg-meioambiente"><i class="fa-solid fa-leaf"></i></div>
@@ -574,6 +574,43 @@
     </div>
 </div>
 
+<div id="screen-arrecadacao" class="screen">
+    <h3 style="margin-top:0; line-height: 1.2;">
+        <i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal<br>
+        <small style="font-size: 0.6em; color: var(--gray); font-weight: normal;">(IPTU, ISS, Alvarás, Certidões)</small>
+    </h3>
+    
+    <div class="card-info" style="border-left-color: var(--financas);">
+        <h4><i class="fa-solid fa-barcode"></i> Consulta de IPTU</h4>
+        <p style="font-size:0.9rem;">Emita a guia de pagamento do seu IPTU de forma rápida e segura.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)">Emitir IPTU</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--success);">
+        <h4><i class="fa-solid fa-file-circle-check"></i> Certidão Negativa</h4>
+        <p style="font-size:0.9rem;">Emita a sua Certidão Negativa de Débitos Municipais.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/emissao-certidao-negat" target="_blank" class="btn-action btn-link" style="background:var(--success)">Emitir Certidão</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--primary);">
+        <h4><i class="fa-solid fa-file-invoice"></i> Guias de ISS</h4>
+        <p style="font-size:0.9rem;">Emita suas guias de Imposto Sobre Serviços (ISS).</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iss" target="_blank" class="btn-action btn-link" style="background:var(--primary)">Acessar ISS</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--cetec);">
+        <h4><i class="fa-solid fa-file-signature"></i> Consulta de Alvará</h4>
+        <p style="font-size:0.9rem;">Consulte e emita seu Alvará de Licença ou Habite-se.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/consultar-alvara-habitese" target="_blank" class="btn-action btn-link" style="background:var(--cetec)">Consultar Alvará</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--warning);">
+        <h4><i class="fa-solid fa-file-invoice-dollar"></i> Consulta de Débitos</h4>
+        <p style="font-size:0.9rem;">Emita demais taxas e guias de arrecadação municipal.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/outras-guias" target="_blank" class="btn-action btn-link" style="background:var(--warning); color:#000;">Consultar Débitos</a>
+    </div>
+</div>
+
 <div id="screen-meioambiente" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
     <div class="card-info" style="border-left-color: var(--meioambiente);">
@@ -597,20 +634,6 @@
     <div class="card-info" style="border-left-color: var(--educacao);">
         <h4><i class="fa-solid fa-pen-ruler"></i> Lista de Materiais</h4>
         <p style="font-size:0.9rem;">Em breve, a lista de materiais de todas as escolas da rede municipal estará disponível aqui.</p>
-    </div>
-</div>
-
-<div id="screen-arrecadacao" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal</h3>
-    <div class="card-info" style="border-left-color: var(--financas);">
-        <h4><i class="fa-solid fa-barcode"></i> Consulta de IPTU</h4>
-        <p style="font-size:0.9rem;">Emita a guia de pagamento do seu IPTU de forma rápida e segura.</p>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)">Emitir IPTU</a>
-    </div>
-    <div class="card-info" style="border-left-color: var(--warning);">
-        <h4><i class="fa-solid fa-file-invoice"></i> Consulta de Débitos</h4>
-        <p style="font-size:0.9rem;">Emita alvarás, ISSQN e demais taxas municipais.</p>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/outras-guias" target="_blank" class="btn-action btn-link" style="background:var(--warning); color:#000;">Consultar Débitos</a>
     </div>
 </div>
 
