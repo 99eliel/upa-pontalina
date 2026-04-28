@@ -170,6 +170,18 @@
         <i class="fa-solid fa-bell fa-shake"></i>
         <strong id="global-alert-text">Carregando aviso...</strong>
     </div>
+
+    <div id="install-banner">
+        <div>
+            <strong style="display: block; font-size: 1.05rem;"><i class="fa-solid fa-mobile-screen-button"></i> Instalar App</strong>
+            <span style="font-size: 0.8rem; opacity: 0.9;">Acesso rápido aos serviços</span>
+        </div>
+        <button id="btn-instalar-pwa">Instalar</button>
+    </div>
+    <div id="install-banner-ios">
+        <i class="fa-brands fa-apple" style="font-size: 1.5rem; margin-bottom: 5px; display: block;"></i>
+        Para instalar no iPhone, toque no ícone de <b>Compartilhar</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> e selecione <b>"Adicionar à Tela de Início"</b>.
+    </div>
 </div>
 
 <div id="screen-admin-geral" class="screen">
@@ -249,33 +261,58 @@
     const db = firebase.database();
     const messaging = firebase.messaging();
     
-    // A CHAVE EXATA QUE COPIEI DO SEU PRINT!
-    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYImJC6FCi13w_18IBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
+    // A CHAVE EXATA DE PONTALINA
+    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYlmJC6FCi13w_18lBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
 
     if ("Notification" in window) { if (Notification.permission === "default") { document.getElementById('push-permission-box').style.display = 'block'; } }
 
+    // FUNÇÃO DETETIVE: RASTREIO DE ERRO PASSO A PASSO
     function solicitarPermissaoNotificacao() {
+        alert("Passo 1: Iniciando pedido...");
+        
         Notification.requestPermission().then((permission) => {
+            alert("Passo 2: Permissão do usuário = " + permission);
+            
             if (permission === 'granted') {
                 document.getElementById('push-permission-box').style.display = 'none';
+                alert("Passo 3: Buscando Service Worker (sw.js)...");
+                
                 navigator.serviceWorker.ready.then((registration) => {
+                    alert("Passo 4: SW Encontrado! Pedindo Token ao Google...");
+                    
                     messaging.getToken({ 
                         vapidKey: VAPID_KEY,
                         serviceWorkerRegistration: registration 
                     }).then((currentToken) => {
                         if (currentToken) {
-                            db.ref('fcm_tokens/' + currentToken).set({ ativo: true, dataCadastro: new Date().toISOString(), plataforma: navigator.platform });
-                            alert("Notificações ativadas com sucesso!");
+                            alert("Passo 5: Sucesso! Token gerado: " + currentToken.substring(0, 10) + "...");
+                            
+                            // Tenta salvar no banco e avisa se der erro!
+                            db.ref('fcm_tokens/' + currentToken).set({ 
+                                ativo: true, 
+                                dataCadastro: new Date().toISOString(), 
+                                plataforma: navigator.platform 
+                            }).then(() => {
+                                alert("Passo 6: VITÓRIA! Token salvo no Banco de Dados!");
+                            }).catch((dbErr) => {
+                                alert("ERRO NO PASSO 6 (Banco de Dados): " + dbErr.message);
+                            });
+                            
+                        } else {
+                            alert("ERRO NO PASSO 5: Google não devolveu o token.");
                         }
                     }).catch((err) => {
-                        console.error('Erro FCM:', err);
-                        // AQUI ESTÁ O DETETIVE: Vai printar o erro exato na tela do celular
-                        alert("ERRO TÉCNICO AO ATIVAR:\n" + err.message + "\n\n(Tire um print disso)");
+                        alert("ERRO NO PASSO 4 (Falha ao pedir Token):\n" + err.message);
                     });
+                }).catch((swErr) => {
+                    alert("ERRO NO PASSO 3 (Service Worker):\n" + swErr.message);
                 });
             } else {
-                alert("Você bloqueou as notificações."); document.getElementById('push-permission-box').style.display = 'none';
+                alert("Você bloqueou as notificações."); 
+                document.getElementById('push-permission-box').style.display = 'none';
             }
+        }).catch((permErr) => {
+            alert("ERRO NO PASSO 1:\n" + permErr.message);
         });
     }
 
@@ -288,7 +325,7 @@
         if(data.avisoAtivo && data.avisoTexto) { bannerTexto.innerText = data.avisoTexto; banner.style.display = 'block'; } else { banner.style.display = 'none'; }
     });
 
-    // Demais lógicas de negócio (CETEC, Agendamentos, etc) foram mantidas idênticas e minimizadas.
+    // LÓGICA CETEC
     let cacheCursosCetec = []; let cacheInscricoesCetec = {}; let cpfAtualCetec = ""; function mudarAbaCetec(idAba) { if(idAba === 'cetec-admin') { let pass = prompt("Senha Admin CETEC:"); if(pass !== "789") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active'); if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active'); } db.ref('cetec_cursos').on('value', (snapshot) => { cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso...</option>'; cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options; }); db.ref('cetec_inscricoes').on('value', (snapshot) => { cacheInscricoesCetec = snapshot.val() || {}; let htmlLista = ''; for(let cpf in cacheInscricoesCetec) { let info = cacheInscricoesCetec[cpf]; let badgeStatus = info.status === 'Realizada' ? '<span class="badge badge-concluido">Realizada</span>' : '<span class="badge badge-pendente">Pendente</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><strong>${info.nome}</strong> ${badgeStatus}<br><span>CPF: ${cpf} | Tel: ${info.zap}</span><br><b>${info.curso}</b></div>`; } document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista || "Nenhum inscrito."; }); function buscarCpfCetec() { let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none'; if(cacheInscricoesCetec[cpfAtualCetec]) { document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { document.getElementById('cetec-passo2-novo').style.display = 'block'; } } function voltarBuscaCetec() { document.getElementById('cetec-passo2-novo').style.display = 'none'; document.getElementById('cetec-passo2-existe').style.display = 'none'; document.getElementById('cetec-passo1').style.display = 'block'; document.getElementById('cetec-cpf-busca').value = ''; } function salvarInscricaoCetec() { db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: document.getElementById('cetec-nome').value, zap: document.getElementById('cetec-zap').value, curso: document.getElementById('cetec-curso-select').value, status: "Pendente" }); alert("Inscrição realizada!"); voltarBuscaCetec(); } function adicionarCursoCetec() { let novoCurso = document.getElementById('cetec-novo-curso').value; db.ref('cetec_cursos').set([...cacheCursosCetec, novoCurso]); alert("Curso adicionado!"); }
     let cacheConsultas = {}; let cpfAtualConsulta = ""; function mudarAbaConsulta(idAba) { if(idAba === 'consulta-admin') { let pass = prompt("Senha:"); if(pass !== "147") return alert("Incorreta."); } document.querySelectorAll('#screen-consulta .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-consulta .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'consulta-publico') document.getElementById('btn-consulta-pub').classList.add('active'); if(idAba === 'consulta-admin') document.getElementById('btn-consulta-adm').classList.add('active'); } db.ref('consultas_pedidos').on('value', (snapshot) => { cacheConsultas = snapshot.val() || {}; renderListaConsultas(); }); function renderListaConsultas() { const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS'; let htmlLista = ''; for(let cpf in cacheConsultas) { let info = cacheConsultas[cpf]; if(filtro === 'TODOS' || info.posto === filtro) { htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><strong>${info.nome}</strong><br><span>CPF: ${cpf} | Tel: ${info.zap}</span><br><b>${info.posto}</b></div>`; } } document.getElementById('consulta-lista-pedidos').innerHTML = htmlLista || "Vazio."; } function buscarCpfConsulta() { let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualConsulta = inputCpf; document.getElementById('consulta-passo1').style.display = 'none'; if(cacheConsultas[cpfAtualConsulta]) { document.getElementById('consulta-passo2-existe').style.display = 'block'; } else { document.getElementById('consulta-passo2-novo').style.display = 'block'; } } function voltarBuscaConsulta() { document.getElementById('consulta-passo2-novo').style.display = 'none'; document.getElementById('consulta-passo2-existe').style.display = 'none'; document.getElementById('consulta-passo1').style.display = 'block'; document.getElementById('consulta-cpf').value = ''; } function salvarConsulta() { db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: document.getElementById('consulta-nome').value, zap: document.getElementById('consulta-zap').value, posto: document.getElementById('consulta-posto-select').value, motivo: document.getElementById('consulta-motivo-select').value, status: "Pendente", timestamp: new Date().toISOString() }); alert("Enviado com sucesso!"); voltarBuscaConsulta(); } function cancelarConsulta() { db.ref('consultas_pedidos/' + cpfAtualConsulta).remove(); voltarBuscaConsulta(); }
     function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; } function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; } function reiniciarTriagem() { document.getElementById('resultado-upa').style.display = 'none'; document.getElementById('resultado-posto').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; document.getElementById('triagem-q1').style.display = 'block'; }
