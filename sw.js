@@ -23,8 +23,8 @@ messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Forçando a atualização do cache (Versão 5)
-const CACHE_NAME = 'pontalina-app-v5';
+// Forçando a versão V4 para limpar o cache do celular
+const CACHE_NAME = 'pontalina-app-v4';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
