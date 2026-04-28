@@ -35,10 +35,11 @@
             --educacao: #fd7e14;
             --meioambiente: #198754;
             --financas: #6f42c1;
-            --engenharia: #d97706;
+            --social: #e83e8c;
             --esporte: #fd7e14;
             --obras: #6c757d;
             --cetec: #17a2b8;
+            --engenharia: #d97706;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -67,11 +68,17 @@
         .header-title span { font-size: 0.75rem; opacity: 0.8; }
 
         .nav-buttons { display: flex; gap: 10px; }
-        .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; display: none; }
+        .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
+        .nav-btn-hidden { display: none; }
         .nav-btn:active { background: rgba(255,255,255,0.4); }
 
-        /* BANNERS PWA */
+        /* BANNERS PWA E ALERTA GLOBAL */
         .banner-container { padding: 15px 15px 0 15px; }
+        
+        #global-alert { display: none; background: linear-gradient(135deg, var(--primary), #004494); color: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3); text-align: center; border-left: 5px solid var(--warning); animation: slideDown 0.4s ease; }
+        #global-alert i { font-size: 1.2rem; margin-bottom: 5px; color: var(--warning); display: block; }
+        #global-alert strong { font-size: 0.9rem; }
+
         #install-banner { display: none; background: linear-gradient(135deg, var(--success), #20c997); color: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2); align-items: center; justify-content: space-between; text-align: left; }
         #install-banner button { background: white; color: var(--success); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 700; cursor: pointer; }
         #install-banner-ios { display: none; background: #e6f0fa; color: var(--primary); border: 1px solid #b8daff; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 0.85rem; }
@@ -80,6 +87,7 @@
         .screen { display: none; padding: 15px; animation: slideIn 0.3s ease; max-width: 600px; margin: auto; }
         .screen.active { display: block; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* GRID MENU */
         .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
@@ -88,16 +96,17 @@
         .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .app-card span { font-weight: 600; font-size: 0.95rem; color: var(--dark); line-height: 1.2; }
 
-        /* CORES */
+        /* CORES CORRIGIDAS */
         .bg-saude { background: linear-gradient(135deg, #20c997, #17a2b8) !important; color: white !important; }
         .bg-meioambiente { background: linear-gradient(135deg, #198754, #20c997) !important; color: white !important; }
         .bg-educacao { background: linear-gradient(135deg, #fd7e14, #ffc107) !important; color: white !important; }
         .bg-financas { background: linear-gradient(135deg, #6f42c1, #007bff) !important; color: white !important; }
         .bg-esporte { background: linear-gradient(135deg, #ff5722, #fd7e14) !important; color: white !important; }
-        .bg-engenharia { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: white !important; }
+        .bg-social { background: linear-gradient(135deg, #e83e8c, #d63384) !important; color: white !important; }
         .bg-obras { background: linear-gradient(135deg, #6c757d, #343a40) !important; color: white !important; }
         .bg-danger { background: linear-gradient(135deg, #dc3545, #a71d2a) !important; color: white !important; }
         .bg-cetec { background: linear-gradient(135deg, var(--cetec), #0d6efd) !important; color: white !important; }
+        .bg-engenharia { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: white !important; }
 
         /* COMPONENTES */
         .card-info { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px; border-left: 5px solid var(--primary); }
@@ -117,35 +126,15 @@
         .badge-concluido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 
         /* FORMULÁRIOS ADMIN */
-        input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
+        textarea, input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
         .label-escala { font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 2px; display: block; }
         
-        /* ESCALA SEMANAL */
-        .dia-semana { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        .dia-semana:last-child { border-bottom: none; }
-        .dia-ativo { background: #d4edda; border-radius: 8px; border-left: 4px solid var(--success); font-weight: 600; color: #155724; }
-
         /* NAVEGAÇÃO INTERNA (SUB-ABAS) */
         .sub-nav { display: flex; background: white; border-radius: 10px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .sub-nav button { flex: 1; padding: 10px; border: none; background: none; font-weight: 600; color: var(--gray); cursor: pointer; transition: 0.2s; }
         .sub-nav button.active { background: var(--primary); color: white; }
         .sub-aba { display: none; }
         .sub-aba.active { display: block; }
-
-        /* TRIAGEM */
-        .triagem-box { text-align: center; background: white; padding: 30px 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .triagem-pergunta { font-size: 1.2rem; font-weight: 600; color: var(--dark); margin-bottom: 25px; }
-        .triagem-btn { width: 100%; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 10px; border: none; margin-bottom: 15px; cursor: pointer; }
-        .btn-sim { background: var(--danger); color: white; }
-        .btn-nao { background: var(--success); color: white; }
-
-        /* UPA ESPECÍFICO */
-        .counter-box { background: var(--primary-light); padding: 20px; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,86,179,0.15); }
-        .counter { font-size: 3.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
-        .sala-vermelha-status { padding: 15px; border-radius: 10px; margin-bottom: 15px; font-weight: 700; text-align: center; }
-        .status-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; animation: pulseRed 2s infinite; }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.5); } 70% { box-shadow: 0 0 0 10px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
     </style>
 </head>
 <body>
@@ -159,12 +148,18 @@
         </div>
     </div>
     <div class="nav-buttons">
-        <button class="nav-btn" id="btn-back" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
-        <button class="nav-btn" id="btn-home" onclick="goHome()"><i class="fa-solid fa-house"></i></button>
+        <button class="nav-btn nav-btn-hidden" id="btn-back" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="nav-btn nav-btn-hidden" id="btn-home" onclick="goHome()"><i class="fa-solid fa-house"></i></button>
+        <button class="nav-btn" id="btn-admin-geral" onclick="abrirAdminGeral()"><i class="fa-solid fa-gear"></i></button>
     </div>
 </header>
 
 <div class="banner-container">
+    <div id="global-alert">
+        <i class="fa-solid fa-bell fa-shake"></i>
+        <strong id="global-alert-text">Carregando aviso...</strong>
+    </div>
+
     <div id="install-banner">
         <div>
             <strong style="display: block; font-size: 1.05rem;"><i class="fa-solid fa-mobile-screen-button"></i> Instalar App</strong>
@@ -176,6 +171,23 @@
         <i class="fa-brands fa-apple" style="font-size: 1.5rem; margin-bottom: 5px; display: block;"></i>
         Para instalar no iPhone, toque no ícone de <b>Compartilhar</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> e selecione <b>"Adicionar à Tela de Início"</b>.
     </div>
+</div>
+
+<div id="screen-admin-geral" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Painel Geral da Prefeitura</h3>
+    
+    <div class="card-info" style="border-left-color: var(--warning);">
+        <h4><i class="fa-solid fa-bullhorn"></i> Notificação em Massa (Banner)</h4>
+        <p style="font-size:0.85rem; color:var(--gray);">Ative este aviso para ele aparecer na tela inicial de todos os cidadãos da cidade instantaneamente.</p>
+        
+        <textarea id="input-global-aviso" rows="3" placeholder="Ex: Campanha de vacinação contra a gripe amanhã no ESF Centro!"></textarea>
+        
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn-action" style="background:var(--success); color:white; margin-top:0;" onclick="salvarAvisoGlobal(true)"><i class="fa-solid fa-bell"></i> Ligar Aviso</button>
+            <button class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="salvarAvisoGlobal(false)"><i class="fa-solid fa-bell-slash"></i> Desligar</button>
+        </div>
+    </div>
+    <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="goHome()">Sair do Painel</button>
 </div>
 
 <div id="screen-home" class="screen active">
@@ -215,73 +227,6 @@
         </div>
     </div>
 </div>
-
-<div id="screen-engenharia" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-ruler-combined" style="color:var(--engenharia)"></i> Serviços de Engenharia</h3>
-    
-    <div style="background: #e6f0fa; padding: 15px; border-radius: 8px; color: var(--primary); font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--primary); text-align: center;">
-        <strong><i class="fa-solid fa-cloud-arrow-up"></i> Em Breve no Aplicativo:</strong><br>
-        Você poderá enviar as fotos e PDFs dos seus projetos diretamente por aqui!
-    </div>
-
-    <div class="card-info" style="border-left-color: var(--engenharia);">
-        <h4><i class="fa-solid fa-file-contract"></i> Aprovação e Alvará</h4>
-        <p style="font-size:0.9rem;">Documentos necessários para aprovação de projetos e emissão de alvará de construção.</p>
-        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-alvara')">Ver Documentos Necessários</button>
-        
-        <div id="doc-alvara" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;">
-                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando aprovação, assinado pelo proprietário (contendo dados e endereço: quadra, lote e setor).</li>
-                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
-                <li style="margin-bottom:5px;"><b>Responsabilidade Técnica:</b> ART ou RRT assinado pelo engenheiro ou arquiteto.</li>
-                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
-                <li style="margin-bottom:5px;"><b>Projeto Arquitetônico (3 vias):</b> Impresso em A2, A1 ou A0. Deve conter: planta de situação, locação, baixa, cobertura, elevação das fachadas, cortes, legenda ABNT e adequação ao código de obras.</li>
-            </ul>
-            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; margin-top: 10px; font-size: 0.8rem;">
-                * Será cobrada taxa e o imóvel <b>não poderá conter débitos</b> municipais.<br>
-                * A critério do órgão, pode ser exigido projeto de prevenção contra incêndio (obrigatório para indústrias).
-            </div>
-        </div>
-    </div>
-
-    <div class="card-info" style="border-left-color: var(--engenharia);">
-        <h4><i class="fa-solid fa-house-circle-check"></i> Emissão de Habite-se</h4>
-        <p style="font-size:0.9rem;">Requisitos para liberação do documento após conclusão da obra.</p>
-        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-habitese')">Ver Documentos Necessários</button>
-        
-        <div id="doc-habitese" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;">
-                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando o Habite-se, assinado pelo proprietário, com dados e endereço completo.</li>
-                <li style="margin-bottom:5px;"><b>Alvará:</b> Cópia do Alvará de Construção emitido pela prefeitura.</li>
-            </ul>
-            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; margin-top: 10px; font-size: 0.8rem;">
-                * Será cobrada taxa e o imóvel <b>não poderá conter débitos</b> municipais.
-            </div>
-        </div>
-    </div>
-
-    <div class="card-info" style="border-left-color: var(--engenharia);">
-        <h4><i class="fa-solid fa-object-ungroup"></i> Desmembramento e Retificação</h4>
-        <p style="font-size:0.9rem;">Documentação para amembramento, desmembramento ou retificação de área.</p>
-        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-desmembramento')">Ver Documentos Necessários</button>
-        
-        <div id="doc-desmembramento" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;">
-                <li style="margin-bottom:5px;"><b>Requerimento:</b> Assinado pelo proprietário, com dados e endereço do imóvel.</li>
-                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
-                <li style="margin-bottom:5px;"><b>ART:</b> Assinado pelo engenheiro.</li>
-                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
-                <li style="margin-bottom:5px;"><b>Projeto e Memorial:</b> Projeto do antes e depois (2 vias) e Memorial Descritivo (2 vias) contendo as metragens de antes e depois.</li>
-                <li style="margin-bottom:5px;"><b>Para Retificação de Área:</b> Documento assinado pelos confrontantes declarando que não há invasão em nenhuma das partes.</li>
-                <li style="margin-bottom:5px;"><b>Se Espólio:</b> Apresentar escritura pública do inventariante.</li>
-            </ul>
-            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404; margin-top: 10px; font-size: 0.8rem;">
-                * Será cobrada taxa e o imóvel <b>não poderá conter débitos</b> municipais.
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <div id="screen-saude" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-notes-medical" style="color:var(--saude)"></i> Secretaria de Saúde</h3>
@@ -424,13 +369,11 @@
 
 <div id="screen-upa" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-truck-medical" style="color:var(--danger)"></i> UPA 24h</h3>
-    
     <div class="sub-nav">
         <button onclick="mudarAbaUpa('upa-publico')" class="active" id="btn-upa-pub">Público</button>
         <button onclick="mudarAbaUpa('upa-escala')" id="btn-upa-esc">Escala</button>
         <button onclick="mudarAbaUpa('upa-admin')" id="btn-upa-adm"><i class="fa-solid fa-lock"></i> Admin</button>
     </div>
-
     <div id="upa-publico" class="sub-aba active">
         <div id="status-sala" class="sala-vermelha-status status-ok"><i class="fa-solid fa-heart-pulse"></i> SALA VERMELHA: DISPONÍVEL</div>
         <div class="card-info" style="text-align:center; border-left: none; border-top: 5px solid var(--primary);">
@@ -439,12 +382,7 @@
             <div style="color: var(--gray); font-size: 0.9rem;">Pacientes aguardando triagem/consulta</div>
             <div style="margin-top:10px; font-weight:bold; color:var(--dark);" id="val-tempo"><i class="fa-regular fa-clock"></i> Espera est.: ~0 min</div>
         </div>
-        <div class="card-info" style="border-left-color: var(--warning);">
-            <h4><i class="fa-solid fa-bullhorn"></i> Quadro de Avisos</h4>
-            <div id="lista-avisos" style="background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 0.95rem;">Carregando...</div>
-        </div>
     </div>
-
     <div id="upa-escala" class="sub-aba">
         <div class="card-info" style="padding: 0; overflow: hidden; border:none; margin-bottom: 20px;">
             <div style="background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: 600;">Plantão Atual (Agora)</div>
@@ -457,7 +395,6 @@
                 <div><strong id="display-pediatra" style="font-size: 1.1rem;">Carregando...</strong><br><span style="font-size:0.85rem; color:var(--gray)">Pediatra</span></div>
             </div>
         </div>
-
         <div class="card-info" style="padding: 0; overflow: hidden; border:none;">
             <div style="background: var(--dark); color: white; padding: 15px; text-align: center; font-weight: 600;"><i class="fa-regular fa-calendar-days"></i> Escala da Semana</div>
             <div id="tabela-semana">
@@ -471,7 +408,6 @@
             </div>
         </div>
     </div>
-
     <div id="upa-admin" class="sub-aba">
         <div class="card-info" style="border-left-color: var(--danger);">
             <h4>Controle de Fila</h4>
@@ -483,19 +419,13 @@
                 <button class="btn-action" style="background:#eee; color:var(--dark); margin-top:0;" onclick="modificarPacientes(-1)"><i class="fa-solid fa-minus"></i> Saída</button>
                 <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="modificarPacientes(1)"><i class="fa-solid fa-plus"></i> Entrada</button>
             </div>
-            
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-            <h4>Avisos e Emergência</h4>
-            <input type="text" id="input-aviso" placeholder="Novo aviso público...">
-            <button class="btn-action" style="background:var(--success); color:white; margin-top:0; margin-bottom:15px;" onclick="postarAviso()">Atualizar Aviso</button>
             <button id="btn-sala-vermelha" class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="toggleSalaVermelha()">Alertar Sala Vermelha</button>
-
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
             <h4><i class="fa-solid fa-user-doctor"></i> Editar Plantão Atual</h4>
             <input type="text" id="input-clinico" placeholder="Nome do Clínico Geral">
             <input type="text" id="input-pediatra" placeholder="Nome do Pediatra">
             <button class="btn-action" style="background:var(--primary); color:white; margin-top:0; margin-bottom:20px;" onclick="salvarMedicosUpa()">Atualizar Agora</button>
-
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
             <h4><i class="fa-solid fa-calendar-week"></i> Editar Escala da Semana</h4>
             <span class="label-escala">Segunda-feira</span><input type="text" id="edit-seg">
@@ -562,20 +492,16 @@
 
 <div id="screen-cetec" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-laptop-code" style="color:var(--cetec)"></i> CETEC - Cursos</h3>
-    
     <div class="sub-nav">
         <button onclick="mudarAbaCetec('cetec-publico')" class="active" id="btn-cetec-pub">Inscrição</button>
         <button onclick="mudarAbaCetec('cetec-admin')" id="btn-cetec-adm"><i class="fa-solid fa-lock"></i> Admin</button>
     </div>
-
     <div id="cetec-publico" class="sub-aba active">
         <div class="card-info" id="cetec-passo1" style="border-left-color: var(--cetec);">
             <h4><i class="fa-solid fa-magnifying-glass"></i> Consultar ou Nova Inscrição</h4>
-            <p style="font-size: 0.9rem; color: var(--gray);">Digite seu CPF para iniciar.</p>
             <input type="tel" id="cetec-cpf-busca" placeholder="Digite apenas números (Ex: 12345678900)">
             <button class="btn-action" style="background:var(--cetec); color:white;" onclick="buscarCpfCetec()">Continuar</button>
         </div>
-
         <div class="card-info" id="cetec-passo2-novo" style="display:none; border-left-color: var(--warning);">
             <h4>Nova Inscrição</h4>
             <input type="text" id="cetec-nome" placeholder="Nome Completo">
@@ -585,21 +511,18 @@
             <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarInscricaoCetec()">Confirmar Inscrição</button>
             <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Cancelar</button>
         </div>
-
         <div class="card-info" id="cetec-passo2-existe" style="display:none; border-left-color: var(--success);">
             <h4 style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Inscrição Localizada</h4>
             <p id="cetec-resultado-texto" style="font-size:0.95rem;"></p>
             <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaCetec()">Voltar para o início</button>
         </div>
     </div>
-
     <div id="cetec-admin" class="sub-aba">
         <div class="card-info" style="border-left-color: var(--primary);">
             <h4><i class="fa-solid fa-plus"></i> Adicionar Novo Curso</h4>
             <input type="text" id="cetec-novo-curso" placeholder="Nome do Curso (Ex: Informática Básica)">
             <button class="btn-action" style="background:var(--primary); color:white; margin-top:0;" onclick="adicionarCursoCetec()">Disponibilizar Curso</button>
         </div>
-        
         <div class="card-info" style="border-left-color: var(--warning);">
             <h4><i class="fa-solid fa-users"></i> Lista de Inscritos</h4>
             <div id="cetec-lista-inscritos" style="font-size:0.9rem; max-height:400px; overflow-y:auto; padding-right:5px;">Carregando inscritos...</div>
@@ -607,13 +530,60 @@
     </div>
 </div>
 
+<div id="screen-engenharia" class="screen">
+    <h3 style="margin-top:0;"><i class="fa-solid fa-ruler-combined" style="color:var(--engenharia)"></i> Serviços de Engenharia</h3>
+    
+    <div style="background: #e6f0fa; padding: 15px; border-radius: 8px; color: var(--primary); font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--primary); text-align: center;">
+        <strong><i class="fa-solid fa-cloud-arrow-up"></i> Em Breve no Aplicativo:</strong><br>
+        Você poderá enviar as fotos e PDFs dos seus projetos diretamente por aqui!
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--engenharia);">
+        <h4><i class="fa-solid fa-file-contract"></i> Aprovação e Alvará</h4>
+        <p style="font-size:0.9rem;">Documentos necessários para aprovação de projetos e emissão de alvará de construção.</p>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-alvara')">Ver Documentos Necessários</button>
+        <div id="doc-alvara" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
+            <ul style="padding-left:20px; margin:0;">
+                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando aprovação, assinado pelo proprietário (contendo dados e endereço).</li>
+                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
+                <li style="margin-bottom:5px;"><b>Responsabilidade Técnica:</b> ART ou RRT assinado pelo engenheiro ou arquiteto.</li>
+                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
+                <li style="margin-bottom:5px;"><b>Projeto Arquitetônico (3 vias):</b> Impresso em A2, A1 ou A0. Deve conter: planta de situação, locação, baixa, cobertura, elevação das fachadas, cortes, legenda ABNT e adequação ao código de obras.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--engenharia);">
+        <h4><i class="fa-solid fa-house-circle-check"></i> Emissão de Habite-se</h4>
+        <p style="font-size:0.9rem;">Requisitos para liberação do documento após conclusão da obra.</p>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-habitese')">Ver Documentos Necessários</button>
+        <div id="doc-habitese" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
+            <ul style="padding-left:20px; margin:0;">
+                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando o Habite-se, assinado pelo proprietário.</li>
+                <li style="margin-bottom:5px;"><b>Alvará:</b> Cópia do Alvará de Construção emitido pela prefeitura.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--engenharia);">
+        <h4><i class="fa-solid fa-object-ungroup"></i> Desmembramento e Retificação</h4>
+        <p style="font-size:0.9rem;">Documentação para amembramento, desmembramento ou retificação de área.</p>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-desmembramento')">Ver Documentos Necessários</button>
+        <div id="doc-desmembramento" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
+            <ul style="padding-left:20px; margin:0;">
+                <li style="margin-bottom:5px;"><b>Requerimento:</b> Assinado pelo proprietário.</li>
+                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
+                <li style="margin-bottom:5px;"><b>ART:</b> Assinado pelo engenheiro.</li>
+                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
+                <li style="margin-bottom:5px;"><b>Projeto e Memorial:</b> Projeto do antes e depois (2 vias) e Memorial Descritivo (2 vias).</li>
+                <li style="margin-bottom:5px;"><b>Para Retificação de Área:</b> Documento assinado pelos confrontantes declarando que não há invasão.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <div id="screen-meioambiente" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
-    <div class="card-info" style="border-left-color: var(--meioambiente);">
-        <h4><i class="fa-solid fa-file-signature"></i> Licença Ambiental</h4>
-        <p style="font-size:0.9rem;">Consulte a lista de documentos necessários para requerer sua licença de operação.</p>
-        <button class="btn-action btn-link" style="background:var(--meioambiente)">Ver Documentos</button>
-    </div>
     <div class="card-info" style="border-left-color: var(--danger);">
         <h4><i class="fa-solid fa-bullhorn"></i> Fazer Denúncia</h4>
         <p style="font-size:0.9rem;">Denuncie descarte irregular de lixo ou queimadas com total sigilo.</p>
@@ -627,10 +597,6 @@
         <h4><i class="fa-solid fa-address-card"></i> Matrículas Escolares</h4>
         <p style="font-size:0.9rem;">Documentos: Certidão de nascimento, comprovante de endereço, cartão de vacina, RG dos pais.</p>
     </div>
-    <div class="card-info" style="border-left-color: var(--educacao);">
-        <h4><i class="fa-solid fa-pen-ruler"></i> Lista de Materiais</h4>
-        <p style="font-size:0.9rem;">Em breve, a lista de materiais de todas as escolas da rede municipal estará disponível aqui.</p>
-    </div>
 </div>
 
 <div id="screen-arrecadacao" class="screen">
@@ -638,34 +604,24 @@
         <i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal<br>
         <small style="font-size: 0.6em; color: var(--gray); font-weight: normal;">(IPTU, ISS, Alvarás, Certidões)</small>
     </h3>
-    
     <div class="card-info" style="border-left-color: var(--financas);">
         <h4><i class="fa-solid fa-barcode"></i> Consulta de IPTU</h4>
-        <p style="font-size:0.9rem;">Emita a guia de pagamento do seu IPTU de forma rápida e segura.</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)">Emitir IPTU</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--success);">
         <h4><i class="fa-solid fa-file-circle-check"></i> Certidão Negativa</h4>
-        <p style="font-size:0.9rem;">Emita a sua Certidão Negativa de Débitos Municipais.</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/emissao-certidao-negat" target="_blank" class="btn-action btn-link" style="background:var(--success)">Emitir Certidão</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--primary);">
         <h4><i class="fa-solid fa-file-invoice"></i> Guias de ISS</h4>
-        <p style="font-size:0.9rem;">Emita suas guias de Imposto Sobre Serviços (ISS).</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iss" target="_blank" class="btn-action btn-link" style="background:var(--primary)">Acessar ISS</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--cetec);">
         <h4><i class="fa-solid fa-file-signature"></i> Consulta de Alvará</h4>
-        <p style="font-size:0.9rem;">Consulte e emita seu Alvará de Licença ou Habite-se.</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/consultar-alvara-habitese" target="_blank" class="btn-action btn-link" style="background:var(--cetec)">Consultar Alvará</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--warning);">
         <h4><i class="fa-solid fa-file-invoice-dollar"></i> Consulta de Débitos</h4>
-        <p style="font-size:0.9rem;">Emita demais taxas e guias de arrecadação municipal.</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/outras-guias" target="_blank" class="btn-action btn-link" style="background:var(--warning); color:#000;">Consultar Débitos</a>
     </div>
 </div>
@@ -680,10 +636,6 @@
 
 <div id="screen-infraestrutura" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-tractor" style="color:var(--obras)"></i> Infraestrutura e Obras</h3>
-    <div class="card-info" style="border-left-color: var(--obras);">
-        <h4><i class="fa-solid fa-road-barrier"></i> Avisos da Secretaria</h4>
-        <p style="font-size:0.9rem;">Nenhuma rua interditada para recapeamento na data de hoje.</p>
-    </div>
     <div class="card-info" style="border-left-color: var(--primary);">
         <h4><i class="fa-solid fa-lightbulb"></i> Requisição de Serviços</h4>
         <p style="font-size:0.9rem;">Solicite troca de lâmpadas de iluminação pública ou tapa-buracos na sua rua.</p>
@@ -693,15 +645,28 @@
 
 <script>
     // ==========================================
-    // 0. FUNÇÕES DE TOGGLE PARA ENGENHARIA (NOVO)
+    // 0. ADMIN GERAL (AVISO GLOBAL)
     // ==========================================
+    function abrirAdminGeral() {
+        let pass = prompt("Senha Mestre da Prefeitura:");
+        if(pass !== "000") return alert("Senha Incorreta!");
+        openScreen('screen-admin-geral');
+    }
+
+    function salvarAvisoGlobal(ativar) {
+        let texto = document.getElementById('input-global-aviso').value;
+        if(ativar && !texto) return alert("Digite o texto do aviso primeiro!");
+        
+        db.ref('sistema_global').update({
+            avisoAtivo: ativar,
+            avisoTexto: texto
+        });
+        alert(ativar ? "Aviso Global ATIVADO para todos os cidadãos!" : "Aviso Global DESATIVADO.");
+    }
+
     function toggleDoc(id) {
         let el = document.getElementById(id);
-        if(el.style.display === 'none') {
-            el.style.display = 'block';
-        } else {
-            el.style.display = 'none';
-        }
+        el.style.display = (el.style.display === 'none') ? 'block' : 'none';
     }
 
     // ==========================================
@@ -710,6 +675,7 @@
     let historyStack = ['screen-home'];
     const btnBack = document.getElementById('btn-back');
     const btnHome = document.getElementById('btn-home');
+    const btnAdminGeral = document.getElementById('btn-admin-geral');
 
     function openScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -719,10 +685,12 @@
             if(historyStack[historyStack.length - 1] !== screenId) historyStack.push(screenId);
             btnBack.style.display = 'flex';
             btnHome.style.display = 'flex';
+            btnAdminGeral.classList.add('nav-btn-hidden');
         } else {
             historyStack = ['screen-home'];
             btnBack.style.display = 'none';
             btnHome.style.display = 'none';
+            btnAdminGeral.classList.remove('nav-btn-hidden');
         }
     }
 
@@ -733,7 +701,11 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(previous).classList.add('active');
             window.scrollTo(0, 0);
-            if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; }
+            if (previous === 'screen-home') { 
+                btnBack.style.display = 'none'; 
+                btnHome.style.display = 'none';
+                btnAdminGeral.classList.remove('nav-btn-hidden');
+            }
         }
     }
 
@@ -783,8 +755,13 @@
         document.getElementById('install-banner-ios').style.display = 'none';
     });
 
+    // Pede permissão para Notificações Nativas do Celular (Preparação para o Apito no Bolso futuro)
+    if ("Notification" in window) {
+        Notification.requestPermission();
+    }
+
     // ==========================================
-    // 2. FIREBASE: CONFIGURAÇÃO GLOBAL
+    // 2. FIREBASE: CONFIGURAÇÃO GLOBAL E ALERTA
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -796,6 +773,22 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
+    // Escuta o Aviso Global
+    db.ref('sistema_global').on('value', (snapshot) => {
+        const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "" };
+        const banner = document.getElementById('global-alert');
+        const bannerTexto = document.getElementById('global-alert-text');
+        const inputTexto = document.getElementById('input-global-aviso');
+        
+        if(inputTexto) inputTexto.value = data.avisoTexto;
+
+        if(data.avisoAtivo && data.avisoTexto) {
+            bannerTexto.innerText = data.avisoTexto;
+            banner.style.display = 'block';
+        } else {
+            banner.style.display = 'none';
+        }
+    });
 
     // ==========================================
     // 3. LÓGICA CETEC (COM STATUS E EDIÇÃO)
@@ -1056,7 +1049,7 @@
 
     db.ref('upa_status').on('value', (snapshot) => {
         const data = snapshot.val() || {}; currentPacientes = data.pacientes || 0; salaCritica = data.salaVermelha || false;
-        document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); document.getElementById('lista-avisos').innerHTML = `<strong>Atenção:</strong> ${data.avisos || "Nenhum aviso no momento."}`;
+        document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
         let minutos = currentPacientes * 15; document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`;
         document.getElementById('display-clinico').innerText = data.clinico || "Não informado"; document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado"; document.getElementById('input-clinico').value = data.clinico || ""; document.getElementById('input-pediatra').value = data.pediatra || "";
         const escala = data.escala || { seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia", qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana" };
@@ -1068,7 +1061,6 @@
 
     function modificarPacientes(val) { db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) }); }
     function toggleSalaVermelha() { db.ref('upa_status').update({ salaVermelha: !salaCritica }); }
-    function postarAviso() { const txt = document.getElementById('input-aviso').value; if(txt) { db.ref('upa_status').update({ avisos: txt }); document.getElementById('input-aviso').value = ""; alert("Aviso atualizado!"); } }
     function salvarMedicosUpa() { db.ref('upa_status').update({ clinico: document.getElementById('input-clinico').value, pediatra: document.getElementById('input-pediatra').value }); alert("Plantão atualizado!"); }
     function salvarEscalaSemana() { db.ref('upa_status/escala').update({ seg: document.getElementById('edit-seg').value, ter: document.getElementById('edit-ter').value, qua: document.getElementById('edit-qua').value, qui: document.getElementById('edit-qui').value, sex: document.getElementById('edit-sex').value, sab: document.getElementById('edit-sab').value, dom: document.getElementById('edit-dom').value }); alert("Escala Semanal atualizada!"); }
 
