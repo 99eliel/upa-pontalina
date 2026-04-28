@@ -12,13 +12,19 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// O Firebase exibe a notificação nativa sozinho. Deixamos este evento apenas para segurança.
 messaging.onBackgroundMessage(function(payload) {
   console.log('Notificação recebida silenciosamente: ', payload);
+  const notificationTitle = payload.notification.title || 'Prefeitura de Pontalina';
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: 'https://i.imgur.com/lUheBDA.png',
+    badge: 'https://i.imgur.com/lUheBDA.png',
+    vibrate: [200, 100, 200, 100, 200, 100, 200]
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Atualizado para V5 para forçar o download nos celulares
-const CACHE_NAME = 'pontalina-app-v5';
+const CACHE_NAME = 'pontalina-app-v6';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
