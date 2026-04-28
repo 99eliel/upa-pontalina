@@ -223,7 +223,7 @@
     function toggleDoc(id) { let el = document.getElementById(id); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
 
     // ==========================================
-    // 1. NAVEGAÇÃO SPA E PWA (MUDANÇA DE NOME DO ARQUIVO AQUI)
+    // 1. NAVEGAÇÃO SPA E PWA (AGORA APONTANDO PARA O NOME NOVO)
     // ==========================================
     let historyStack = ['screen-home'];
     const btnBack = document.getElementById('btn-back'); const btnHome = document.getElementById('btn-home'); const btnAdminGeral = document.getElementById('btn-admin-geral');
@@ -234,7 +234,7 @@
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./firebase-messaging-sw.js').then(reg => { reg.onupdatefound = () => { const installingWorker = reg.installing; installingWorker.onstatechange = () => { if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); }; }; }).catch(err => console.log('Erro SW', err)); }); let refreshing = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { window.location.reload(); refreshing = true; } }); }
 
     // ==========================================
-    // 2. FIREBASE E PERMISSÃO PUSH (SEM ALERT() BLOQUEADO)
+    // 2. FIREBASE E PERMISSÃO PUSH
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -263,7 +263,6 @@
                     }).then((currentToken) => {
                         if (currentToken) {
                             db.ref('fcm_tokens/' + currentToken).set({ ativo: true, dataCadastro: new Date().toISOString(), plataforma: navigator.platform });
-                            // Usando o banner da tela em vez do alert bloqueado
                             const banner = document.getElementById('global-alert');
                             document.getElementById('global-alert-text').innerText = "Notificações ativadas com sucesso!";
                             banner.style.display = 'block'; banner.style.background = 'linear-gradient(135deg, var(--success), #20c997)';
@@ -275,16 +274,13 @@
         });
     }
 
-    // A MÁGICA CONTRA O BLOQUEIO DE TELA ABERTA AQUI
     messaging.onMessage((payload) => { 
         console.log('Mensagem Foreground:', payload);
-        // Desce o banner da prefeitura na tela na mesma hora
         const banner = document.getElementById('global-alert');
         document.getElementById('global-alert-text').innerText = "Atenção: " + payload.notification.body;
         banner.style.display = 'block';
         banner.style.background = 'linear-gradient(135deg, var(--primary), #004494)';
         
-        // Dispara a notificação nativa por cima do app
         if (Notification.permission === 'granted') {
             navigator.serviceWorker.ready.then(function(registration) {
                 registration.showNotification(payload.notification.title || 'Prefeitura de Pontalina', {
