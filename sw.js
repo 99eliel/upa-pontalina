@@ -23,8 +23,8 @@ messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// A MÁGICA ESTÁ AQUI: Mudamos para V4 para forçar o celular a atualizar!
-const CACHE_NAME = 'pontalina-app-v4';
+// Forçando a atualização do cache (Versão 5)
+const CACHE_NAME = 'pontalina-app-v5';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
