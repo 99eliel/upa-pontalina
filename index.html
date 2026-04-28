@@ -463,21 +463,12 @@
     <div class="card-info">
         <h4><i class="fa-regular fa-clock"></i> Horário de Coleta</h4>
         <p>Segunda a Sexta-feira<br>07:00 às 09:30 (Necessário Jejum)</p>
-        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-        <h4><i class="fa-solid fa-vial"></i> Exames Oferecidos</h4>
-        <ul style="padding-left:20px; font-size:0.9rem;">
-            <li>Hemograma Completo</li>
-            <li>Glicemia de Jejum</li>
-            <li>Colesterol Total e Frações</li>
-            <li>EAS (Urina) / EPF (Fezes)</li>
-            <li>Teste Rápido (HIV, Sífilis, Hepatites)</li>
-        </ul>
     </div>
 </div>
 
 <div id="screen-farmacia" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-pills" style="color:var(--saude)"></i> Farmácia Básica</h3>
-    <div class="card-info"><p>Módulo em desenvolvimento. Em breve consulta de estoque.</p></div>
+    <div class="card-info"><p>Módulo em desenvolvimento.</p></div>
 </div>
 
 <div id="screen-cetec" class="screen">
@@ -577,68 +568,20 @@
 </div>
 
 <script>
-    // ==========================================
-    // 0. ADMIN GERAL E TOGGLE
-    // ==========================================
-    function abrirAdminGeral() {
-        let pass = prompt("Senha Mestre da Prefeitura:");
-        if(pass !== "000") return alert("Senha Incorreta!");
-        openScreen('screen-admin-geral');
-    }
-    function salvarAvisoGlobal(ativar) {
-        let texto = document.getElementById('input-global-aviso').value;
-        if(ativar && !texto) return alert("Digite o texto do aviso primeiro!");
-        db.ref('sistema_global').update({ avisoAtivo: ativar, avisoTexto: texto });
-        alert(ativar ? "Aviso Global ATIVADO para todos os cidadãos!" : "Aviso Global DESATIVADO.");
-    }
-    function toggleDoc(id) {
-        let el = document.getElementById(id); el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-    }
+    function abrirAdminGeral() { let pass = prompt("Senha Mestre:"); if(pass !== "000") return alert("Senha Incorreta!"); openScreen('screen-admin-geral'); }
+    function salvarAvisoGlobal(ativar) { let texto = document.getElementById('input-global-aviso').value; if(ativar && !texto) return alert("Digite o texto!"); db.ref('sistema_global').update({ avisoAtivo: ativar, avisoTexto: texto }); alert(ativar ? "Aviso LIGADO!" : "Aviso DESLIGADO."); }
+    function toggleDoc(id) { let el = document.getElementById(id); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
 
-    // ==========================================
-    // 1. NAVEGAÇÃO SPA E PWA
-    // ==========================================
     let historyStack = ['screen-home'];
-    const btnBack = document.getElementById('btn-back');
-    const btnHome = document.getElementById('btn-home');
-    const btnAdminGeral = document.getElementById('btn-admin-geral');
-
-    function openScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        window.scrollTo(0, 0);
-        if (screenId !== 'screen-home') {
-            if(historyStack[historyStack.length - 1] !== screenId) historyStack.push(screenId);
-            btnBack.style.display = 'flex'; btnHome.style.display = 'flex'; btnAdminGeral.classList.add('nav-btn-hidden');
-        } else {
-            historyStack = ['screen-home'];
-            btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden');
-        }
-    }
-    function goBack() {
-        if (historyStack.length > 1) {
-            historyStack.pop(); let previous = historyStack[historyStack.length - 1];
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(previous).classList.add('active'); window.scrollTo(0, 0);
-            if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden'); }
-        }
-    }
+    const btnBack = document.getElementById('btn-back'); const btnHome = document.getElementById('btn-home'); const btnAdminGeral = document.getElementById('btn-admin-geral');
+    function openScreen(screenId) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); window.scrollTo(0, 0); if (screenId !== 'screen-home') { if(historyStack[historyStack.length - 1] !== screenId) historyStack.push(screenId); btnBack.style.display = 'flex'; btnHome.style.display = 'flex'; btnAdminGeral.classList.add('nav-btn-hidden'); } else { historyStack = ['screen-home']; btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden'); } }
+    function goBack() { if (historyStack.length > 1) { historyStack.pop(); let previous = historyStack[historyStack.length - 1]; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(previous).classList.add('active'); window.scrollTo(0, 0); if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden'); } } }
     function goHome() { openScreen('screen-home'); }
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { 
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                reg.onupdatefound = () => {
-                    const installingWorker = reg.installing;
-                    installingWorker.onstatechange = () => { if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); };
-                };
-            }).catch(err => console.log('Erro SW', err)); 
-        });
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { window.location.reload(); refreshing = true; } });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').then(reg => { reg.onupdatefound = () => { const installingWorker = reg.installing; installingWorker.onstatechange = () => { if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); }; }; }).catch(err => console.log('Erro SW', err)); }); let refreshing = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { window.location.reload(); refreshing = true; } }); }
 
     // ==========================================
-    // 2. FIREBASE E PERMISSÃO PUSH (COM CORREÇÃO DO SERVICE WORKER)
+    // 2. FIREBASE E PERMISSÃO PUSH 
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -653,69 +596,48 @@
     const db = firebase.database();
     const messaging = firebase.messaging();
     
-    // A CHAVE VAPID COM A LETRA "I" MAIÚSCULA CORRIGIDA
-    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYlmJC6FCi13w_18IBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
+    // A CHAVE COM L MINÚSCULO CONFORME A CORREÇÃO
+    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYlmJC6FCi13w_18lBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
 
-    if ("Notification" in window) {
-        if (Notification.permission === "default") {
-            document.getElementById('push-permission-box').style.display = 'block';
-        }
-    }
+    if ("Notification" in window) { if (Notification.permission === "default") { document.getElementById('push-permission-box').style.display = 'block'; } }
 
     function solicitarPermissaoNotificacao() {
         Notification.requestPermission().then((permission) => {
             if (permission === 'granted') {
                 document.getElementById('push-permission-box').style.display = 'none';
-                
-                // A MÁGICA DA CORREÇÃO AQUI: Passamos o "sw.js" para o Firebase
                 navigator.serviceWorker.ready.then((registration) => {
                     messaging.getToken({ 
                         vapidKey: VAPID_KEY,
                         serviceWorkerRegistration: registration 
                     }).then((currentToken) => {
                         if (currentToken) {
-                            db.ref('fcm_tokens/' + currentToken).set({
-                                ativo: true,
-                                dataCadastro: new Date().toISOString(),
-                                plataforma: navigator.platform
-                            });
-                            alert("Notificações ativadas com sucesso! Você receberá os alertas da prefeitura.");
+                            db.ref('fcm_tokens/' + currentToken).set({ ativo: true, dataCadastro: new Date().toISOString(), plataforma: navigator.platform });
+                            alert("Notificações ativadas com sucesso!");
                         }
                     }).catch((err) => {
-                        console.error('Erro detalhado FCM:', err);
+                        console.error('Erro FCM:', err);
                         alert("Não foi possível ativar. Verifique se há algum erro de digitação na chave VAPID.");
                     });
                 });
-
             } else {
-                alert("Você bloqueou as notificações. Você não receberá alertas vitais da prefeitura.");
-                document.getElementById('push-permission-box').style.display = 'none';
+                alert("Você bloqueou as notificações."); document.getElementById('push-permission-box').style.display = 'none';
             }
         });
     }
 
-    messaging.onMessage((payload) => {
-        console.log('Notificação em primeiro plano: ', payload);
-        alert(`NOVO AVISO DA PREFEITURA:\n\n${payload.notification.title}\n${payload.notification.body}`);
-    });
+    messaging.onMessage((payload) => { alert(`NOVO AVISO:\n\n${payload.notification.title}\n${payload.notification.body}`); });
 
     db.ref('sistema_global').on('value', (snapshot) => {
         const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "" };
-        const banner = document.getElementById('global-alert');
-        const bannerTexto = document.getElementById('global-alert-text');
-        const inputTexto = document.getElementById('input-global-aviso');
-        
+        const banner = document.getElementById('global-alert'); const bannerTexto = document.getElementById('global-alert-text'); const inputTexto = document.getElementById('input-global-aviso');
         if(inputTexto) inputTexto.value = data.avisoTexto;
-        if(data.avisoAtivo && data.avisoTexto) { bannerTexto.innerText = data.avisoTexto; banner.style.display = 'block'; } 
-        else { banner.style.display = 'none'; }
+        if(data.avisoAtivo && data.avisoTexto) { bannerTexto.innerText = data.avisoTexto; banner.style.display = 'block'; } else { banner.style.display = 'none'; }
     });
 
-    // ==========================================
-    // 3. LÓGICA CETEC
-    // ==========================================
+    // LÓGICA CETEC
     let cacheCursosCetec = []; let cacheInscricoesCetec = {}; let cpfAtualCetec = "";
     function mudarAbaCetec(idAba) { if(idAba === 'cetec-admin') { let pass = prompt("Senha Admin CETEC:"); if(pass !== "789") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active'); if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active'); }
-    db.ref('cetec_cursos').on('value', (snapshot) => { cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso disponível...</option>'; cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options; });
+    db.ref('cetec_cursos').on('value', (snapshot) => { cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso...</option>'; cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options; });
     db.ref('cetec_inscricoes').on('value', (snapshot) => {
         cacheInscricoesCetec = snapshot.val() || {}; let htmlLista = '';
         for(let cpf in cacheInscricoesCetec) {
@@ -723,7 +645,7 @@
         }
         if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>"; document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista;
     });
-    function buscarCpfCetec() { let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none'; if(cacheInscricoesCetec[cpfAtualCetec]) { let dadosUser = cacheInscricoesCetec[cpfAtualCetec]; let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Confirmação)</span>"; document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`; document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { if(cacheCursosCetec.length === 0) { alert("Nenhum curso aberto."); voltarBuscaCetec(); return; } document.getElementById('cetec-passo2-novo').style.display = 'block'; } }
+    function buscarCpfCetec() { let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none'; if(cacheInscricoesCetec[cpfAtualCetec]) { let dadosUser = cacheInscricoesCetec[cpfAtualCetec]; let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE</span>"; document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`; document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { if(cacheCursosCetec.length === 0) { alert("Nenhum curso aberto."); voltarBuscaCetec(); return; } document.getElementById('cetec-passo2-novo').style.display = 'block'; } }
     function voltarBuscaCetec() { document.getElementById('cetec-passo2-novo').style.display = 'none'; document.getElementById('cetec-passo2-existe').style.display = 'none'; document.getElementById('cetec-passo1').style.display = 'block'; document.getElementById('cetec-cpf-busca').value = ''; cpfAtualCetec = ""; }
     function salvarInscricaoCetec() { let nome = document.getElementById('cetec-nome').value; let zap = document.getElementById('cetec-zap').value; let curso = document.getElementById('cetec-curso-select').value; if(!nome || !zap || !curso) return alert("Preencha todos os campos!"); db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso, status: "Pendente" }); alert("Inscrição realizada!"); voltarBuscaCetec(); }
     function adicionarCursoCetec() { let novoCurso = document.getElementById('cetec-novo-curso').value; if(!novoCurso) return alert("Digite o nome."); let novaLista = [...cacheCursosCetec, novoCurso]; db.ref('cetec_cursos').set(novaLista); alert("Curso adicionado!"); }
@@ -731,18 +653,16 @@
     function editarInscritoCetec(cpf, nomeAtual, zapAtual) { let novoNome = prompt("Editar Nome:", nomeAtual); if(!novoNome) return; let novoZap = prompt("Editar Celular:", zapAtual); if(!novoZap) return; db.ref('cetec_inscricoes/' + cpf).update({ nome: novoNome, zap: novoZap }); }
     function excluirInscritoCetec(cpf) { if(confirm("APAGAR inscrição?")) db.ref('cetec_inscricoes/' + cpf).remove(); }
 
-    // ==========================================
-    // 4. AGENDAMENTO DE CONSULTAS
-    // ==========================================
+    // LÓGICA DE CONSULTAS
     let cacheConsultas = {}; let cpfAtualConsulta = "";
     function mudarAbaConsulta(idAba) { if(idAba === 'consulta-admin') { let pass = prompt("Senha da Recepção:"); if(pass !== "147") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-consulta .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-consulta .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'consulta-publico') document.getElementById('btn-consulta-pub').classList.add('active'); if(idAba === 'consulta-admin') document.getElementById('btn-consulta-adm').classList.add('active'); }
     db.ref('consultas_pedidos').on('value', (snapshot) => { cacheConsultas = snapshot.val() || {}; renderListaConsultas(); });
     function renderListaConsultas() {
         const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS'; let htmlLista = '';
-        for(let cpf in cacheConsultas) { let info = cacheConsultas[cpf]; if(filtro === 'TODOS' || info.posto === filtro) { let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR'); let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}. Referente ao seu pedido de consulta...`); let badgeStatus = info.status === 'Concluída' ? '<span class="badge badge-concluido">Agendada / Concluída</span>' : '<span class="badge badge-pendente">Aguardando Recepção</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br><span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp</a></div>`; } }
+        for(let cpf in cacheConsultas) { let info = cacheConsultas[cpf]; if(filtro === 'TODOS' || info.posto === filtro) { let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR'); let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}...`); let badgeStatus = info.status === 'Concluída' ? '<span class="badge badge-concluido">Agendada / Concluída</span>' : '<span class="badge badge-pendente">Aguardando Recepção</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br><span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp</a></div>`; } }
         if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum pedido encontrado.</p>"; document.getElementById('consulta-lista-pedidos').innerHTML = htmlLista;
     }
-    function buscarCpfConsulta() { let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualConsulta = inputCpf; document.getElementById('consulta-passo1').style.display = 'none'; if(cacheConsultas[cpfAtualConsulta]) { let dadosUser = cacheConsultas[cpfAtualConsulta]; let txtStatus = dadosUser.status === 'Concluída' ? "<span style='color:var(--success)'>AGENDADA COM SUCESSO</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Recepção)</span>"; document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Status do Pedido: <b>${txtStatus}</b>`; document.getElementById('consulta-passo2-existe').style.display = 'block'; } else { document.getElementById('consulta-passo2-novo').style.display = 'block'; } }
+    function buscarCpfConsulta() { let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualConsulta = inputCpf; document.getElementById('consulta-passo1').style.display = 'none'; if(cacheConsultas[cpfAtualConsulta]) { let dadosUser = cacheConsultas[cpfAtualConsulta]; let txtStatus = dadosUser.status === 'Concluída' ? "<span style='color:var(--success)'>AGENDADA COM SUCESSO</span>" : "<span style='color:var(--warning)'>PENDENTE</span>"; document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Status do Pedido: <b>${txtStatus}</b>`; document.getElementById('consulta-passo2-existe').style.display = 'block'; } else { document.getElementById('consulta-passo2-novo').style.display = 'block'; } }
     function voltarBuscaConsulta() { document.getElementById('consulta-passo2-novo').style.display = 'none'; document.getElementById('consulta-passo2-existe').style.display = 'none'; document.getElementById('consulta-passo1').style.display = 'block'; document.getElementById('consulta-cpf').value = ''; cpfAtualConsulta = ""; }
     function salvarConsulta() { let nome = document.getElementById('consulta-nome').value; let zap = document.getElementById('consulta-zap').value; let posto = document.getElementById('consulta-posto-select').value; let motivo = document.getElementById('consulta-motivo-select').value; if(!nome || !zap || !posto || !motivo) return alert("Preencha todos os campos!"); db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: nome, zap: zap, posto: posto, motivo: motivo, status: "Pendente", timestamp: new Date().toISOString() }); alert("Enviado com sucesso!"); voltarBuscaConsulta(); }
     function cancelarConsulta() { if(confirm("CANCELAR?")) { db.ref('consultas_pedidos/' + cpfAtualConsulta).remove(); voltarBuscaConsulta(); } }
@@ -750,9 +670,7 @@
     function editarConsulta(cpf, nomeAtual, zapAtual) { let novoNome = prompt("Nome:", nomeAtual); if(!novoNome) return; let novoZap = prompt("Celular:", zapAtual); if(!novoZap) return; db.ref('consultas_pedidos/' + cpf).update({ nome: novoNome, zap: novoZap }); }
     function excluirConsulta(cpf) { if(confirm("APAGAR?")) db.ref('consultas_pedidos/' + cpf).remove(); }
 
-    // ==========================================
-    // 5. UPA E POSTOS BÁSICOS
-    // ==========================================
+    // UPA E POSTOS BÁSICOS
     function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; }
     function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; }
     function reiniciarTriagem() { document.getElementById('resultado-upa').style.display = 'none'; document.getElementById('resultado-posto').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; document.getElementById('triagem-q1').style.display = 'block'; }
