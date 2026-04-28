@@ -12,7 +12,6 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// Fica escutando as notificações mesmo com o app fechado
 messaging.onBackgroundMessage(function(payload) {
   console.log('Notificação recebida em background: ', payload);
   const notificationTitle = payload.notification.title;
@@ -24,7 +23,8 @@ messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-const CACHE_NAME = 'pontalina-app-v3';
+// A MÁGICA ESTÁ AQUI: Mudamos para V4 para forçar o celular a atualizar!
+const CACHE_NAME = 'pontalina-app-v4';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
