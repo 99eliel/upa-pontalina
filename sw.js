@@ -12,19 +12,13 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// O Firebase exibe a notificação nativa sozinho. Deixamos este evento apenas para segurança.
 messaging.onBackgroundMessage(function(payload) {
-  console.log('Notificação recebida em background: ', payload);
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: 'https://i.imgur.com/lUheBDA.png',
-    badge: 'https://i.imgur.com/lUheBDA.png'
-  };
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  console.log('Notificação recebida silenciosamente: ', payload);
 });
 
-// Forçando a versão V4 para limpar o cache do celular
-const CACHE_NAME = 'pontalina-app-v4';
+// Atualizado para V5 para forçar o download nos celulares
+const CACHE_NAME = 'pontalina-app-v5';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
