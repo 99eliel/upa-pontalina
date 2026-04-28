@@ -463,6 +463,15 @@
     <div class="card-info">
         <h4><i class="fa-regular fa-clock"></i> Horário de Coleta</h4>
         <p>Segunda a Sexta-feira<br>07:00 às 09:30 (Necessário Jejum)</p>
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        <h4><i class="fa-solid fa-vial"></i> Exames Oferecidos</h4>
+        <ul style="padding-left:20px; font-size:0.9rem;">
+            <li>Hemograma Completo</li>
+            <li>Glicemia de Jejum</li>
+            <li>Colesterol Total e Frações</li>
+            <li>EAS (Urina) / EPF (Fezes)</li>
+            <li>Teste Rápido (HIV, Sífilis, Hepatites)</li>
+        </ul>
     </div>
 </div>
 
@@ -513,28 +522,25 @@
 
 <div id="screen-engenharia" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-ruler-combined" style="color:var(--engenharia)"></i> Serviços de Engenharia</h3>
-    <div style="background: #e6f0fa; padding: 15px; border-radius: 8px; color: var(--primary); font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--primary); text-align: center;">
-        <strong><i class="fa-solid fa-cloud-arrow-up"></i> Em Breve no Aplicativo:</strong><br>Você poderá enviar as fotos e PDFs dos seus projetos diretamente por aqui!
-    </div>
     <div class="card-info" style="border-left-color: var(--engenharia);">
         <h4><i class="fa-solid fa-file-contract"></i> Aprovação e Alvará</h4>
-        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-alvara')">Ver Documentos Necessários</button>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-alvara')">Ver Documentos</button>
         <div id="doc-alvara" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;"><li>Requerimento assinado pelo proprietário.</li><li>Cópia do CPF e RG.</li><li>ART ou RRT assinado pelo engenheiro ou arquiteto.</li><li>Certidão de inteiro teor atualizada.</li><li>Projeto Arquitetônico (3 vias) em A2, A1 ou A0 contendo todas as plantas.</li></ul>
+            <ul style="padding-left:20px; margin:0;"><li>Requerimento assinado pelo proprietário.</li><li>Cópia do CPF e RG.</li><li>ART ou RRT assinado.</li><li>Certidão de inteiro teor.</li><li>Projeto Arquitetônico.</li></ul>
         </div>
     </div>
     <div class="card-info" style="border-left-color: var(--engenharia);">
         <h4><i class="fa-solid fa-house-circle-check"></i> Emissão de Habite-se</h4>
-        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-habitese')">Ver Documentos Necessários</button>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-habitese')">Ver Documentos</button>
         <div id="doc-habitese" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;"><li>Requerimento solicitando o Habite-se assinado pelo proprietário.</li><li>Alvará de Construção emitido pela prefeitura.</li></ul>
+            <ul style="padding-left:20px; margin:0;"><li>Requerimento solicitando Habite-se.</li><li>Alvará de Construção.</li></ul>
         </div>
     </div>
     <div class="card-info" style="border-left-color: var(--engenharia);">
-        <h4><i class="fa-solid fa-object-ungroup"></i> Desmembramento e Retificação</h4>
-        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-desmembramento')">Ver Documentos Necessários</button>
+        <h4><i class="fa-solid fa-object-ungroup"></i> Desmembramento</h4>
+        <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-desmembramento')">Ver Documentos</button>
         <div id="doc-desmembramento" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;"><li>Requerimento assinado pelo proprietário.</li><li>Cópia do CPF e RG.</li><li>ART assinado pelo engenheiro.</li><li>Certidão de inteiro teor atualizada.</li><li>Projeto e Memorial descritivo do antes e depois (2 vias).</li></ul>
+            <ul style="padding-left:20px; margin:0;"><li>Requerimento assinado.</li><li>CPF, RG e ART.</li><li>Certidão de inteiro teor.</li><li>Projeto e Memorial descritivo.</li></ul>
         </div>
     </div>
 </div>
@@ -632,7 +638,7 @@
     }
 
     // ==========================================
-    // 2. FIREBASE E NOTIFICAÇÃO PUSH (FCM)
+    // 2. FIREBASE E PERMISSÃO PUSH (COM CORREÇÃO DO SERVICE WORKER)
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -645,14 +651,11 @@
 
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
-    
-    // --- LÓGICA DE NOTIFICAÇÃO PUSH (MESSAGING) ---
     const messaging = firebase.messaging();
     
-    // SUA CHAVE VAPID EXATA QUE VOCÊ GEROU NO FIREBASE
-    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYlmJC6FCi13w_18lBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
+    // A CHAVE VAPID COM A LETRA "I" MAIÚSCULA CORRIGIDA
+    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYlmJC6FCi13w_18IBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
 
-    // Se o navegador suportar Push e ainda não tiver perguntado, mostra a caixa
     if ("Notification" in window) {
         if (Notification.permission === "default") {
             document.getElementById('push-permission-box').style.display = 'block';
@@ -664,21 +667,26 @@
             if (permission === 'granted') {
                 document.getElementById('push-permission-box').style.display = 'none';
                 
-                // Pega o Token do celular
-                messaging.getToken({ vapidKey: VAPID_KEY }).then((currentToken) => {
-                    if (currentToken) {
-                        // Salva no banco de dados para a prefeitura poder usar depois
-                        db.ref('fcm_tokens/' + currentToken).set({
-                            ativo: true,
-                            dataCadastro: new Date().toISOString(),
-                            plataforma: navigator.platform
-                        });
-                        alert("Notificações ativadas com sucesso! Você receberá os alertas da prefeitura.");
-                    }
-                }).catch((err) => {
-                    console.log('Erro ao pegar token', err);
-                    alert("Não foi possível ativar. Tente novamente mais tarde.");
+                // A MÁGICA DA CORREÇÃO AQUI: Passamos o "sw.js" para o Firebase
+                navigator.serviceWorker.ready.then((registration) => {
+                    messaging.getToken({ 
+                        vapidKey: VAPID_KEY,
+                        serviceWorkerRegistration: registration 
+                    }).then((currentToken) => {
+                        if (currentToken) {
+                            db.ref('fcm_tokens/' + currentToken).set({
+                                ativo: true,
+                                dataCadastro: new Date().toISOString(),
+                                plataforma: navigator.platform
+                            });
+                            alert("Notificações ativadas com sucesso! Você receberá os alertas da prefeitura.");
+                        }
+                    }).catch((err) => {
+                        console.error('Erro detalhado FCM:', err);
+                        alert("Não foi possível ativar. Verifique se há algum erro de digitação na chave VAPID.");
+                    });
                 });
+
             } else {
                 alert("Você bloqueou as notificações. Você não receberá alertas vitais da prefeitura.");
                 document.getElementById('push-permission-box').style.display = 'none';
@@ -686,13 +694,11 @@
         });
     }
 
-    // Se o app estiver ABERTO na tela na hora que a notificação chegar, ele avisa aqui
     messaging.onMessage((payload) => {
-        console.log('Notificação recebida em primeiro plano: ', payload);
+        console.log('Notificação em primeiro plano: ', payload);
         alert(`NOVO AVISO DA PREFEITURA:\n\n${payload.notification.title}\n${payload.notification.body}`);
     });
 
-    // Escuta o Aviso Global Estático (Banner da engrenagem)
     db.ref('sistema_global').on('value', (snapshot) => {
         const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "" };
         const banner = document.getElementById('global-alert');
@@ -700,42 +706,24 @@
         const inputTexto = document.getElementById('input-global-aviso');
         
         if(inputTexto) inputTexto.value = data.avisoTexto;
-
-        if(data.avisoAtivo && data.avisoTexto) {
-            bannerTexto.innerText = data.avisoTexto;
-            banner.style.display = 'block';
-        } else {
-            banner.style.display = 'none';
-        }
+        if(data.avisoAtivo && data.avisoTexto) { bannerTexto.innerText = data.avisoTexto; banner.style.display = 'block'; } 
+        else { banner.style.display = 'none'; }
     });
 
     // ==========================================
     // 3. LÓGICA CETEC
     // ==========================================
     let cacheCursosCetec = []; let cacheInscricoesCetec = {}; let cpfAtualCetec = "";
-
-    function mudarAbaCetec(idAba) {
-        if(idAba === 'cetec-admin') { let pass = prompt("Senha Admin CETEC:"); if(pass !== "789") return alert("Senha Incorreta."); }
-        document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active');
-        if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active'); if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active');
-    }
-    db.ref('cetec_cursos').on('value', (snapshot) => {
-        cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso disponível...</option>';
-        cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options;
-    });
+    function mudarAbaCetec(idAba) { if(idAba === 'cetec-admin') { let pass = prompt("Senha Admin CETEC:"); if(pass !== "789") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active'); if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active'); }
+    db.ref('cetec_cursos').on('value', (snapshot) => { cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso disponível...</option>'; cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options; });
     db.ref('cetec_inscricoes').on('value', (snapshot) => {
         cacheInscricoesCetec = snapshot.val() || {}; let htmlLista = '';
         for(let cpf in cacheInscricoesCetec) {
-            let info = cacheInscricoesCetec[cpf]; let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`);
-            let badgeStatus = info.status === 'Realizada' ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' : '<span class="badge badge-pendente">Aguardando Confirmação</span>';
-            htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp</a></div>`;
+            let info = cacheInscricoesCetec[cpf]; let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`); let badgeStatus = info.status === 'Realizada' ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' : '<span class="badge badge-pendente">Aguardando Confirmação</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp</a></div>`;
         }
         if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>"; document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista;
     });
-    function buscarCpfCetec() {
-        let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none';
-        if(cacheInscricoesCetec[cpfAtualCetec]) { let dadosUser = cacheInscricoesCetec[cpfAtualCetec]; let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Confirmação)</span>"; document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`; document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { if(cacheCursosCetec.length === 0) { alert("Nenhum curso aberto."); voltarBuscaCetec(); return; } document.getElementById('cetec-passo2-novo').style.display = 'block'; }
-    }
+    function buscarCpfCetec() { let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none'; if(cacheInscricoesCetec[cpfAtualCetec]) { let dadosUser = cacheInscricoesCetec[cpfAtualCetec]; let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Confirmação)</span>"; document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`; document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { if(cacheCursosCetec.length === 0) { alert("Nenhum curso aberto."); voltarBuscaCetec(); return; } document.getElementById('cetec-passo2-novo').style.display = 'block'; } }
     function voltarBuscaCetec() { document.getElementById('cetec-passo2-novo').style.display = 'none'; document.getElementById('cetec-passo2-existe').style.display = 'none'; document.getElementById('cetec-passo1').style.display = 'block'; document.getElementById('cetec-cpf-busca').value = ''; cpfAtualCetec = ""; }
     function salvarInscricaoCetec() { let nome = document.getElementById('cetec-nome').value; let zap = document.getElementById('cetec-zap').value; let curso = document.getElementById('cetec-curso-select').value; if(!nome || !zap || !curso) return alert("Preencha todos os campos!"); db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso, status: "Pendente" }); alert("Inscrição realizada!"); voltarBuscaCetec(); }
     function adicionarCursoCetec() { let novoCurso = document.getElementById('cetec-novo-curso').value; if(!novoCurso) return alert("Digite o nome."); let novaLista = [...cacheCursosCetec, novoCurso]; db.ref('cetec_cursos').set(novaLista); alert("Curso adicionado!"); }
