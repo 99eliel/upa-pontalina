@@ -20,6 +20,7 @@
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
 
     <style>
         :root { 
@@ -45,7 +46,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--light); color: var(--dark); padding-bottom: 30px; overflow-x: hidden; }
         
-        /* HEADER PRINCIPAL */
         header { 
             background: linear-gradient(135deg, var(--primary), #003d82); 
             color: white; 
@@ -72,7 +72,6 @@
         .nav-btn-hidden { display: none; }
         .nav-btn:active { background: rgba(255,255,255,0.4); }
 
-        /* BANNERS PWA E ALERTA GLOBAL */
         .banner-container { padding: 15px 15px 0 15px; }
         
         #global-alert { display: none; background: linear-gradient(135deg, var(--primary), #004494); color: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3); text-align: center; border-left: 5px solid var(--warning); animation: slideDown 0.4s ease; }
@@ -83,20 +82,17 @@
         #install-banner button { background: white; color: var(--success); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 700; cursor: pointer; }
         #install-banner-ios { display: none; background: #e6f0fa; color: var(--primary); border: 1px solid #b8daff; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 0.85rem; }
 
-        /* NAVEGAÇÃO SPA */
         .screen { display: none; padding: 15px; animation: slideIn 0.3s ease; max-width: 600px; margin: auto; }
         .screen.active { display: block; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* GRID MENU */
         .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .app-card { background: white; border-radius: 16px; padding: 20px 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: none; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.1s; }
         .app-card:active { transform: scale(0.96); }
         .app-icon { width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .app-card span { font-weight: 600; font-size: 0.95rem; color: var(--dark); line-height: 1.2; }
 
-        /* CORES CORRIGIDAS */
         .bg-saude { background: linear-gradient(135deg, #20c997, #17a2b8) !important; color: white !important; }
         .bg-meioambiente { background: linear-gradient(135deg, #198754, #20c997) !important; color: white !important; }
         .bg-educacao { background: linear-gradient(135deg, #fd7e14, #ffc107) !important; color: white !important; }
@@ -108,7 +104,6 @@
         .bg-cetec { background: linear-gradient(135deg, var(--cetec), #0d6efd) !important; color: white !important; }
         .bg-engenharia { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: white !important; }
 
-        /* COMPONENTES */
         .card-info { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px; border-left: 5px solid var(--primary); }
         .card-info h4 { margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; color: var(--dark); }
         .btn-action { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; margin-top: 10px; }
@@ -116,25 +111,38 @@
         .btn-map { background: #ea4335; color: white; }
         .btn-link { background: var(--primary); color: white; }
         
-        /* BOTÕES PEQUENOS ADMIN */
         .btn-small { padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .btn-group-small { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         
-        /* BADGE DE STATUS */
         .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .badge-concluido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 
-        /* FORMULÁRIOS ADMIN */
         textarea, input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
         .label-escala { font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 2px; display: block; }
         
-        /* NAVEGAÇÃO INTERNA (SUB-ABAS) */
+        .dia-semana { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .dia-semana:last-child { border-bottom: none; }
+        .dia-ativo { background: #d4edda; border-radius: 8px; border-left: 4px solid var(--success); font-weight: 600; color: #155724; }
+
         .sub-nav { display: flex; background: white; border-radius: 10px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .sub-nav button { flex: 1; padding: 10px; border: none; background: none; font-weight: 600; color: var(--gray); cursor: pointer; transition: 0.2s; }
         .sub-nav button.active { background: var(--primary); color: white; }
         .sub-aba { display: none; }
         .sub-aba.active { display: block; }
+
+        .triagem-box { text-align: center; background: white; padding: 30px 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .triagem-pergunta { font-size: 1.2rem; font-weight: 600; color: var(--dark); margin-bottom: 25px; }
+        .triagem-btn { width: 100%; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 10px; border: none; margin-bottom: 15px; cursor: pointer; }
+        .btn-sim { background: var(--danger); color: white; }
+        .btn-nao { background: var(--success); color: white; }
+
+        .counter-box { background: var(--primary-light); padding: 20px; border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,86,179,0.15); }
+        .counter { font-size: 3.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
+        .sala-vermelha-status { padding: 15px; border-radius: 10px; margin-bottom: 15px; font-weight: 700; text-align: center; }
+        .status-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-critico { background: #ffebeb; color: #dc3545; border: 2px solid #dc3545; animation: pulseRed 2s infinite; }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.5); } 70% { box-shadow: 0 0 0 10px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
     </style>
 </head>
 <body>
@@ -155,6 +163,12 @@
 </header>
 
 <div class="banner-container">
+    <div id="push-permission-box" style="display:none; background: linear-gradient(135deg, #0056b3, #003d82); color: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <strong><i class="fa-solid fa-bell fa-shake"></i> Fique Informado!</strong>
+        <p style="font-size: 0.85rem; margin: 8px 0;">Ative as notificações para receber alertas de vacinas, obras e comunicados da prefeitura direto no seu celular.</p>
+        <button onclick="solicitarPermissaoNotificacao()" style="background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%;">Ativar Notificações</button>
+    </div>
+
     <div id="global-alert">
         <i class="fa-solid fa-bell fa-shake"></i>
         <strong id="global-alert-text">Carregando aviso...</strong>
@@ -174,14 +188,10 @@
 </div>
 
 <div id="screen-admin-geral" class="screen">
-    <h3 style="margin-top:0;"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Painel Geral da Prefeitura</h3>
-    
+    <h3 style="margin-top:0;"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Painel Geral</h3>
     <div class="card-info" style="border-left-color: var(--warning);">
-        <h4><i class="fa-solid fa-bullhorn"></i> Notificação em Massa (Banner)</h4>
-        <p style="font-size:0.85rem; color:var(--gray);">Ative este aviso para ele aparecer na tela inicial de todos os cidadãos da cidade instantaneamente.</p>
-        
-        <textarea id="input-global-aviso" rows="3" placeholder="Ex: Campanha de vacinação contra a gripe amanhã no ESF Centro!"></textarea>
-        
+        <h4><i class="fa-solid fa-bullhorn"></i> Notificação de Banner</h4>
+        <textarea id="input-global-aviso" rows="3" placeholder="Ex: Campanha de vacinação amanhã!"></textarea>
         <div style="display:flex; gap:10px; margin-top:10px;">
             <button class="btn-action" style="background:var(--success); color:white; margin-top:0;" onclick="salvarAvisoGlobal(true)"><i class="fa-solid fa-bell"></i> Ligar Aviso</button>
             <button class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="salvarAvisoGlobal(false)"><i class="fa-solid fa-bell-slash"></i> Desligar</button>
@@ -260,29 +270,23 @@
 
 <div id="screen-consulta" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-calendar-check" style="color:var(--saude)"></i> Agendar Consulta</h3>
-    
     <div class="sub-nav">
         <button onclick="mudarAbaConsulta('consulta-publico')" class="active" id="btn-consulta-pub">Agendar</button>
         <button onclick="mudarAbaConsulta('consulta-admin')" id="btn-consulta-adm"><i class="fa-solid fa-lock"></i> Recepção</button>
     </div>
-
     <div id="consulta-publico" class="sub-aba active">
         <div class="card-info" id="consulta-passo1" style="border-left-color: var(--saude);">
             <h4><i class="fa-solid fa-magnifying-glass"></i> Iniciar Agendamento</h4>
-            <p style="font-size: 0.9rem; color: var(--gray);">Digite seu CPF para solicitar uma consulta.</p>
             <input type="tel" id="consulta-cpf" placeholder="Digite apenas números (Ex: 12345678900)">
             <button class="btn-action" style="background:var(--saude); color:white;" onclick="buscarCpfConsulta()">Continuar</button>
         </div>
-
         <div class="card-info" id="consulta-passo2-novo" style="display:none; border-left-color: var(--warning);">
             <div style="background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--warning);">
-                <strong><i class="fa-solid fa-triangle-exclamation"></i> ATENÇÃO:</strong> O agendamento só é válido se for feito na unidade (Postinho) referente ao seu bairro. <br><br>Se você escolher a unidade errada, a sua solicitação <b>não será validada</b> e a consulta será cancelada.
+                <strong><i class="fa-solid fa-triangle-exclamation"></i> ATENÇÃO:</strong> O agendamento só é válido se for feito na unidade (Postinho) referente ao seu bairro.
             </div>
-
             <h4>Solicitar Consulta</h4>
             <input type="text" id="consulta-nome" placeholder="Nome Completo do Paciente">
             <input type="tel" id="consulta-zap" placeholder="Celular / WhatsApp com DDD">
-            
             <label class="label-escala" style="margin-top:10px;">Selecione o Posto do seu Bairro:</label>
             <select id="consulta-posto-select">
                 <option value="">Escolha seu posto...</option>
@@ -293,7 +297,6 @@
                 <option value="ESF 304 - Lázaro Teodoro">ESF 304 - Lázaro Teodoro</option>
                 <option value="ESF 305 - Aluísio Borges">ESF 305 - Aluísio Borges</option>
             </select>
-            
             <label class="label-escala" style="margin-top:10px;">Qual a necessidade da consulta?</label>
             <select id="consulta-motivo-select">
                 <option value="Consulta de Rotina">Consulta de Rotina / Avaliação</option>
@@ -302,24 +305,19 @@
                 <option value="Apresentar Exames">Apresentar Exames Prontos</option>
                 <option value="Outros">Outros motivos não urgentes</option>
             </select>
-
             <button class="btn-action" style="background:var(--success); color:white;" onclick="salvarConsulta()">Solicitar Agendamento</button>
             <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaConsulta()">Cancelar</button>
         </div>
-
         <div class="card-info" id="consulta-passo2-existe" style="display:none; border-left-color: var(--success);">
             <h4 style="color: var(--success);"><i class="fa-solid fa-calendar-check"></i> Solicitação Recebida</h4>
             <p id="consulta-resultado-texto" style="font-size:0.95rem;"></p>
-            <p style="font-size:0.85rem; color:var(--gray);">Sua solicitação foi enviada. Aguarde o contato da recepção do seu posto (via WhatsApp) para confirmar a data exata.</p>
             <button class="btn-action" style="background:var(--danger); color:white; margin-top:15px;" onclick="cancelarConsulta()">Cancelar Pedido</button>
             <button class="btn-action" style="background:#eee; color:var(--dark);" onclick="voltarBuscaConsulta()">Voltar</button>
         </div>
     </div>
-
     <div id="consulta-admin" class="sub-aba">
         <div class="card-info" style="border-left-color: var(--primary);">
             <h4><i class="fa-solid fa-list"></i> Solicitações Pendentes</h4>
-            <p style="font-size: 0.85rem; color: var(--gray);">Selecione o seu posto para ver os pacientes da sua área:</p>
             <select id="admin-filtro-posto" onchange="renderListaConsultas()" style="margin-bottom: 20px;">
                 <option value="TODOS">Ver Todos os Postos (Geral)</option>
                 <option value="ESF 201 - Rural">ESF 201 - Rural</option>
@@ -336,32 +334,25 @@
 
 <div id="screen-triagem" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-stethoscope" style="color:var(--danger)"></i> Auto Triagem</h3>
-    <p style="font-size: 0.9rem; color: var(--gray);">Responda para saber onde procurar atendimento:</p>
-    
     <div class="triagem-box" id="triagem-q1">
         <div class="triagem-pergunta">Você está sentindo dor forte no peito, falta de ar grave, desmaio, dormência no braço ou sangramento intenso?</div>
         <button class="triagem-btn btn-sim" onclick="resultadoTriagem('upa')">SIM</button>
         <button class="triagem-btn btn-nao" onclick="proximaPergunta('triagem-q2')">NÃO</button>
     </div>
-
     <div class="triagem-box" id="triagem-q2" style="display:none;">
         <div class="triagem-pergunta">Você está com febre alta que não baixa, dor abdominal forte ou sofreu algum corte que precisa de pontos?</div>
         <button class="triagem-btn btn-sim" onclick="resultadoTriagem('upa')">SIM</button>
         <button class="triagem-btn btn-nao" onclick="resultadoTriagem('posto')">NÃO</button>
     </div>
-
     <div class="triagem-box" id="resultado-upa" style="display:none; text-align:center;">
         <i class="fa-solid fa-truck-medical" style="font-size: 4rem; color: var(--danger); margin-bottom: 15px;"></i>
         <h2 style="color: var(--danger); margin:0;">Vá para a UPA</h2>
-        <p>Seus sintomas indicam urgência/emergência.</p>
         <button class="btn-action btn-link" onclick="openScreen('screen-upa')">Ver Fila da UPA Agora</button>
         <button class="btn-action btn-link" style="background:#ddd; color:#333;" onclick="reiniciarTriagem()">Refazer</button>
     </div>
-
     <div class="triagem-box" id="resultado-posto" style="display:none; text-align:center;">
         <i class="fa-solid fa-house-medical" style="font-size: 4rem; color: var(--success); margin-bottom: 15px;"></i>
         <h2 style="color: var(--success); margin:0;">Vá ao Posto de Saúde</h2>
-        <p>Seus sintomas são leves (dor de garganta, renovar receita, atestado). Procure o postinho do seu bairro.</p>
         <button class="btn-action btn-link" style="background:var(--success)" onclick="openScreen('screen-atencao-basica')">Ver Postos de Saúde</button>
         <button class="btn-action btn-link" style="background:#ddd; color:#333;" onclick="reiniciarTriagem()">Refazer</button>
     </div>
@@ -379,7 +370,6 @@
         <div class="card-info" style="text-align:center; border-left: none; border-top: 5px solid var(--primary);">
             <h4 style="justify-content:center"><i class="fa-solid fa-users"></i> Fila de Espera</h4>
             <div class="counter-box"><div id="val-pacientes" class="counter">00</div></div>
-            <div style="color: var(--gray); font-size: 0.9rem;">Pacientes aguardando triagem/consulta</div>
             <div style="margin-top:10px; font-weight:bold; color:var(--dark);" id="val-tempo"><i class="fa-regular fa-clock"></i> Espera est.: ~0 min</div>
         </div>
     </div>
@@ -473,15 +463,6 @@
     <div class="card-info">
         <h4><i class="fa-regular fa-clock"></i> Horário de Coleta</h4>
         <p>Segunda a Sexta-feira<br>07:00 às 09:30 (Necessário Jejum)</p>
-        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-        <h4><i class="fa-solid fa-vial"></i> Exames Oferecidos</h4>
-        <ul style="padding-left:20px; font-size:0.9rem;">
-            <li>Hemograma Completo</li>
-            <li>Glicemia de Jejum</li>
-            <li>Colesterol Total e Frações</li>
-            <li>EAS (Urina) / EPF (Fezes)</li>
-            <li>Teste Rápido (HIV, Sífilis, Hepatites)</li>
-        </ul>
     </div>
 </div>
 
@@ -532,52 +513,28 @@
 
 <div id="screen-engenharia" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-ruler-combined" style="color:var(--engenharia)"></i> Serviços de Engenharia</h3>
-    
     <div style="background: #e6f0fa; padding: 15px; border-radius: 8px; color: var(--primary); font-size: 0.85rem; margin-bottom: 15px; border-left: 4px solid var(--primary); text-align: center;">
-        <strong><i class="fa-solid fa-cloud-arrow-up"></i> Em Breve no Aplicativo:</strong><br>
-        Você poderá enviar as fotos e PDFs dos seus projetos diretamente por aqui!
+        <strong><i class="fa-solid fa-cloud-arrow-up"></i> Em Breve no Aplicativo:</strong><br>Você poderá enviar as fotos e PDFs dos seus projetos diretamente por aqui!
     </div>
-
     <div class="card-info" style="border-left-color: var(--engenharia);">
         <h4><i class="fa-solid fa-file-contract"></i> Aprovação e Alvará</h4>
-        <p style="font-size:0.9rem;">Documentos necessários para aprovação de projetos e emissão de alvará de construção.</p>
         <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-alvara')">Ver Documentos Necessários</button>
         <div id="doc-alvara" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;">
-                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando aprovação, assinado pelo proprietário (contendo dados e endereço).</li>
-                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
-                <li style="margin-bottom:5px;"><b>Responsabilidade Técnica:</b> ART ou RRT assinado pelo engenheiro ou arquiteto.</li>
-                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
-                <li style="margin-bottom:5px;"><b>Projeto Arquitetônico (3 vias):</b> Impresso em A2, A1 ou A0. Deve conter: planta de situação, locação, baixa, cobertura, elevação das fachadas, cortes, legenda ABNT e adequação ao código de obras.</li>
-            </ul>
+            <ul style="padding-left:20px; margin:0;"><li>Requerimento assinado pelo proprietário.</li><li>Cópia do CPF e RG.</li><li>ART ou RRT assinado pelo engenheiro ou arquiteto.</li><li>Certidão de inteiro teor atualizada.</li><li>Projeto Arquitetônico (3 vias) em A2, A1 ou A0 contendo todas as plantas.</li></ul>
         </div>
     </div>
-
     <div class="card-info" style="border-left-color: var(--engenharia);">
         <h4><i class="fa-solid fa-house-circle-check"></i> Emissão de Habite-se</h4>
-        <p style="font-size:0.9rem;">Requisitos para liberação do documento após conclusão da obra.</p>
         <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-habitese')">Ver Documentos Necessários</button>
         <div id="doc-habitese" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;">
-                <li style="margin-bottom:5px;"><b>Requerimento:</b> Solicitando o Habite-se, assinado pelo proprietário.</li>
-                <li style="margin-bottom:5px;"><b>Alvará:</b> Cópia do Alvará de Construção emitido pela prefeitura.</li>
-            </ul>
+            <ul style="padding-left:20px; margin:0;"><li>Requerimento solicitando o Habite-se assinado pelo proprietário.</li><li>Alvará de Construção emitido pela prefeitura.</li></ul>
         </div>
     </div>
-
     <div class="card-info" style="border-left-color: var(--engenharia);">
         <h4><i class="fa-solid fa-object-ungroup"></i> Desmembramento e Retificação</h4>
-        <p style="font-size:0.9rem;">Documentação para amembramento, desmembramento ou retificação de área.</p>
         <button class="btn-action btn-link" style="background:var(--engenharia)" onclick="toggleDoc('doc-desmembramento')">Ver Documentos Necessários</button>
         <div id="doc-desmembramento" style="display:none; margin-top:15px; text-align:left; font-size:0.85rem; color:var(--dark);">
-            <ul style="padding-left:20px; margin:0;">
-                <li style="margin-bottom:5px;"><b>Requerimento:</b> Assinado pelo proprietário.</li>
-                <li style="margin-bottom:5px;"><b>Documentos:</b> Cópia do CPF e RG.</li>
-                <li style="margin-bottom:5px;"><b>ART:</b> Assinado pelo engenheiro.</li>
-                <li style="margin-bottom:5px;"><b>Certidão:</b> De inteiro teor atualizada.</li>
-                <li style="margin-bottom:5px;"><b>Projeto e Memorial:</b> Projeto do antes e depois (2 vias) e Memorial Descritivo (2 vias).</li>
-                <li style="margin-bottom:5px;"><b>Para Retificação de Área:</b> Documento assinado pelos confrontantes declarando que não há invasão.</li>
-            </ul>
+            <ul style="padding-left:20px; margin:0;"><li>Requerimento assinado pelo proprietário.</li><li>Cópia do CPF e RG.</li><li>ART assinado pelo engenheiro.</li><li>Certidão de inteiro teor atualizada.</li><li>Projeto e Memorial descritivo do antes e depois (2 vias).</li></ul>
         </div>
     </div>
 </div>
@@ -586,7 +543,6 @@
     <h3 style="margin-top:0;"><i class="fa-solid fa-leaf" style="color:var(--meioambiente)"></i> Meio Ambiente</h3>
     <div class="card-info" style="border-left-color: var(--danger);">
         <h4><i class="fa-solid fa-bullhorn"></i> Fazer Denúncia</h4>
-        <p style="font-size:0.9rem;">Denuncie descarte irregular de lixo ou queimadas com total sigilo.</p>
         <a href="#" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Enviar Denúncia</a>
     </div>
 </div>
@@ -595,78 +551,42 @@
     <h3 style="margin-top:0;"><i class="fa-solid fa-graduation-cap" style="color:var(--educacao)"></i> Educação</h3>
     <div class="card-info" style="border-left-color: var(--educacao);">
         <h4><i class="fa-solid fa-address-card"></i> Matrículas Escolares</h4>
-        <p style="font-size:0.9rem;">Documentos: Certidão de nascimento, comprovante de endereço, cartão de vacina, RG dos pais.</p>
     </div>
 </div>
 
 <div id="screen-arrecadacao" class="screen">
-    <h3 style="margin-top:0; line-height: 1.2;">
-        <i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal<br>
-        <small style="font-size: 0.6em; color: var(--gray); font-weight: normal;">(IPTU, ISS, Alvarás, Certidões)</small>
-    </h3>
+    <h3 style="margin-top:0; line-height: 1.2;"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal</h3>
     <div class="card-info" style="border-left-color: var(--financas);">
         <h4><i class="fa-solid fa-barcode"></i> Consulta de IPTU</h4>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)">Emitir IPTU</a>
-    </div>
-    <div class="card-info" style="border-left-color: var(--success);">
-        <h4><i class="fa-solid fa-file-circle-check"></i> Certidão Negativa</h4>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/emissao-certidao-negat" target="_blank" class="btn-action btn-link" style="background:var(--success)">Emitir Certidão</a>
-    </div>
-    <div class="card-info" style="border-left-color: var(--primary);">
-        <h4><i class="fa-solid fa-file-invoice"></i> Guias de ISS</h4>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iss" target="_blank" class="btn-action btn-link" style="background:var(--primary)">Acessar ISS</a>
-    </div>
-    <div class="card-info" style="border-left-color: var(--cetec);">
-        <h4><i class="fa-solid fa-file-signature"></i> Consulta de Alvará</h4>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/consultar-alvara-habitese" target="_blank" class="btn-action btn-link" style="background:var(--cetec)">Consultar Alvará</a>
-    </div>
-    <div class="card-info" style="border-left-color: var(--warning);">
-        <h4><i class="fa-solid fa-file-invoice-dollar"></i> Consulta de Débitos</h4>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/outras-guias" target="_blank" class="btn-action btn-link" style="background:var(--warning); color:#000;">Consultar Débitos</a>
     </div>
 </div>
 
 <div id="screen-esporte" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-futbol" style="color:var(--esporte)"></i> Esportes</h3>
-    <div class="card-info" style="border-left-color: var(--esporte);">
-        <h4><i class="fa-solid fa-medal"></i> Escolinhas e Programas</h4>
-        <p style="font-size:0.9rem;">Módulo em desenvolvimento. Em breve inscrições pelo app.</p>
-    </div>
 </div>
 
 <div id="screen-infraestrutura" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-tractor" style="color:var(--obras)"></i> Infraestrutura e Obras</h3>
-    <div class="card-info" style="border-left-color: var(--primary);">
-        <h4><i class="fa-solid fa-lightbulb"></i> Requisição de Serviços</h4>
-        <p style="font-size:0.9rem;">Solicite troca de lâmpadas de iluminação pública ou tapa-buracos na sua rua.</p>
-        <button class="btn-action btn-link" style="background:var(--obras)">Abrir Chamado</button>
-    </div>
 </div>
 
 <script>
     // ==========================================
-    // 0. ADMIN GERAL (AVISO GLOBAL)
+    // 0. ADMIN GERAL E TOGGLE
     // ==========================================
     function abrirAdminGeral() {
         let pass = prompt("Senha Mestre da Prefeitura:");
         if(pass !== "000") return alert("Senha Incorreta!");
         openScreen('screen-admin-geral');
     }
-
     function salvarAvisoGlobal(ativar) {
         let texto = document.getElementById('input-global-aviso').value;
         if(ativar && !texto) return alert("Digite o texto do aviso primeiro!");
-        
-        db.ref('sistema_global').update({
-            avisoAtivo: ativar,
-            avisoTexto: texto
-        });
+        db.ref('sistema_global').update({ avisoAtivo: ativar, avisoTexto: texto });
         alert(ativar ? "Aviso Global ATIVADO para todos os cidadãos!" : "Aviso Global DESATIVADO.");
     }
-
     function toggleDoc(id) {
-        let el = document.getElementById(id);
-        el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+        let el = document.getElementById(id); el.style.display = (el.style.display === 'none') ? 'block' : 'none';
     }
 
     // ==========================================
@@ -683,32 +603,19 @@
         window.scrollTo(0, 0);
         if (screenId !== 'screen-home') {
             if(historyStack[historyStack.length - 1] !== screenId) historyStack.push(screenId);
-            btnBack.style.display = 'flex';
-            btnHome.style.display = 'flex';
-            btnAdminGeral.classList.add('nav-btn-hidden');
+            btnBack.style.display = 'flex'; btnHome.style.display = 'flex'; btnAdminGeral.classList.add('nav-btn-hidden');
         } else {
             historyStack = ['screen-home'];
-            btnBack.style.display = 'none';
-            btnHome.style.display = 'none';
-            btnAdminGeral.classList.remove('nav-btn-hidden');
+            btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden');
         }
     }
-
     function goBack() {
         if (historyStack.length > 1) {
-            historyStack.pop();
-            let previous = historyStack[historyStack.length - 1];
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(previous).classList.add('active');
-            window.scrollTo(0, 0);
-            if (previous === 'screen-home') { 
-                btnBack.style.display = 'none'; 
-                btnHome.style.display = 'none';
-                btnAdminGeral.classList.remove('nav-btn-hidden');
-            }
+            historyStack.pop(); let previous = historyStack[historyStack.length - 1];
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(previous).classList.add('active'); window.scrollTo(0, 0);
+            if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden'); }
         }
     }
-
     function goHome() { openScreen('screen-home'); }
 
     if ('serviceWorker' in navigator) {
@@ -716,64 +623,76 @@
             navigator.serviceWorker.register('./sw.js').then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
-                    installingWorker.onstatechange = () => {
-                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            window.location.reload();
-                        }
-                    };
+                    installingWorker.onstatechange = () => { if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); };
                 };
             }).catch(err => console.log('Erro SW', err)); 
         });
         let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) { window.location.reload(); refreshing = true; }
-        });
-    }
-
-    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-    const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
-    if (isIos && !isInStandaloneMode) { document.getElementById('install-banner-ios').style.display = 'block'; }
-
-    let promptDeInstalacao = null;
-    const bannerInstalacao = document.getElementById('install-banner');
-    const btnInstalar = document.getElementById('btn-instalar-pwa');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        promptDeInstalacao = e;
-        bannerInstalacao.style.display = 'flex';
-    });
-    btnInstalar.addEventListener('click', async () => {
-        if (!promptDeInstalacao) return;
-        promptDeInstalacao.prompt();
-        const resultado = await promptDeInstalacao.userChoice;
-        if (resultado.outcome === 'accepted') { bannerInstalacao.style.display = 'none'; }
-        promptDeInstalacao = null;
-    });
-    window.addEventListener('appinstalled', () => {
-        bannerInstalacao.style.display = 'none';
-        document.getElementById('install-banner-ios').style.display = 'none';
-    });
-
-    // Pede permissão para Notificações Nativas do Celular (Preparação para o Apito no Bolso futuro)
-    if ("Notification" in window) {
-        Notification.requestPermission();
+        navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { window.location.reload(); refreshing = true; } });
     }
 
     // ==========================================
-    // 2. FIREBASE: CONFIGURAÇÃO GLOBAL E ALERTA
+    // 2. FIREBASE E NOTIFICAÇÃO PUSH (FCM)
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
         authDomain: "upa-pontalina.firebaseapp.com",
         databaseURL: "https://upa-pontalina-default-rtdb.firebaseio.com",
-        projectId: "upa-pontalina"
+        projectId: "upa-pontalina",
+        messagingSenderId: "881228406713",
+        appId: "1:881228406713:web:4a8637dc043c8be3d52068"
     };
 
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
+    
+    // --- LÓGICA DE NOTIFICAÇÃO PUSH (MESSAGING) ---
+    const messaging = firebase.messaging();
+    
+    // SUA CHAVE VAPID EXATA QUE VOCÊ GEROU NO FIREBASE
+    const VAPID_KEY = "BLOw6zrOC-dpNuVMU_aAejqLX2j16WYlmJC6FCi13w_18lBl8e3tOHKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
 
-    // Escuta o Aviso Global
+    // Se o navegador suportar Push e ainda não tiver perguntado, mostra a caixa
+    if ("Notification" in window) {
+        if (Notification.permission === "default") {
+            document.getElementById('push-permission-box').style.display = 'block';
+        }
+    }
+
+    function solicitarPermissaoNotificacao() {
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                document.getElementById('push-permission-box').style.display = 'none';
+                
+                // Pega o Token do celular
+                messaging.getToken({ vapidKey: VAPID_KEY }).then((currentToken) => {
+                    if (currentToken) {
+                        // Salva no banco de dados para a prefeitura poder usar depois
+                        db.ref('fcm_tokens/' + currentToken).set({
+                            ativo: true,
+                            dataCadastro: new Date().toISOString(),
+                            plataforma: navigator.platform
+                        });
+                        alert("Notificações ativadas com sucesso! Você receberá os alertas da prefeitura.");
+                    }
+                }).catch((err) => {
+                    console.log('Erro ao pegar token', err);
+                    alert("Não foi possível ativar. Tente novamente mais tarde.");
+                });
+            } else {
+                alert("Você bloqueou as notificações. Você não receberá alertas vitais da prefeitura.");
+                document.getElementById('push-permission-box').style.display = 'none';
+            }
+        });
+    }
+
+    // Se o app estiver ABERTO na tela na hora que a notificação chegar, ele avisa aqui
+    messaging.onMessage((payload) => {
+        console.log('Notificação recebida em primeiro plano: ', payload);
+        alert(`NOVO AVISO DA PREFEITURA:\n\n${payload.notification.title}\n${payload.notification.body}`);
+    });
+
+    // Escuta o Aviso Global Estático (Banner da engrenagem)
     db.ref('sistema_global').on('value', (snapshot) => {
         const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "" };
         const banner = document.getElementById('global-alert');
@@ -791,262 +710,67 @@
     });
 
     // ==========================================
-    // 3. LÓGICA CETEC (COM STATUS E EDIÇÃO)
+    // 3. LÓGICA CETEC
     // ==========================================
-    let cacheCursosCetec = [];
-    let cacheInscricoesCetec = {};
-    let cpfAtualCetec = "";
+    let cacheCursosCetec = []; let cacheInscricoesCetec = {}; let cpfAtualCetec = "";
 
     function mudarAbaCetec(idAba) {
         if(idAba === 'cetec-admin') { let pass = prompt("Senha Admin CETEC:"); if(pass !== "789") return alert("Senha Incorreta."); }
-        document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(idAba).classList.add('active');
-        if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active');
-        if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active');
+        document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active');
+        if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active'); if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active');
     }
-
     db.ref('cetec_cursos').on('value', (snapshot) => {
-        cacheCursosCetec = snapshot.val() || [];
-        let options = '<option value="">Selecione um curso disponível...</option>';
-        cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; });
-        document.getElementById('cetec-curso-select').innerHTML = options;
+        cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso disponível...</option>';
+        cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options;
     });
-
     db.ref('cetec_inscricoes').on('value', (snapshot) => {
-        cacheInscricoesCetec = snapshot.val() || {};
-        let htmlLista = '';
+        cacheInscricoesCetec = snapshot.val() || {}; let htmlLista = '';
         for(let cpf in cacheInscricoesCetec) {
-            let info = cacheInscricoesCetec[cpf];
-            let zapLimpo = info.zap.replace(/\D/g, '');
-            if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo;
-            let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`);
-            
-            let badgeStatus = info.status === 'Realizada' 
-                ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' 
-                : '<span class="badge badge-pendente">Aguardando Confirmação</span>';
-            
-            htmlLista += `
-            <div style="border-bottom:1px solid #eee; padding:15px 0;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>
-                    ${badgeStatus}
-                </div>
-                <span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br>
-                <span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span>
-                
-                <div class="btn-group-small">
-                    <button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button>
-                    <button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button>
-                    <button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button>
-                </div>
-                
-                <a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;">
-                    <i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp
-                </a>
-            </div>`;
+            let info = cacheInscricoesCetec[cpf]; let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`);
+            let badgeStatus = info.status === 'Realizada' ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' : '<span class="badge badge-pendente">Aguardando Confirmação</span>';
+            htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp</a></div>`;
         }
-        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>";
-        document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista;
+        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>"; document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista;
     });
-
     function buscarCpfCetec() {
-        let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, '');
-        if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo (11 números).");
-        cpfAtualCetec = inputCpf;
-        document.getElementById('cetec-passo1').style.display = 'none';
-        
-        if(cacheInscricoesCetec[cpfAtualCetec]) {
-            let dadosUser = cacheInscricoesCetec[cpfAtualCetec];
-            let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Confirmação)</span>";
-            document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`;
-            document.getElementById('cetec-passo2-existe').style.display = 'block';
-        } else {
-            if(cacheCursosCetec.length === 0) { alert("Nenhum curso com vagas abertas no momento."); voltarBuscaCetec(); return; }
-            document.getElementById('cetec-passo2-novo').style.display = 'block';
-        }
+        let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none';
+        if(cacheInscricoesCetec[cpfAtualCetec]) { let dadosUser = cacheInscricoesCetec[cpfAtualCetec]; let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Confirmação)</span>"; document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`; document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { if(cacheCursosCetec.length === 0) { alert("Nenhum curso aberto."); voltarBuscaCetec(); return; } document.getElementById('cetec-passo2-novo').style.display = 'block'; }
     }
-
-    function voltarBuscaCetec() {
-        document.getElementById('cetec-passo2-novo').style.display = 'none';
-        document.getElementById('cetec-passo2-existe').style.display = 'none';
-        document.getElementById('cetec-passo1').style.display = 'block';
-        document.getElementById('cetec-cpf-busca').value = '';
-        cpfAtualCetec = "";
-    }
-
-    function salvarInscricaoCetec() {
-        let nome = document.getElementById('cetec-nome').value;
-        let zap = document.getElementById('cetec-zap').value;
-        let curso = document.getElementById('cetec-curso-select').value;
-        if(!nome || !zap || !curso) return alert("Preencha todos os campos e selecione um curso!");
-        
-        db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso, status: "Pendente" });
-        alert("Inscrição realizada com sucesso!");
-        document.getElementById('cetec-nome').value = ''; document.getElementById('cetec-zap').value = '';
-        voltarBuscaCetec();
-    }
-
-    function adicionarCursoCetec() {
-        let novoCurso = document.getElementById('cetec-novo-curso').value;
-        if(!novoCurso) return alert("Digite o nome do curso.");
-        let novaLista = [...cacheCursosCetec, novoCurso];
-        db.ref('cetec_cursos').set(novaLista);
-        document.getElementById('cetec-novo-curso').value = '';
-        alert("Curso disponibilizado para a população!");
-    }
-
-    function marcarStatusCetec(cpf, statusAtual) {
-        let novoStatus = statusAtual === 'Realizada' ? 'Pendente' : 'Realizada';
-        db.ref('cetec_inscricoes/' + cpf).update({ status: novoStatus });
-    }
-    function editarInscritoCetec(cpf, nomeAtual, zapAtual) {
-        let novoNome = prompt("Editar Nome do Aluno:", nomeAtual); if(novoNome === null) return;
-        let novoZap = prompt("Editar Celular/WhatsApp:", zapAtual); if(novoZap === null) return;
-        db.ref('cetec_inscricoes/' + cpf).update({ nome: novoNome, zap: novoZap });
-    }
-    function excluirInscritoCetec(cpf) {
-        if(confirm("Tem certeza que deseja APAGAR esta inscrição?")) { db.ref('cetec_inscricoes/' + cpf).remove(); }
-    }
-
+    function voltarBuscaCetec() { document.getElementById('cetec-passo2-novo').style.display = 'none'; document.getElementById('cetec-passo2-existe').style.display = 'none'; document.getElementById('cetec-passo1').style.display = 'block'; document.getElementById('cetec-cpf-busca').value = ''; cpfAtualCetec = ""; }
+    function salvarInscricaoCetec() { let nome = document.getElementById('cetec-nome').value; let zap = document.getElementById('cetec-zap').value; let curso = document.getElementById('cetec-curso-select').value; if(!nome || !zap || !curso) return alert("Preencha todos os campos!"); db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso, status: "Pendente" }); alert("Inscrição realizada!"); voltarBuscaCetec(); }
+    function adicionarCursoCetec() { let novoCurso = document.getElementById('cetec-novo-curso').value; if(!novoCurso) return alert("Digite o nome."); let novaLista = [...cacheCursosCetec, novoCurso]; db.ref('cetec_cursos').set(novaLista); alert("Curso adicionado!"); }
+    function marcarStatusCetec(cpf, statusAtual) { let novoStatus = statusAtual === 'Realizada' ? 'Pendente' : 'Realizada'; db.ref('cetec_inscricoes/' + cpf).update({ status: novoStatus }); }
+    function editarInscritoCetec(cpf, nomeAtual, zapAtual) { let novoNome = prompt("Editar Nome:", nomeAtual); if(!novoNome) return; let novoZap = prompt("Editar Celular:", zapAtual); if(!novoZap) return; db.ref('cetec_inscricoes/' + cpf).update({ nome: novoNome, zap: novoZap }); }
+    function excluirInscritoCetec(cpf) { if(confirm("APAGAR inscrição?")) db.ref('cetec_inscricoes/' + cpf).remove(); }
 
     // ==========================================
-    // 4. AGENDAMENTO DE CONSULTAS (COM STATUS E EDIÇÃO)
+    // 4. AGENDAMENTO DE CONSULTAS
     // ==========================================
-    let cacheConsultas = {};
-    let cpfAtualConsulta = "";
-
-    function mudarAbaConsulta(idAba) {
-        if(idAba === 'consulta-admin') { let pass = prompt("Senha da Recepção:"); if(pass !== "147") return alert("Senha Incorreta."); }
-        document.querySelectorAll('#screen-consulta .sub-aba').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('#screen-consulta .sub-nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(idAba).classList.add('active');
-        if(idAba === 'consulta-publico') document.getElementById('btn-consulta-pub').classList.add('active');
-        if(idAba === 'consulta-admin') document.getElementById('btn-consulta-adm').classList.add('active');
-    }
-
-    db.ref('consultas_pedidos').on('value', (snapshot) => {
-        cacheConsultas = snapshot.val() || {};
-        renderListaConsultas();
-    });
-
+    let cacheConsultas = {}; let cpfAtualConsulta = "";
+    function mudarAbaConsulta(idAba) { if(idAba === 'consulta-admin') { let pass = prompt("Senha da Recepção:"); if(pass !== "147") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-consulta .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-consulta .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'consulta-publico') document.getElementById('btn-consulta-pub').classList.add('active'); if(idAba === 'consulta-admin') document.getElementById('btn-consulta-adm').classList.add('active'); }
+    db.ref('consultas_pedidos').on('value', (snapshot) => { cacheConsultas = snapshot.val() || {}; renderListaConsultas(); });
     function renderListaConsultas() {
-        const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS';
-        let htmlLista = '';
-        
-        for(let cpf in cacheConsultas) {
-            let info = cacheConsultas[cpf];
-            if(filtro === 'TODOS' || info.posto === filtro) {
-                let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR');
-                let zapLimpo = info.zap.replace(/\D/g, '');
-                if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo;
-                let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}. Referente ao seu pedido de consulta...`);
-                
-                let badgeStatus = info.status === 'Concluída' 
-                    ? '<span class="badge badge-concluido">Agendada / Concluída</span>' 
-                    : '<span class="badge badge-pendente">Aguardando Recepção</span>';
-
-                htmlLista += `
-                <div style="border-bottom:1px solid #eee; padding:15px 0;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>
-                        ${badgeStatus}
-                    </div>
-                    <span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br>
-                    <span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br>
-                    <span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span>
-                    
-                    <div class="btn-group-small">
-                        <button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button>
-                        <button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button>
-                        <button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-
-                    <a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;">
-                        <i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp
-                    </a>
-                </div>`;
-            }
-        }
-        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhuma solicitação encontrada para este filtro.</p>";
-        const listaDiv = document.getElementById('consulta-lista-pedidos');
-        if(listaDiv) listaDiv.innerHTML = htmlLista;
+        const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS'; let htmlLista = '';
+        for(let cpf in cacheConsultas) { let info = cacheConsultas[cpf]; if(filtro === 'TODOS' || info.posto === filtro) { let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR'); let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}. Referente ao seu pedido de consulta...`); let badgeStatus = info.status === 'Concluída' ? '<span class="badge badge-concluido">Agendada / Concluída</span>' : '<span class="badge badge-pendente">Aguardando Recepção</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br><span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp</a></div>`; } }
+        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum pedido encontrado.</p>"; document.getElementById('consulta-lista-pedidos').innerHTML = htmlLista;
     }
-
-    function buscarCpfConsulta() {
-        let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, '');
-        if(inputCpf.length < 11) return alert("Por favor, digite o CPF completo (11 números).");
-        cpfAtualConsulta = inputCpf;
-        document.getElementById('consulta-passo1').style.display = 'none';
-        
-        if(cacheConsultas[cpfAtualConsulta]) {
-            let dadosUser = cacheConsultas[cpfAtualConsulta];
-            let txtStatus = dadosUser.status === 'Concluída' ? "<span style='color:var(--success)'>AGENDADA COM SUCESSO</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Recepção)</span>";
-            document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Você tem um pedido de consulta para a unidade:<br><b>${dadosUser.posto}</b><br><br>Status do Pedido: <b>${txtStatus}</b>`;
-            document.getElementById('consulta-passo2-existe').style.display = 'block';
-        } else {
-            document.getElementById('consulta-passo2-novo').style.display = 'block';
-        }
-    }
-
-    function voltarBuscaConsulta() {
-        document.getElementById('consulta-passo2-novo').style.display = 'none';
-        document.getElementById('consulta-passo2-existe').style.display = 'none';
-        document.getElementById('consulta-passo1').style.display = 'block';
-        document.getElementById('consulta-cpf').value = '';
-        cpfAtualConsulta = "";
-    }
-
-    function salvarConsulta() {
-        let nome = document.getElementById('consulta-nome').value;
-        let zap = document.getElementById('consulta-zap').value;
-        let posto = document.getElementById('consulta-posto-select').value;
-        let motivo = document.getElementById('consulta-motivo-select').value;
-        if(!nome || !zap || !posto || !motivo) return alert("Por favor, preencha seu nome, telefone, selecione o posto e o motivo!");
-        
-        db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: nome, zap: zap, posto: posto, motivo: motivo, status: "Pendente", timestamp: new Date().toISOString() });
-        alert("Sua solicitação de consulta foi enviada com sucesso! Aguarde o contato da recepção.");
-        document.getElementById('consulta-nome').value = ''; document.getElementById('consulta-zap').value = ''; document.getElementById('consulta-posto-select').value = '';
-        voltarBuscaConsulta();
-    }
-    
-    function cancelarConsulta() {
-        if(confirm("Você tem certeza que deseja CANCELAR a sua solicitação de consulta?")) { db.ref('consultas_pedidos/' + cpfAtualConsulta).remove(); alert("Sua solicitação foi cancelada."); voltarBuscaConsulta(); }
-    }
-
-    function marcarStatusConsulta(cpf, statusAtual) {
-        let novoStatus = statusAtual === 'Concluída' ? 'Pendente' : 'Concluída';
-        db.ref('consultas_pedidos/' + cpf).update({ status: novoStatus });
-    }
-    function editarConsulta(cpf, nomeAtual, zapAtual) {
-        let novoNome = prompt("Editar Nome do Paciente:", nomeAtual); if(novoNome === null) return;
-        let novoZap = prompt("Editar Celular/WhatsApp:", zapAtual); if(novoZap === null) return;
-        db.ref('consultas_pedidos/' + cpf).update({ nome: novoNome, zap: novoZap });
-    }
-    function excluirConsulta(cpf) {
-        if(confirm("Tem certeza que deseja APAGAR este pedido do sistema?")) { db.ref('consultas_pedidos/' + cpf).remove(); }
-    }
+    function buscarCpfConsulta() { let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualConsulta = inputCpf; document.getElementById('consulta-passo1').style.display = 'none'; if(cacheConsultas[cpfAtualConsulta]) { let dadosUser = cacheConsultas[cpfAtualConsulta]; let txtStatus = dadosUser.status === 'Concluída' ? "<span style='color:var(--success)'>AGENDADA COM SUCESSO</span>" : "<span style='color:var(--warning)'>PENDENTE (Aguardando Recepção)</span>"; document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Status do Pedido: <b>${txtStatus}</b>`; document.getElementById('consulta-passo2-existe').style.display = 'block'; } else { document.getElementById('consulta-passo2-novo').style.display = 'block'; } }
+    function voltarBuscaConsulta() { document.getElementById('consulta-passo2-novo').style.display = 'none'; document.getElementById('consulta-passo2-existe').style.display = 'none'; document.getElementById('consulta-passo1').style.display = 'block'; document.getElementById('consulta-cpf').value = ''; cpfAtualConsulta = ""; }
+    function salvarConsulta() { let nome = document.getElementById('consulta-nome').value; let zap = document.getElementById('consulta-zap').value; let posto = document.getElementById('consulta-posto-select').value; let motivo = document.getElementById('consulta-motivo-select').value; if(!nome || !zap || !posto || !motivo) return alert("Preencha todos os campos!"); db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: nome, zap: zap, posto: posto, motivo: motivo, status: "Pendente", timestamp: new Date().toISOString() }); alert("Enviado com sucesso!"); voltarBuscaConsulta(); }
+    function cancelarConsulta() { if(confirm("CANCELAR?")) { db.ref('consultas_pedidos/' + cpfAtualConsulta).remove(); voltarBuscaConsulta(); } }
+    function marcarStatusConsulta(cpf, statusAtual) { let novoStatus = statusAtual === 'Concluída' ? 'Pendente' : 'Concluída'; db.ref('consultas_pedidos/' + cpf).update({ status: novoStatus }); }
+    function editarConsulta(cpf, nomeAtual, zapAtual) { let novoNome = prompt("Nome:", nomeAtual); if(!novoNome) return; let novoZap = prompt("Celular:", zapAtual); if(!novoZap) return; db.ref('consultas_pedidos/' + cpf).update({ nome: novoNome, zap: novoZap }); }
+    function excluirConsulta(cpf) { if(confirm("APAGAR?")) db.ref('consultas_pedidos/' + cpf).remove(); }
 
     // ==========================================
-    // 5. AUTO TRIAGEM E OUTRAS LÓGICAS DA UPA/POSTO
+    // 5. UPA E POSTOS BÁSICOS
     // ==========================================
     function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; }
     function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; }
     function reiniciarTriagem() { document.getElementById('resultado-upa').style.display = 'none'; document.getElementById('resultado-posto').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; document.getElementById('triagem-q1').style.display = 'block'; }
 
-    function mudarAbaUpa(idAba) {
-        if(idAba === 'upa-admin') { let pass = prompt("Senha da UPA:"); if(pass !== "123") return alert("Senha Incorreta."); }
-        document.querySelectorAll('#screen-upa .sub-aba').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('#screen-upa .sub-nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(idAba).classList.add('active');
-        if(idAba === 'upa-publico') document.getElementById('btn-upa-pub').classList.add('active');
-        if(idAba === 'upa-escala') document.getElementById('btn-upa-esc').classList.add('active');
-        if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active');
-    }
-
-    const diaHoje = new Date().getDay(); const linhaHoje = document.getElementById('dia-' + diaHoje); if(linhaHoje) linhaHoje.classList.add('dia-ativo');
+    function mudarAbaUpa(idAba) { if(idAba === 'upa-admin') { let pass = prompt("Senha da UPA:"); if(pass !== "123") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-upa .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-upa .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'upa-publico') document.getElementById('btn-upa-pub').classList.add('active'); if(idAba === 'upa-escala') document.getElementById('btn-upa-esc').classList.add('active'); if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active'); }
     let currentPacientes = 0; let salaCritica = false;
-
     db.ref('upa_status').on('value', (snapshot) => {
         const data = snapshot.val() || {}; currentPacientes = data.pacientes || 0; salaCritica = data.salaVermelha || false;
         document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
@@ -1058,33 +782,12 @@
         const divSala = document.getElementById('status-sala'); const btnSala = document.getElementById('btn-sala-vermelha');
         if(salaCritica) { divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO"; divSala.className = "sala-vermelha-status status-critico"; btnSala.innerHTML = "Normalizar Sala Vermelha"; btnSala.style.background = "var(--success)"; } else { divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL"; divSala.className = "sala-vermelha-status status-ok"; btnSala.innerHTML = "Alertar Sala Vermelha"; btnSala.style.background = "var(--danger)"; }
     });
-
-    function modificarPacientes(val) { db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) }); }
-    function toggleSalaVermelha() { db.ref('upa_status').update({ salaVermelha: !salaCritica }); }
-    function salvarMedicosUpa() { db.ref('upa_status').update({ clinico: document.getElementById('input-clinico').value, pediatra: document.getElementById('input-pediatra').value }); alert("Plantão atualizado!"); }
-    function salvarEscalaSemana() { db.ref('upa_status/escala').update({ seg: document.getElementById('edit-seg').value, ter: document.getElementById('edit-ter').value, qua: document.getElementById('edit-qua').value, qui: document.getElementById('edit-qui').value, sex: document.getElementById('edit-sex').value, sab: document.getElementById('edit-sab').value, dom: document.getElementById('edit-dom').value }); alert("Escala Semanal atualizada!"); }
+    function modificarPacientes(val) { db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) }); } function toggleSalaVermelha() { db.ref('upa_status').update({ salaVermelha: !salaCritica }); } function salvarMedicosUpa() { db.ref('upa_status').update({ clinico: document.getElementById('input-clinico').value, pediatra: document.getElementById('input-pediatra').value }); alert("Plantão atualizado!"); } function salvarEscalaSemana() { db.ref('upa_status/escala').update({ seg: document.getElementById('edit-seg').value, ter: document.getElementById('edit-ter').value, qua: document.getElementById('edit-qua').value, qui: document.getElementById('edit-qui').value, sex: document.getElementById('edit-sex').value, sab: document.getElementById('edit-sab').value, dom: document.getElementById('edit-dom').value }); alert("Escala Semanal atualizada!"); }
 
     const infoEstaticaPostos = { esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf302: { nome: "ESF 302 - Santa Rita de Cássia", zap: "556434711147", mapa: "https://maps.app.goo.gl/LCTP73ZZXuy7SzPa9" }, esf303: { nome: "ESF 303 - Dr. Antônio Carlos Vasconcelos", zap: "5564992742306", mapa: "https://maps.app.goo.gl/xZ8dhCzXR6QzAWCk9" }, esf304: { nome: "ESF 304 - Lázaro Teodoro de Barros", zap: "5564992385727", mapa: "https://maps.app.goo.gl/7GR3HgboKoCXu1tw6" }, esf305: { nome: "ESF 305 - Aluísio Borges", zap: "5564992346304", mapa: "https://maps.app.goo.gl/T6G1fx4Jik5PR5J27" } };
     let cachePostos = {};
-
-    function mudarAbaPostos(idAba) {
-        if(idAba === 'postos-admin') { let pass = prompt("Senha da Atenção Básica:"); if(pass !== "456") return alert("Senha Incorreta."); carregarDadosPostoAdmin(); }
-        document.querySelectorAll('#screen-atencao-basica .sub-aba').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('#screen-atencao-basica .sub-nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(idAba).classList.add('active');
-        if(idAba === 'postos-publico') document.getElementById('btn-postos-pub').classList.add('active');
-        if(idAba === 'postos-admin') document.getElementById('btn-postos-adm').classList.add('active');
-    }
-
-    db.ref('postos_status').on('value', (snapshot) => {
-        const data = snapshot.val() || {}; cachePostos = data; let htmlLista = '';
-        for (const [id, info] of Object.entries(infoEstaticaPostos)) {
-            const dinamico = data[id] || { medico: "Médico não informado", horario: "07h às 17h" };
-            htmlLista += `<div class="card-info"><h4>${info.nome}</h4><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> ${dinamico.horario}</p><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-solid fa-user-doctor"></i> <strong>Médico:</strong> ${dinamico.medico}</p><div style="display:flex; gap:10px; margin-top:15px;"><a href="https://wa.me/${info.zap}?text=Olá, vim pelo aplicativo da Prefeitura e preciso de informações." target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Falar</a><a href="${info.mapa}" target="_blank" class="btn-action btn-map"><i class="fa-solid fa-location-dot"></i> Rota</a></div></div>`;
-        }
-        document.getElementById('lista-postos-publico').innerHTML = htmlLista;
-    });
-
+    function mudarAbaPostos(idAba) { if(idAba === 'postos-admin') { let pass = prompt("Senha da Atenção Básica:"); if(pass !== "456") return alert("Senha Incorreta."); carregarDadosPostoAdmin(); } document.querySelectorAll('#screen-atencao-basica .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-atencao-basica .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'postos-publico') document.getElementById('btn-postos-pub').classList.add('active'); if(idAba === 'postos-admin') document.getElementById('btn-postos-adm').classList.add('active'); }
+    db.ref('postos_status').on('value', (snapshot) => { const data = snapshot.val() || {}; cachePostos = data; let htmlLista = ''; for (const [id, info] of Object.entries(infoEstaticaPostos)) { const dinamico = data[id] || { medico: "Médico não informado", horario: "07h às 17h" }; htmlLista += `<div class="card-info"><h4>${info.nome}</h4><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> ${dinamico.horario}</p><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-solid fa-user-doctor"></i> <strong>Médico:</strong> ${dinamico.medico}</p><div style="display:flex; gap:10px; margin-top:15px;"><a href="https://wa.me/${info.zap}?text=Olá, vim pelo aplicativo da Prefeitura e preciso de informações." target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Falar</a><a href="${info.mapa}" target="_blank" class="btn-action btn-map"><i class="fa-solid fa-location-dot"></i> Rota</a></div></div>`; } document.getElementById('lista-postos-publico').innerHTML = htmlLista; });
     function carregarDadosPostoAdmin() { const idPosto = document.getElementById('select-posto').value; const dados = cachePostos[idPosto] || { medico: "", horario: "" }; document.getElementById('input-posto-medico').value = dados.medico; document.getElementById('input-posto-horario').value = dados.horario; }
     function salvarDadosPosto() { db.ref('postos_status/' + document.getElementById('select-posto').value).update({ medico: document.getElementById('input-posto-medico').value, horario: document.getElementById('input-posto-horario').value }); alert("Posto atualizado com sucesso!"); }
 </script>
