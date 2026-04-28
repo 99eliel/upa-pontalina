@@ -553,9 +553,29 @@
 
 <div id="screen-arrecadacao" class="screen">
     <h3 style="margin-top:0; line-height: 1.2;"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal</h3>
+    
     <div class="card-info" style="border-left-color: var(--financas);">
-        <h4><i class="fa-solid fa-barcode"></i> Consulta de IPTU</h4>
-        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)">Emitir IPTU</a>
+        <h4><i class="fa-solid fa-barcode"></i> Guias de IPTU</h4>
+        <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Emita a 2ª via do seu carnê de IPTU.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-print"></i> Emitir IPTU</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--financas);">
+        <h4><i class="fa-solid fa-file-signature"></i> Nota Fiscal (ISS)</h4>
+        <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Acesso ao sistema de Nota Fiscal Eletrônica.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/nfse" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Portal da NFS-e</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--financas);">
+        <h4><i class="fa-solid fa-certificate"></i> Certidão Negativa</h4>
+        <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Emissão de Certidão Negativa de Débitos (CND).</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/certidao" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-file-contract"></i> Emitir Certidão</a>
+    </div>
+
+    <div class="card-info" style="border-left-color: var(--financas);">
+        <h4><i class="fa-solid fa-store"></i> Alvarás de Funcionamento</h4>
+        <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Consulta e emissão de Alvarás Municipais.</p>
+        <a href="https://pontalina.megasoftservicos.com.br/cidadao/alvaras" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-magnifying-glass"></i> Consultar Alvará</a>
     </div>
 </div>
 
@@ -576,7 +596,7 @@
     function toggleDoc(id) { let el = document.getElementById(id); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
 
     // ==========================================
-    // 1. NAVEGAÇÃO SPA E PWA (AGORA APONTANDO PARA O NOME NOVO DO SW)
+    // 1. NAVEGAÇÃO SPA E PWA 
     // ==========================================
     let historyStack = ['screen-home'];
     const btnBack = document.getElementById('btn-back'); const btnHome = document.getElementById('btn-home'); const btnAdminGeral = document.getElementById('btn-admin-geral');
@@ -587,7 +607,7 @@
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./firebase-messaging-sw.js').then(reg => { reg.onupdatefound = () => { const installingWorker = reg.installing; installingWorker.onstatechange = () => { if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); }; }; }).catch(err => console.log('Erro SW', err)); }); let refreshing = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { window.location.reload(); refreshing = true; } }); }
 
     // ==========================================
-    // 2. FIREBASE E PERMISSÃO PUSH (CÓDIGO PERFEITO)
+    // 2. FIREBASE E PERMISSÃO PUSH (O MOTOR CONSERTADO)
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
@@ -693,7 +713,7 @@
     function excluirConsulta(cpf) { if(confirm("APAGAR?")) db.ref('consultas_pedidos/' + cpf).remove(); }
 
     // ==========================================
-    // 5. LÓGICA COMPLETA DE UPA, TRIAGEM E POSTOS BÁSICOS
+    // 5. LÓGICA COMPLETA DE UPA E POSTOS BÁSICOS
     // ==========================================
     function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; }
     function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; }
