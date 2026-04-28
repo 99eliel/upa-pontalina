@@ -1,12 +1,35 @@
-// O nome do cache. Quando você fizer uma mudança GIGANTE, mude o v1 para v2, v3, etc.
-const CACHE_NAME = 'pontalina-app-v1';
+importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
-// 1. Instalação: Força o novo aplicativo a assumir o controle na mesma hora
+firebase.initializeApp({
+    apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
+    authDomain: "upa-pontalina.firebaseapp.com",
+    databaseURL: "https://upa-pontalina-default-rtdb.firebaseio.com",
+    projectId: "upa-pontalina",
+    messagingSenderId: "881228406713",
+    appId: "1:881228406713:web:4a8637dc043c8be3d52068"
+});
+
+const messaging = firebase.messaging();
+
+// Fica escutando as notificações mesmo com o app fechado
+messaging.onBackgroundMessage(function(payload) {
+  console.log('Notificação recebida em background: ', payload);
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: 'https://i.imgur.com/lUheBDA.png',
+    badge: 'https://i.imgur.com/lUheBDA.png'
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+const CACHE_NAME = 'pontalina-app-v3';
+
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
 
-// 2. Ativação: Limpa os lixos e caches antigos do celular do cidadão
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -21,25 +44,16 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// 3. Estratégia de Busca: NETWORK FIRST (Internet primeiro, Cache como plano B)
 self.addEventListener('fetch', (event) => {
-    // Ignora requisições de outras origens (como o banco do Firebase) para não dar conflito
-    if (!event.request.url.startsWith(self.location.origin)) {
-        return;
-    }
-
+    if (!event.request.url.startsWith(self.location.origin)) return;
     event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                // Se a internet funcionou e baixou a versão nova, salva uma cópia no cache
-                return caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, response.clone());
-                    return response;
-                });
-            })
-            .catch(() => {
-                // Se o cidadão estiver sem internet (offline), puxa a versão salva no celular
-                return caches.match(event.request);
-            })
+        fetch(event.request).then((response) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, response.clone());
+                return response;
+            });
+        }).catch(() => {
+            return caches.match(event.request);
+        })
     );
 });
