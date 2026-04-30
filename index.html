@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     
+    <!-- Cores e Ícones Oficiais do App -->
     <meta name="theme-color" content="#0056b3">
     <link rel="apple-touch-icon" href="https://i.imgur.com/lUheBDA.png">
     
+    <!-- Bloqueadores de Cache Severos -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -15,12 +17,15 @@
     <title>Pontalina Digital</title>
     <link rel="manifest" href="manifest.json">
     
+    <!-- Fontes e Ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase SDKs (Com Storage ativado) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
     <style>
         :root { 
@@ -75,12 +80,18 @@
         .banner-container { padding: 15px 15px 0 15px; }
         
         #global-alert { display: none; background: linear-gradient(135deg, var(--primary), #004494); color: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3); text-align: center; border-left: 5px solid var(--warning); animation: slideDown 0.4s ease; }
-        #global-alert i { font-size: 1.2rem; margin-bottom: 5px; color: var(--warning); display: block; }
+        #global-alert i.icon-principal { font-size: 1.2rem; margin-bottom: 5px; color: var(--warning); display: block; }
         #global-alert strong { font-size: 0.9rem; }
 
         #install-banner { display: none; background: linear-gradient(135deg, var(--success), #20c997); color: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2); align-items: center; justify-content: space-between; text-align: left; }
         #install-banner button { background: white; color: var(--success); border: none; padding: 8px 15px; border-radius: 20px; font-weight: 700; cursor: pointer; }
         #install-banner-ios { display: none; background: #e6f0fa; color: var(--primary); border: 1px solid #b8daff; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-size: 0.85rem; }
+
+        /* Estilo do Modal de Imagem */
+        #modal-alerta-imagem { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s ease; }
+        .modal-conteudo { background: white; border-radius: 16px; max-width: 500px; width: 100%; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: rgba(220, 53, 69, 0.9); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .screen { display: none; padding: 15px; animation: slideIn 0.3s ease; max-width: 600px; margin: auto; }
         .screen.active { display: block; }
@@ -118,7 +129,7 @@
         .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .badge-concluido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 
-        textarea, input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
+        textarea, input[type="text"], input[type="tel"], input[type="file"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; margin-bottom: 10px; font-family: 'Poppins', sans-serif; background: #fff; }
         .label-escala { font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 2px; display: block; }
         
         .dia-semana { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
@@ -147,6 +158,18 @@
 </head>
 <body>
 
+<!-- Modal de Aviso com Imagem (Pop-up) -->
+<div id="modal-alerta-imagem">
+    <div class="modal-conteudo">
+        <button onclick="fecharAlertaModal()" class="btn-fechar-modal"><i class="fa-solid fa-xmark"></i></button>
+        <img id="alerta-modal-img" src="" style="width: 100%; height: auto; display: block; max-height: 60vh; object-fit: contain; background: #000;">
+        <div style="padding: 20px; text-align: center; background: white;">
+            <p id="alerta-modal-texto" style="font-size: 1.1rem; font-weight: 600; color: var(--dark); margin-bottom: 15px;"></p>
+            <button onclick="fecharAlertaModal()" class="btn-action" style="background: #eee; color: var(--dark); width: 100%;"><i class="fa-solid fa-check"></i> Entendi, fechar aviso</button>
+        </div>
+    </div>
+</div>
+
 <header>
     <div class="header-logo-area">
         <img src="https://i.imgur.com/lUheBDA.png" alt="Prefeitura">
@@ -163,24 +186,32 @@
 </header>
 
 <div class="banner-container">
+    <!-- Caixa para pedir permissão de Notificação Push -->
     <div id="push-permission-box" style="display:none; background: linear-gradient(135deg, #0056b3, #003d82); color: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <strong><i class="fa-solid fa-bell fa-shake"></i> Fique Informado!</strong>
-        <p style="font-size: 0.85rem; margin: 8px 0;">Ative as notificações para receber alertas de vacinas, obras e comunicados da prefeitura direto no seu celular.</p>
+        <strong><i class="fa-solid fa-bell fa-shake"></i> Passo 1: Fique Informado!</strong>
+        <p style="font-size: 0.85rem; margin: 8px 0;">Ative as notificações para receber alertas de vacinas, obras e comunicados. (Necessário para instalar o app).</p>
         <button onclick="solicitarPermissaoNotificacao()" style="background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%;">Ativar Notificações</button>
     </div>
 
-    <div id="global-alert">
-        <i class="fa-solid fa-bell fa-shake"></i>
-        <strong id="global-alert-text">Carregando aviso...</strong>
-    </div>
-
+    <!-- Banner de Instalação -->
     <div id="install-banner">
         <div>
-            <strong style="display: block; font-size: 1.05rem;"><i class="fa-solid fa-mobile-screen-button"></i> Instalar App</strong>
-            <span style="font-size: 0.8rem; opacity: 0.9;">Acesso rápido aos serviços</span>
+            <strong style="display: block; font-size: 1.05rem;"><i class="fa-solid fa-mobile-screen-button"></i> Passo 2: Instalar App</strong>
+            <span style="font-size: 0.8rem; opacity: 0.9;">Adicione à sua tela inicial</span>
         </div>
-        <button id="btn-instalar-pwa">Instalar</button>
+        <button id="btn-instalar-pwa" onclick="instalarApp()">Instalar</button>
     </div>
+
+    <!-- Banner Global de Alertas (Texto Puro e Botão da Imagem) -->
+    <div id="global-alert">
+        <i class="fa-solid fa-bell fa-shake icon-principal"></i>
+        <strong id="global-alert-text">Carregando aviso...</strong>
+        <!-- Esse botão só aparece se houver uma imagem cadastrada -->
+        <button id="btn-ver-cartaz" onclick="abrirAlertaModal()" style="display:none; margin: 10px auto 0; background: white; color: var(--primary); border: none; padding: 6px 18px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.85rem; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <i class="fa-regular fa-image" style="margin:0; font-size: 0.9rem; color: var(--primary); display: inline-block;"></i> Ver Cartaz
+        </button>
+    </div>
+
     <div id="install-banner-ios">
         <i class="fa-brands fa-apple" style="font-size: 1.5rem; margin-bottom: 5px; display: block;"></i>
         Para instalar no iPhone, toque no ícone de <b>Compartilhar</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> e selecione <b>"Adicionar à Tela de Início"</b>.
@@ -190,10 +221,16 @@
 <div id="screen-admin-geral" class="screen">
     <h3 style="margin-top:0;"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Painel Geral</h3>
     <div class="card-info" style="border-left-color: var(--warning);">
-        <h4><i class="fa-solid fa-bullhorn"></i> Notificação de Banner</h4>
+        <h4><i class="fa-solid fa-bullhorn"></i> Central de Avisos</h4>
+        <span class="label-escala">Mensagem do Aviso (Obrigatório):</span>
         <textarea id="input-global-aviso" rows="3" placeholder="Ex: Campanha de vacinação amanhã!"></textarea>
+        
+        <span class="label-escala" style="margin-top: 10px;"><i class="fa-regular fa-image"></i> Adicionar Imagem (Opcional):</span>
+        <input type="file" id="input-global-imagem" accept="image/*">
+        <p style="font-size: 0.75rem; color: var(--gray); margin-top: -5px;">Se selecionar uma imagem, o aviso abrirá como um Pop-up na tela do cidadão.</p>
+
         <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn-action" style="background:var(--success); color:white; margin-top:0;" onclick="salvarAvisoGlobal(true)"><i class="fa-solid fa-bell"></i> Ligar Aviso</button>
+            <button class="btn-action" id="btn-ligar-aviso" style="background:var(--success); color:white; margin-top:0;" onclick="salvarAvisoGlobal(true)"><i class="fa-solid fa-bell"></i> Ligar Aviso</button>
             <button class="btn-action" style="background:var(--danger); color:white; margin-top:0;" onclick="salvarAvisoGlobal(false)"><i class="fa-solid fa-bell-slash"></i> Desligar</button>
         </div>
     </div>
@@ -553,25 +590,21 @@
 
 <div id="screen-arrecadacao" class="screen">
     <h3 style="margin-top:0; line-height: 1.2;"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--financas)"></i> Arrecadação Municipal</h3>
-    
     <div class="card-info" style="border-left-color: var(--financas);">
         <h4><i class="fa-solid fa-barcode"></i> Guias de IPTU</h4>
         <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Emita a 2ª via do seu carnê de IPTU.</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/guias-iptu" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-print"></i> Emitir IPTU</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--financas);">
         <h4><i class="fa-solid fa-file-signature"></i> Nota Fiscal (ISS)</h4>
         <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Acesso ao sistema de Nota Fiscal Eletrônica.</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/nfse" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-arrow-up-right-from-square"></i> Portal da NFS-e</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--financas);">
         <h4><i class="fa-solid fa-certificate"></i> Certidão Negativa</h4>
         <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Emissão de Certidão Negativa de Débitos (CND).</p>
         <a href="https://pontalina.megasoftservicos.com.br/cidadao/certidao" target="_blank" class="btn-action btn-link" style="background:var(--financas)"><i class="fa-solid fa-file-contract"></i> Emitir Certidão</a>
     </div>
-
     <div class="card-info" style="border-left-color: var(--financas);">
         <h4><i class="fa-solid fa-store"></i> Alvarás de Funcionamento</h4>
         <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0;">Consulta e emissão de Alvarás Municipais.</p>
@@ -589,14 +622,66 @@
 
 <script>
     // ==========================================
-    // 0. ADMIN GERAL E TOGGLE
+    // 0. ADMIN GERAL E UPLOAD DE IMAGEM
     // ==========================================
     function abrirAdminGeral() { let pass = prompt("Senha Mestre:"); if(pass !== "000") return alert("Senha Incorreta!"); openScreen('screen-admin-geral'); }
-    function salvarAvisoGlobal(ativar) { let texto = document.getElementById('input-global-aviso').value; if(ativar && !texto) return alert("Digite o texto!"); db.ref('sistema_global').update({ avisoAtivo: ativar, avisoTexto: texto }); }
+    
+    async function salvarAvisoGlobal(ativar) { 
+        let texto = document.getElementById('input-global-aviso').value; 
+        let fileInput = document.getElementById('input-global-imagem');
+        let file = fileInput.files[0];
+        
+        if(ativar && !texto) return alert("Digite o texto do aviso!"); 
+
+        let btnState = document.getElementById('btn-ligar-aviso');
+        
+        let updateData = { avisoAtivo: ativar, avisoTexto: texto };
+
+        // Se a pessoa ativou o aviso e mandou uma imagem junto
+        if (ativar && file) {
+            btnState.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Enviando...";
+            try {
+                // Sobe a imagem pro Firebase Storage
+                const storageRef = firebase.storage().ref('avisos_prefeitura/' + Date.now() + '_' + file.name);
+                await storageRef.put(file);
+                // Pega o link publico da imagem
+                updateData.avisoImagem = await storageRef.getDownloadURL();
+            } catch (e) {
+                console.error("Erro no Storage:", e);
+                alert("Erro ao enviar a imagem. Verifique se as Regras do Storage estão públicas.");
+                btnState.innerHTML = "<i class='fa-solid fa-bell'></i> Ligar Aviso";
+                return;
+            }
+        } else if (!ativar) {
+            // Se desligar, limpa a imagem do banco
+            updateData.avisoImagem = ""; 
+            if(fileInput) fileInput.value = ""; 
+        }
+
+        // Salva tudo no Realtime Database
+        db.ref('sistema_global').update(updateData).then(() => {
+            btnState.innerHTML = "<i class='fa-solid fa-bell'></i> Ligar Aviso";
+            alert(ativar ? "Aviso enviado para a cidade!" : "Aviso desligado.");
+        });
+    }
+    
     function toggleDoc(id) { let el = document.getElementById(id); el.style.display = (el.style.display === 'none') ? 'block' : 'none'; }
 
+    // Fechar Modal de Imagem e Memorizar
+    function fecharAlertaModal() {
+        document.getElementById('modal-alerta-imagem').style.display = 'none';
+        // Salva no celular do cara que ele já viu ESSE aviso específico
+        let textoAtual = document.getElementById('alerta-modal-texto').innerText;
+        localStorage.setItem('ultimoAvisoVisto', textoAtual);
+    }
+    
+    // Função para abrir o cartaz manualmente (Novidade)
+    function abrirAlertaModal() {
+        document.getElementById('modal-alerta-imagem').style.display = 'flex';
+    }
+
     // ==========================================
-    // 1. NAVEGAÇÃO SPA E PWA 
+    // 1. NAVEGAÇÃO SPA E INSTALAÇÃO
     // ==========================================
     let historyStack = ['screen-home'];
     const btnBack = document.getElementById('btn-back'); const btnHome = document.getElementById('btn-home'); const btnAdminGeral = document.getElementById('btn-admin-geral');
@@ -604,16 +689,21 @@
     function goBack() { if (historyStack.length > 1) { historyStack.pop(); let previous = historyStack[historyStack.length - 1]; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(previous).classList.add('active'); window.scrollTo(0, 0); if (previous === 'screen-home') { btnBack.style.display = 'none'; btnHome.style.display = 'none'; btnAdminGeral.classList.remove('nav-btn-hidden'); } } }
     function goHome() { openScreen('screen-home'); }
 
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if (Notification.permission === 'granted') { document.getElementById('install-banner').style.display = 'flex'; } });
+    function instalarApp() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') { document.getElementById('install-banner').style.display = 'none'; } deferredPrompt = null; }); } }
+
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./firebase-messaging-sw.js').then(reg => { reg.onupdatefound = () => { const installingWorker = reg.installing; installingWorker.onstatechange = () => { if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); }; }; }).catch(err => console.log('Erro SW', err)); }); let refreshing = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { window.location.reload(); refreshing = true; } }); }
 
     // ==========================================
-    // 2. FIREBASE E PERMISSÃO PUSH (O MOTOR CONSERTADO)
+    // 2. FIREBASE CORE, PUSH E EXIBIÇÃO DO AVISO
     // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyAnESxznzZ7CC2QVevYNEYfjysMEzYkfNA",
         authDomain: "upa-pontalina.firebaseapp.com",
         databaseURL: "https://upa-pontalina-default-rtdb.firebaseio.com",
         projectId: "upa-pontalina",
+        storageBucket: "upa-pontalina.appspot.com", 
         messagingSenderId: "881228406713",
         appId: "1:881228406713:web:4a8637dc043c8be3d52068"
     };
@@ -623,68 +713,64 @@
     const messaging = firebase.messaging();
     const VAPID_KEY = "BL0w6zrOC-dpNuVMU_aAejqLX2j16WYImJC6FCi13w_18IBl8e3t0HKqr2C2yFXFAt2O6nUJKAW8oPqPH2yxHr4";
 
-    if ("Notification" in window) { if (Notification.permission === "default") { document.getElementById('push-permission-box').style.display = 'block'; } }
+    if ("Notification" in window) { if (Notification.permission === "default") { document.getElementById('push-permission-box').style.display = 'block'; } else if (Notification.permission === "granted") { if(deferredPrompt) document.getElementById('install-banner').style.display = 'flex'; } }
 
-    function solicitarPermissaoNotificacao() {
-        Notification.requestPermission().then((permission) => {
-            if (permission === 'granted') {
-                document.getElementById('push-permission-box').style.display = 'none';
-                navigator.serviceWorker.ready.then((registration) => {
-                    messaging.getToken({ 
-                        vapidKey: VAPID_KEY,
-                        serviceWorkerRegistration: registration 
-                    }).then((currentToken) => {
-                        if (currentToken) {
-                            db.ref('fcm_tokens/' + currentToken).set({ ativo: true, dataCadastro: new Date().toISOString(), plataforma: navigator.platform });
-                            const banner = document.getElementById('global-alert');
-                            document.getElementById('global-alert-text').innerText = "Notificações ativadas com sucesso!";
-                            banner.style.display = 'block'; banner.style.background = 'linear-gradient(135deg, var(--success), #20c997)';
-                            setTimeout(() => { banner.style.display = 'none'; }, 4000);
-                        }
-                    }).catch((err) => { console.error('Erro FCM:', err); });
-                });
-            } else { document.getElementById('push-permission-box').style.display = 'none'; }
-        });
-    }
+    function solicitarPermissaoNotificacao() { Notification.requestPermission().then((permission) => { if (permission === 'granted') { document.getElementById('push-permission-box').style.display = 'none'; if(deferredPrompt) { document.getElementById('install-banner').style.display = 'flex'; } navigator.serviceWorker.ready.then((registration) => { messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: registration }).then((currentToken) => { if (currentToken) { db.ref('fcm_tokens/' + currentToken).set({ ativo: true, dataCadastro: new Date().toISOString(), plataforma: navigator.platform }); const banner = document.getElementById('global-alert'); document.getElementById('global-alert-text').innerText = "Notificações ativadas! Agora instale o App abaixo."; banner.style.display = 'block'; banner.style.background = 'linear-gradient(135deg, var(--success), #20c997)'; setTimeout(() => { banner.style.display = 'none'; }, 4000); } }).catch((err) => { console.error('Erro FCM:', err); }); }); } else { document.getElementById('push-permission-box').style.display = 'none'; } }); }
 
     messaging.onMessage((payload) => { 
-        console.log('Mensagem Foreground:', payload);
         const banner = document.getElementById('global-alert');
         document.getElementById('global-alert-text').innerText = "Atenção: " + payload.notification.body;
-        banner.style.display = 'block';
-        banner.style.background = 'linear-gradient(135deg, var(--primary), #004494)';
+        banner.style.display = 'block'; banner.style.background = 'linear-gradient(135deg, var(--primary), #004494)';
+        if (Notification.permission === 'granted') { navigator.serviceWorker.ready.then(function(registration) { registration.showNotification(payload.notification.title || 'Prefeitura de Pontalina', { body: payload.notification.body, icon: 'https://i.imgur.com/lUheBDA.png', vibrate: [200, 100, 200, 100, 200] }); }); }
+    });
+
+    // Lógica inteligente para mostrar Imagem ou Texto (Atualizada com o botão "Ver Cartaz")
+    db.ref('sistema_global').on('value', (snapshot) => {
+        const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "", avisoImagem: "" };
+        const banner = document.getElementById('global-alert'); 
+        const modal = document.getElementById('modal-alerta-imagem');
+        const inputTexto = document.getElementById('input-global-aviso');
+        const btnCartaz = document.getElementById('btn-ver-cartaz');
         
-        if (Notification.permission === 'granted') {
-            navigator.serviceWorker.ready.then(function(registration) {
-                registration.showNotification(payload.notification.title || 'Prefeitura de Pontalina', {
-                    body: payload.notification.body,
-                    icon: 'https://i.imgur.com/lUheBDA.png',
-                    vibrate: [200, 100, 200, 100, 200]
-                });
-            });
+        // Atualiza painel admin
+        if(inputTexto) inputTexto.value = data.avisoTexto;
+        
+        if(data.avisoAtivo && data.avisoTexto) { 
+            // O banner de texto vai ficar SEMPRE visível quando o alerta estiver ligado
+            document.getElementById('global-alert-text').innerText = data.avisoTexto; 
+            banner.style.display = 'block'; 
+
+            if(data.avisoImagem) {
+                // Se tiver imagem, mostra o botão "Ver Cartaz" no banner
+                btnCartaz.style.display = 'flex';
+                document.getElementById('alerta-modal-img').src = data.avisoImagem;
+                document.getElementById('alerta-modal-texto').innerText = data.avisoTexto;
+                
+                let ultimoVisto = localStorage.getItem('ultimoAvisoVisto');
+                // Só abre o popup automaticamente se a pessoa ainda não leu
+                if (ultimoVisto !== data.avisoTexto) {
+                    modal.style.display = 'flex';
+                } else {
+                    modal.style.display = 'none';
+                }
+            } else {
+                // Se NÃO tem imagem
+                btnCartaz.style.display = 'none';
+                modal.style.display = 'none';
+            }
+        } else { 
+            banner.style.display = 'none'; 
+            modal.style.display = 'none';
         }
     });
 
-    db.ref('sistema_global').on('value', (snapshot) => {
-        const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "" };
-        const banner = document.getElementById('global-alert'); const bannerTexto = document.getElementById('global-alert-text'); const inputTexto = document.getElementById('input-global-aviso');
-        if(inputTexto) inputTexto.value = data.avisoTexto;
-        if(data.avisoAtivo && data.avisoTexto) { bannerTexto.innerText = data.avisoTexto; banner.style.display = 'block'; } else { banner.style.display = 'none'; }
-    });
-
     // ==========================================
-    // 3. LÓGICA COMPLETA DO CETEC
+    // 3. LÓGICA COMPLETA DO CETEC E DEMAIS MÓDULOS
     // ==========================================
     let cacheCursosCetec = []; let cacheInscricoesCetec = {}; let cpfAtualCetec = "";
     function mudarAbaCetec(idAba) { if(idAba === 'cetec-admin') { let pass = prompt("Senha Admin CETEC:"); if(pass !== "789") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-cetec .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-cetec .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'cetec-publico') document.getElementById('btn-cetec-pub').classList.add('active'); if(idAba === 'cetec-admin') document.getElementById('btn-cetec-adm').classList.add('active'); }
     db.ref('cetec_cursos').on('value', (snapshot) => { cacheCursosCetec = snapshot.val() || []; let options = '<option value="">Selecione um curso...</option>'; cacheCursosCetec.forEach(curso => { options += `<option value="${curso}">${curso}</option>`; }); document.getElementById('cetec-curso-select').innerHTML = options; });
-    db.ref('cetec_inscricoes').on('value', (snapshot) => {
-        cacheInscricoesCetec = snapshot.val() || {}; let htmlLista = '';
-        for(let cpf in cacheInscricoesCetec) {
-            let info = cacheInscricoesCetec[cpf]; let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`); let badgeStatus = info.status === 'Realizada' ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' : '<span class="badge badge-pendente">Aguardando Confirmação</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp</a></div>`;
-        }
-        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>"; document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista;
-    });
+    db.ref('cetec_inscricoes').on('value', (snapshot) => { cacheInscricoesCetec = snapshot.val() || {}; let htmlLista = ''; for(let cpf in cacheInscricoesCetec) { let info = cacheInscricoesCetec[cpf]; let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é do CETEC. Sobre a sua inscrição no curso de ${info.curso}...`); let badgeStatus = info.status === 'Realizada' ? '<span class="badge badge-concluido">Realizada / Matriculado</span>' : '<span class="badge badge-pendente">Aguardando Confirmação</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--cetec); font-size:0.85rem; font-weight:bold;">${info.curso}</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusCetec('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarInscritoCetec('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirInscritoCetec('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Aluno no WhatsApp</a></div>`; } if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum inscrito no momento.</p>"; document.getElementById('cetec-lista-inscritos').innerHTML = htmlLista; });
     function buscarCpfCetec() { let inputCpf = document.getElementById('cetec-cpf-busca').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualCetec = inputCpf; document.getElementById('cetec-passo1').style.display = 'none'; if(cacheInscricoesCetec[cpfAtualCetec]) { let dadosUser = cacheInscricoesCetec[cpfAtualCetec]; let txtStatus = dadosUser.status === 'Realizada' ? "<span style='color:var(--success)'>REALIZADA (Aprovada)</span>" : "<span style='color:var(--warning)'>PENDENTE</span>"; document.getElementById('cetec-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Sua inscrição para o curso de <b>${dadosUser.curso}</b> foi localizada.<br><br>Status Atual: <b>${txtStatus}</b>`; document.getElementById('cetec-passo2-existe').style.display = 'block'; } else { if(cacheCursosCetec.length === 0) { alert("Nenhum curso aberto."); voltarBuscaCetec(); return; } document.getElementById('cetec-passo2-novo').style.display = 'block'; } }
     function voltarBuscaCetec() { document.getElementById('cetec-passo2-novo').style.display = 'none'; document.getElementById('cetec-passo2-existe').style.display = 'none'; document.getElementById('cetec-passo1').style.display = 'block'; document.getElementById('cetec-cpf-busca').value = ''; cpfAtualCetec = ""; }
     function salvarInscricaoCetec() { let nome = document.getElementById('cetec-nome').value; let zap = document.getElementById('cetec-zap').value; let curso = document.getElementById('cetec-curso-select').value; if(!nome || !zap || !curso) return alert("Preencha todos os campos!"); db.ref('cetec_inscricoes/' + cpfAtualCetec).set({ nome: nome, zap: zap, curso: curso, status: "Pendente" }); alert("Inscrição realizada!"); voltarBuscaCetec(); }
@@ -693,17 +779,10 @@
     function editarInscritoCetec(cpf, nomeAtual, zapAtual) { let novoNome = prompt("Editar Nome:", nomeAtual); if(!novoNome) return; let novoZap = prompt("Editar Celular:", zapAtual); if(!novoZap) return; db.ref('cetec_inscricoes/' + cpf).update({ nome: novoNome, zap: novoZap }); }
     function excluirInscritoCetec(cpf) { if(confirm("APAGAR inscrição?")) db.ref('cetec_inscricoes/' + cpf).remove(); }
 
-    // ==========================================
-    // 4. LÓGICA COMPLETA DE CONSULTAS
-    // ==========================================
     let cacheConsultas = {}; let cpfAtualConsulta = "";
     function mudarAbaConsulta(idAba) { if(idAba === 'consulta-admin') { let pass = prompt("Senha da Recepção:"); if(pass !== "147") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-consulta .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-consulta .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'consulta-publico') document.getElementById('btn-consulta-pub').classList.add('active'); if(idAba === 'consulta-admin') document.getElementById('btn-consulta-adm').classList.add('active'); }
     db.ref('consultas_pedidos').on('value', (snapshot) => { cacheConsultas = snapshot.val() || {}; renderListaConsultas(); });
-    function renderListaConsultas() {
-        const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS'; let htmlLista = '';
-        for(let cpf in cacheConsultas) { let info = cacheConsultas[cpf]; if(filtro === 'TODOS' || info.posto === filtro) { let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR'); let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}...`); let badgeStatus = info.status === 'Concluída' ? '<span class="badge badge-concluido">Agendada / Concluída</span>' : '<span class="badge badge-pendente">Aguardando Recepção</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br><span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp</a></div>`; } }
-        if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum pedido encontrado.</p>"; document.getElementById('consulta-lista-pedidos').innerHTML = htmlLista;
-    }
+    function renderListaConsultas() { const filtro = document.getElementById('admin-filtro-posto') ? document.getElementById('admin-filtro-posto').value : 'TODOS'; let htmlLista = ''; for(let cpf in cacheConsultas) { let info = cacheConsultas[cpf]; if(filtro === 'TODOS' || info.posto === filtro) { let dataPedido = new Date(info.timestamp).toLocaleDateString('pt-BR'); let zapLimpo = info.zap.replace(/\D/g, ''); if(zapLimpo.length <= 11) zapLimpo = '55' + zapLimpo; let msgPadrao = encodeURIComponent(`Olá ${info.nome}, aqui é da recepção do ${info.posto}...`); let badgeStatus = info.status === 'Concluída' ? '<span class="badge badge-concluido">Agendada / Concluída</span>' : '<span class="badge badge-pendente">Aguardando Recepção</span>'; htmlLista += `<div style="border-bottom:1px solid #eee; padding:15px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><strong style="color:var(--dark); font-size:1.05rem;">${info.nome}</strong>${badgeStatus}</div><span style="color:var(--gray); font-size:0.85rem;">CPF: ${cpf} | Tel: <b>${info.zap}</b></span><br><span style="color:var(--saude); font-size:0.85rem; font-weight:bold;">${info.posto}</span><br><span style="color:var(--warning); font-size:0.85rem; display:inline-block; margin-top:5px;"><i class="fa-solid fa-tag"></i> ${info.motivo} (Pedido em ${dataPedido})</span><div class="btn-group-small"><button class="btn-small" style="background:var(--success); color:white;" onclick="marcarStatusConsulta('${cpf}', '${info.status}')"><i class="fa-solid fa-check"></i> Concluir</button><button class="btn-small" style="background:var(--primary); color:white;" onclick="editarConsulta('${cpf}', '${info.nome}', '${info.zap}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-small" style="background:var(--danger); color:white;" onclick="excluirConsulta('${cpf}')"><i class="fa-solid fa-trash"></i></button></div><a href="https://wa.me/${zapLimpo}?text=${msgPadrao}" target="_blank" class="btn-action btn-whatsapp" style="margin-top:10px; padding:8px; font-size:0.85rem; width:100%;"><i class="fa-brands fa-whatsapp"></i> Chamar Paciente no WhatsApp</a></div>`; } } if(!htmlLista) htmlLista = "<p style='color:var(--gray);'>Nenhum pedido encontrado.</p>"; document.getElementById('consulta-lista-pedidos').innerHTML = htmlLista; }
     function buscarCpfConsulta() { let inputCpf = document.getElementById('consulta-cpf').value.replace(/\D/g, ''); if(inputCpf.length < 11) return alert("CPF incompleto."); cpfAtualConsulta = inputCpf; document.getElementById('consulta-passo1').style.display = 'none'; if(cacheConsultas[cpfAtualConsulta]) { let dadosUser = cacheConsultas[cpfAtualConsulta]; let txtStatus = dadosUser.status === 'Concluída' ? "<span style='color:var(--success)'>AGENDADA COM SUCESSO</span>" : "<span style='color:var(--warning)'>PENDENTE</span>"; document.getElementById('consulta-resultado-texto').innerHTML = `Olá, <b>${dadosUser.nome}</b>!<br><br>Status do Pedido: <b>${txtStatus}</b>`; document.getElementById('consulta-passo2-existe').style.display = 'block'; } else { document.getElementById('consulta-passo2-novo').style.display = 'block'; } }
     function voltarBuscaConsulta() { document.getElementById('consulta-passo2-novo').style.display = 'none'; document.getElementById('consulta-passo2-existe').style.display = 'none'; document.getElementById('consulta-passo1').style.display = 'block'; document.getElementById('consulta-cpf').value = ''; cpfAtualConsulta = ""; }
     function salvarConsulta() { let nome = document.getElementById('consulta-nome').value; let zap = document.getElementById('consulta-zap').value; let posto = document.getElementById('consulta-posto-select').value; let motivo = document.getElementById('consulta-motivo-select').value; if(!nome || !zap || !posto || !motivo) return alert("Preencha todos os campos!"); db.ref('consultas_pedidos/' + cpfAtualConsulta).set({ nome: nome, zap: zap, posto: posto, motivo: motivo, status: "Pendente", timestamp: new Date().toISOString() }); alert("Enviado com sucesso!"); voltarBuscaConsulta(); }
@@ -712,29 +791,13 @@
     function editarConsulta(cpf, nomeAtual, zapAtual) { let novoNome = prompt("Nome:", nomeAtual); if(!novoNome) return; let novoZap = prompt("Celular:", zapAtual); if(!novoZap) return; db.ref('consultas_pedidos/' + cpf).update({ nome: novoNome, zap: novoZap }); }
     function excluirConsulta(cpf) { if(confirm("APAGAR?")) db.ref('consultas_pedidos/' + cpf).remove(); }
 
-    // ==========================================
-    // 5. LÓGICA COMPLETA DE UPA E POSTOS BÁSICOS
-    // ==========================================
-    function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; }
-    function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; }
-    function reiniciarTriagem() { document.getElementById('resultado-upa').style.display = 'none'; document.getElementById('resultado-posto').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; document.getElementById('triagem-q1').style.display = 'block'; }
-
+    function proximaPergunta(idIdPergunta) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById(idIdPergunta).style.display = 'block'; } function resultadoTriagem(resultado) { document.getElementById('triagem-q1').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; if(resultado === 'upa') document.getElementById('resultado-upa').style.display = 'block'; else document.getElementById('resultado-posto').style.display = 'block'; } function reiniciarTriagem() { document.getElementById('resultado-upa').style.display = 'none'; document.getElementById('resultado-posto').style.display = 'none'; document.getElementById('triagem-q2').style.display = 'none'; document.getElementById('triagem-q1').style.display = 'block'; }
     function mudarAbaUpa(idAba) { if(idAba === 'upa-admin') { let pass = prompt("Senha da UPA:"); if(pass !== "123") return alert("Senha Incorreta."); } document.querySelectorAll('#screen-upa .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-upa .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'upa-publico') document.getElementById('btn-upa-pub').classList.add('active'); if(idAba === 'upa-escala') document.getElementById('btn-upa-esc').classList.add('active'); if(idAba === 'upa-admin') document.getElementById('btn-upa-adm').classList.add('active'); }
     let currentPacientes = 0; let salaCritica = false;
-    db.ref('upa_status').on('value', (snapshot) => {
-        const data = snapshot.val() || {}; currentPacientes = data.pacientes || 0; salaCritica = data.salaVermelha || false;
-        document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0');
-        let minutos = currentPacientes * 15; document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`;
-        document.getElementById('display-clinico').innerText = data.clinico || "Não informado"; document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado"; document.getElementById('input-clinico').value = data.clinico || ""; document.getElementById('input-pediatra').value = data.pediatra || "";
-        const escala = data.escala || { seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia", qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana" };
-        document.getElementById('pub-seg').innerText = escala.seg; document.getElementById('pub-ter').innerText = escala.ter; document.getElementById('pub-qua').innerText = escala.qua; document.getElementById('pub-qui').innerText = escala.qui; document.getElementById('pub-sex').innerText = escala.sex; document.getElementById('pub-sab').innerText = escala.sab; document.getElementById('pub-dom').innerText = escala.dom;
-        document.getElementById('edit-seg').value = escala.seg; document.getElementById('edit-ter').value = escala.ter; document.getElementById('edit-qua').value = escala.qua; document.getElementById('edit-qui').value = escala.qui; document.getElementById('edit-sex').value = escala.sex; document.getElementById('edit-sab').value = escala.sab; document.getElementById('edit-dom').value = escala.dom;
-        const divSala = document.getElementById('status-sala'); const btnSala = document.getElementById('btn-sala-vermelha');
-        if(salaCritica) { divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO"; divSala.className = "sala-vermelha-status status-critico"; btnSala.innerHTML = "Normalizar Sala Vermelha"; btnSala.style.background = "var(--success)"; } else { divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL"; divSala.className = "sala-vermelha-status status-ok"; btnSala.innerHTML = "Alertar Sala Vermelha"; btnSala.style.background = "var(--danger)"; }
-    });
+    db.ref('upa_status').on('value', (snapshot) => { const data = snapshot.val() || {}; currentPacientes = data.pacientes || 0; salaCritica = data.salaVermelha || false; document.getElementById('val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); document.getElementById('admin-val-pacientes').innerText = currentPacientes.toString().padStart(2, '0'); let minutos = currentPacientes * 15; document.getElementById('val-tempo').innerHTML = `<i class="fa-regular fa-clock"></i> Espera est.: <b>~${minutos} min</b>`; document.getElementById('display-clinico').innerText = data.clinico || "Não informado"; document.getElementById('display-pediatra').innerText = data.pediatra || "Não informado"; document.getElementById('input-clinico').value = data.clinico || ""; document.getElementById('input-pediatra').value = data.pediatra || ""; const escala = data.escala || { seg: "Dr. André / Dra. Carla", ter: "Dra. Beatriz / Dr. Marcos", qua: "Dr. Carlos / Dra. Julia", qui: "Dra. Daniela / Dr. Paulo", sex: "Dr. Eduardo / Dra. Ana", sab: "Plantão Fim de Semana", dom: "Plantão Fim de Semana" }; document.getElementById('pub-seg').innerText = escala.seg; document.getElementById('pub-ter').innerText = escala.ter; document.getElementById('pub-qua').innerText = escala.qua; document.getElementById('pub-qui').innerText = escala.qui; document.getElementById('pub-sex').innerText = escala.sex; document.getElementById('pub-sab').innerText = escala.sab; document.getElementById('pub-dom').innerText = escala.dom; document.getElementById('edit-seg').value = escala.seg; document.getElementById('edit-ter').value = escala.ter; document.getElementById('edit-qua').value = escala.qua; document.getElementById('edit-qui').value = escala.qui; document.getElementById('edit-sex').value = escala.sex; document.getElementById('edit-sab').value = escala.sab; document.getElementById('edit-dom').value = escala.dom; const divSala = document.getElementById('status-sala'); const btnSala = document.getElementById('btn-sala-vermelha'); if(salaCritica) { divSala.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> SALA VERMELHA EM USO"; divSala.className = "sala-vermelha-status status-critico"; btnSala.innerHTML = "Normalizar Sala Vermelha"; btnSala.style.background = "var(--success)"; } else { divSala.innerHTML = "<i class='fa-solid fa-heart-pulse'></i> SALA VERMELHA: DISPONÍVEL"; divSala.className = "sala-vermelha-status status-ok"; btnSala.innerHTML = "Alertar Sala Vermelha"; btnSala.style.background = "var(--danger)"; } });
     function modificarPacientes(val) { db.ref('upa_status').update({ pacientes: Math.max(0, currentPacientes + val) }); } function toggleSalaVermelha() { db.ref('upa_status').update({ salaVermelha: !salaCritica }); } function salvarMedicosUpa() { db.ref('upa_status').update({ clinico: document.getElementById('input-clinico').value, pediatra: document.getElementById('input-pediatra').value }); alert("Plantão atualizado!"); } function salvarEscalaSemana() { db.ref('upa_status/escala').update({ seg: document.getElementById('edit-seg').value, ter: document.getElementById('edit-ter').value, qua: document.getElementById('edit-qua').value, qui: document.getElementById('edit-qui').value, sex: document.getElementById('edit-sex').value, sab: document.getElementById('edit-sab').value, dom: document.getElementById('edit-dom').value }); alert("Escala Semanal atualizada!"); }
 
-    const infoEstaticaPostos = { esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf302: { nome: "ESF 302 - Santa Rita de Cássia", zap: "556434711147", mapa: "https://maps.app.goo.gl/LCTP73ZZXuy7SzPa9" }, esf303: { nome: "ESF 303 - Dr. Antônio Carlos Vasconcelos", zap: "5564992742306", mapa: "https://maps.app.goo.gl/xZ8dhCzXR6QzAWCk9" }, esf304: { nome: "ESF 304 - Lázaro Teodoro de Barros", zap: "5564992385727", mapa: "https://maps.app.goo.gl/7GR3HgboKoCXu1tw6" }, esf305: { nome: "ESF 305 - Aluísio Borges", zap: "5564992346304", mapa: "https://maps.app.goo.gl/T6G1fx4Jik5PR5J27" } };
+    const infoEstaticaPostos = { esf201: { nome: "ESF 201 - Rural", zap: "5564992034010", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf301: { nome: "ESF 301 - Jardim Frei Walter", zap: "5564993261482", mapa: "https://maps.app.goo.gl/FYJEvL94AJ7wTreH6" }, esf302: { nome: "ESF 302 - Santa Rita de Cássia", zap: "556434711147", mapa: "https://maps.app.goo.gl/LCTP73ZZXuy7SzPa9" }, esf303: { nome: "ESF 303 - Dr. Antônio Carlos", zap: "5564992742306", mapa: "https://maps.app.goo.gl/xZ8dhCzXR6QzAWCk9" }, esf304: { nome: "ESF 304 - Lázaro Teodoro de Barros", zap: "5564992385727", mapa: "https://maps.app.goo.gl/7GR3HgboKoCXu1tw6" }, esf305: { nome: "ESF 305 - Aluísio Borges", zap: "5564992346304", mapa: "https://maps.app.goo.gl/T6G1fx4Jik5PR5J27" } };
     let cachePostos = {};
     function mudarAbaPostos(idAba) { if(idAba === 'postos-admin') { let pass = prompt("Senha da Atenção Básica:"); if(pass !== "456") return alert("Senha Incorreta."); carregarDadosPostoAdmin(); } document.querySelectorAll('#screen-atencao-basica .sub-aba').forEach(c => c.classList.remove('active')); document.querySelectorAll('#screen-atencao-basica .sub-nav button').forEach(b => b.classList.remove('active')); document.getElementById(idAba).classList.add('active'); if(idAba === 'postos-publico') document.getElementById('btn-postos-pub').classList.add('active'); if(idAba === 'postos-admin') document.getElementById('btn-postos-adm').classList.add('active'); }
     db.ref('postos_status').on('value', (snapshot) => { const data = snapshot.val() || {}; cachePostos = data; let htmlLista = ''; for (const [id, info] of Object.entries(infoEstaticaPostos)) { const dinamico = data[id] || { medico: "Médico não informado", horario: "07h às 17h" }; htmlLista += `<div class="card-info"><h4>${info.nome}</h4><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> ${dinamico.horario}</p><p style="margin:5px 0; font-size:0.9rem;"><i class="fa-solid fa-user-doctor"></i> <strong>Médico:</strong> ${dinamico.medico}</p><div style="display:flex; gap:10px; margin-top:15px;"><a href="https://wa.me/${info.zap}?text=Olá, vim pelo aplicativo da Prefeitura e preciso de informações." target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Falar</a><a href="${info.mapa}" target="_blank" class="btn-action btn-map"><i class="fa-solid fa-location-dot"></i> Rota</a></div></div>`; } document.getElementById('lista-postos-publico').innerHTML = htmlLista; });
