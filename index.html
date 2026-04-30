@@ -675,7 +675,7 @@
         localStorage.setItem('ultimoAvisoVisto', textoAtual);
     }
     
-    // Função para abrir o cartaz manualmente (Novidade)
+    // Função para abrir o cartaz manualmente
     function abrirAlertaModal() {
         document.getElementById('modal-alerta-imagem').style.display = 'flex';
     }
@@ -703,7 +703,7 @@
         authDomain: "upa-pontalina.firebaseapp.com",
         databaseURL: "https://upa-pontalina-default-rtdb.firebaseio.com",
         projectId: "upa-pontalina",
-        storageBucket: "upa-pontalina.appspot.com", 
+        storageBucket: "upa-pontalina.firebasestorage.app", // O LINK CORRIGIDO AQUI!
         messagingSenderId: "881228406713",
         appId: "1:881228406713:web:4a8637dc043c8be3d52068"
     };
@@ -724,7 +724,7 @@
         if (Notification.permission === 'granted') { navigator.serviceWorker.ready.then(function(registration) { registration.showNotification(payload.notification.title || 'Prefeitura de Pontalina', { body: payload.notification.body, icon: 'https://i.imgur.com/lUheBDA.png', vibrate: [200, 100, 200, 100, 200] }); }); }
     });
 
-    // Lógica inteligente para mostrar Imagem ou Texto (Atualizada com o botão "Ver Cartaz")
+    // Lógica inteligente para mostrar Imagem ou Texto
     db.ref('sistema_global').on('value', (snapshot) => {
         const data = snapshot.val() || { avisoAtivo: false, avisoTexto: "", avisoImagem: "" };
         const banner = document.getElementById('global-alert'); 
