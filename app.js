@@ -118,6 +118,23 @@ function temPermissao(nome) {
   return isAdminGeral() || state.perfil?.permissoes?.[nome] === true;
 }
 
+function appEstaInstalado() {
+  return window.matchMedia?.('(display-mode: standalone)').matches
+    || window.navigator.standalone === true
+    || localStorage.getItem('appInstalado') === '1';
+}
+
+function atualizarBotaoInstalar() {
+  const btn = $('#btnInstall');
+  if (!btn) return;
+  if (appEstaInstalado()) {
+    btn.classList.add('hidden');
+    return;
+  }
+  if (state.deferredPrompt) btn.classList.remove('hidden');
+  else btn.classList.add('hidden');
+}
+
 function usuarioBase(user, extras = {}) {
   return {
     nomeCompleto: extras.nomeCompleto || user.displayName || '',
@@ -184,6 +201,7 @@ function abrirApp() {
   $('#userRole').textContent = isAdminGeral() ? 'ADM Geral' : (Object.values(state.perfil.permissoes || {}).some(Boolean) ? 'ADM' : 'Usuário');
   aplicarPermissoesNaTela();
   aplicarEstadoNotificacao();
+  atualizarBotaoInstalar();
   iniciarListenersFirebase();
   abrirPagina(state.currentPage || 'dashboard', { replace: true });
 }
@@ -226,7 +244,10 @@ function abrirPagina(id, options = {}) {
   const btn = $(`.menu-item[data-page="${id}"]`);
   if (btn) btn.classList.add('active');
   $('#pageTitle').textContent = btn?.textContent || finalPage.querySelector('h2')?.textContent || 'ConecteBR';
-  $('#pageSubtitle').textContent = id === 'dashboard' ? 'Portal municipal conectado ao Firebase' : 'Pontalina Digital';
+  $('#pageSubtitle').textContent = id === 'dashboard' ? 'Serviços digitais de Pontalina' : 'ConecteBR';
+  const isHome = id === 'dashboard';
+  $('#btnBack')?.classList.toggle('hidden', isHome);
+  $('#btnHome')?.classList.toggle('hidden', isHome);
   $('.sidebar')?.classList.remove('open');
   $('#btnBack').disabled = state.pageStack.length === 0;
 }
@@ -572,9 +593,13 @@ async function imagemParaDataUrl(file) {
 function aplicarEstadoNotificacao() {
   const box = $('#notificationBox');
   if (!box) return;
-  const ativo = localStorage.getItem('notificacoesAtivadas') === '1' || Notification?.permission === 'granted';
-  if (ativo) box.classList.add('hidden');
-  else box.classList.remove('hidden');
+  if (!('Notification' in window)) {
+    box.classList.add('hidden');
+    return;
+  }
+  const jaDecidiu = Notification.permission === 'granted' || Notification.permission === 'denied';
+  const ativo = localStorage.getItem('notificacoesAtivadas') === '1' || jaDecidiu;
+  box.classList.toggle('hidden', ativo);
 }
 
 async function salvarUpaStatus(parcial) {
@@ -843,14 +868,28 @@ function configurarEventos() {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     state.deferredPrompt = e;
-    $('#btnInstall').classList.remove('hidden');
+    atualizarBotaoInstalar();
   });
 
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem('appInstalado', '1');
+    state.deferredPrompt = null;
+    atualizarBotaoInstalar();
+  });
+
+  window.matchMedia?.('(display-mode: standalone)').addEventListener?.('change', atualizarBotaoInstalar);
+
   $('#btnInstall').addEventListener('click', async () => {
+    if (appEstaInstalado()) {
+      atualizarBotaoInstalar();
+      return;
+    }
     if (!state.deferredPrompt) return toast('Quando o navegador liberar, a instalação aparecerá automaticamente.');
     state.deferredPrompt.prompt();
-    await state.deferredPrompt.userChoice;
+    const choice = await state.deferredPrompt.userChoice;
+    if (choice?.outcome === 'accepted') localStorage.setItem('appInstalado', '1');
     state.deferredPrompt = null;
+    atualizarBotaoInstalar();
   });
 
   $('#btnNotify').addEventListener('click', async () => {
@@ -861,6 +900,7 @@ function configurarEventos() {
       aplicarEstadoNotificacao();
       toast('Notificações ativadas.');
     } else {
+      aplicarEstadoNotificacao();
       toast('Notificações não autorizadas.');
     }
   });
