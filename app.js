@@ -2,7 +2,7 @@ import {
   auth, db, googleProvider,
   signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   sendPasswordResetEmail, updateProfile, onAuthStateChanged, signOut,
-  doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp
+  doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp
 } from './firebase.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -13,8 +13,21 @@ const state = {
   perfil: null,
   usuarios: [],
   avisos: [],
-  fila: 0,
-  deferredPrompt: null
+  cursos: [],
+  inscricoes: [],
+  agendamentos: [],
+  upaStatus: {
+    fila: 0,
+    salaVermelha: true,
+    plantaoClinico: 'A confirmar',
+    plantaoPediatra: 'A confirmar',
+    escala: {}
+  },
+  esfEscalas: {},
+  deferredPrompt: null,
+  pageStack: [],
+  currentPage: 'dashboard',
+  unsubs: []
 };
 
 const permissoesPadrao = {
@@ -29,6 +42,22 @@ const permissoesPadrao = {
   usuarios: false
 };
 
+const paginaPermissao = {
+  avisos: 'avisos',
+  relatorios: 'relatorios',
+  usuarios: 'usuarios'
+};
+
+const diasSemana = [
+  ['segunda', 'Segunda-feira'],
+  ['terca', 'Terça-feira'],
+  ['quarta', 'Quarta-feira'],
+  ['quinta', 'Quinta-feira'],
+  ['sexta', 'Sexta-feira'],
+  ['sabado', 'Sábado'],
+  ['domingo', 'Domingo']
+];
+
 const esfUnidades = [
   ['ESF 201 - Rural', 'Atendimento conforme escala da unidade.'],
   ['ESF 301 - Jardim Frei Walter', 'Atendimento de rotina e acompanhamento familiar.'],
@@ -38,22 +67,47 @@ const esfUnidades = [
   ['ESF 305 - Aluísio Borges', 'Atendimento de rotina e acompanhamento familiar.']
 ];
 
+const cursosPadrao = [
+  { id: 'padrao_informatica_basica', nome: 'Informática Básica', descricao: 'Curso introdutório de informática.' },
+  { id: 'padrao_excel_basico', nome: 'Excel Básico', descricao: 'Planilhas, fórmulas e organização de dados.' },
+  { id: 'padrao_word_basico', nome: 'Word Básico', descricao: 'Documentos, formatação e digitação.' }
+];
+
 function toast(message) {
   const el = $('#toast');
+  if (!el) return alert(message);
   el.textContent = message;
   el.classList.remove('hidden');
   clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(() => el.classList.add('hidden'), 3500);
+  window.__toastTimer = setTimeout(() => el.classList.add('hidden'), 3800);
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[char]));
 }
 
 function formatDate(value) {
   if (!value) return '-';
   const date = value.toDate ? value.toDate() : new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function formatDateTime(value) {
+  if (!value) return '-';
+  const date = value.toDate ? value.toDate() : new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+  return date.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 }
 
 function onlyNumbers(value) {
   return String(value || '').replace(/\D/g, '');
+}
+
+function normalizeId(value) {
+  return onlyNumbers(value) || String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').toLowerCase();
 }
 
 function isAdminGeral() {
@@ -96,6 +150,7 @@ async function garantirUsuario(user, extras = {}) {
 }
 
 async function carregarPerfil(user) {
+  limparListeners();
   state.firebaseUser = user;
   state.perfil = await garantirUsuario(user);
   if (!state.perfil.ativo) {
@@ -109,6 +164,13 @@ async function carregarPerfil(user) {
   abrirApp();
 }
 
+function limparListeners() {
+  state.unsubs.forEach((unsub) => {
+    try { unsub(); } catch (_) { /* vazio */ }
+  });
+  state.unsubs = [];
+}
+
 function abrirCompletarCadastro() {
   $('#completeNome').value = state.perfil?.nomeCompleto || state.firebaseUser?.displayName || '';
   $('#completeCelular').value = state.perfil?.celular || '';
@@ -119,60 +181,149 @@ function abrirApp() {
   $('#authScreen').classList.add('hidden');
   $('#appShell').classList.remove('hidden');
   $('#userName').textContent = state.perfil.nomeCompleto || state.firebaseUser.email;
-  $('#userRole').textContent = isAdminGeral() ? 'ADM Geral' : state.perfil.role || 'Usuário';
+  $('#userRole').textContent = isAdminGeral() ? 'ADM Geral' : (Object.values(state.perfil.permissoes || {}).some(Boolean) ? 'ADM' : 'Usuário');
   aplicarPermissoesNaTela();
-  escutarUsuarios();
-  escutarAvisos();
-  renderEsf();
+  aplicarEstadoNotificacao();
+  iniciarListenersFirebase();
+  abrirPagina(state.currentPage || 'dashboard', { replace: true });
 }
 
 function fecharApp() {
+  limparListeners();
   $('#authScreen').classList.remove('hidden');
   $('#appShell').classList.add('hidden');
   state.firebaseUser = null;
   state.perfil = null;
+  state.pageStack = [];
+  state.currentPage = 'dashboard';
 }
 
 function aplicarPermissoesNaTela() {
   $$('.admin-only').forEach((el) => el.classList.add('hidden'));
-  const perms = ['upa', 'esf', 'laboratorio', 'cetec', 'avisos', 'relatorios', 'escalas', 'agendamentos', 'usuarios'];
-  perms.forEach((perm) => {
+  Object.keys(permissoesPadrao).forEach((perm) => {
     if (temPermissao(perm)) {
       $$(`.perm-${perm}`).forEach((el) => el.classList.remove('hidden'));
     }
   });
 }
 
-function abrirPagina(id) {
-  $$('.page').forEach((p) => p.classList.remove('active'));
-  $$('.menu-item').forEach((b) => b.classList.remove('active'));
+function abrirPagina(id, options = {}) {
   const page = document.getElementById(id);
   if (!page) return;
-  page.classList.add('active');
+  const perm = paginaPermissao[id];
+  if (perm && !temPermissao(perm)) {
+    toast('Você não tem permissão para acessar essa área.');
+    id = 'dashboard';
+  }
+  if (!options.replace && state.currentPage && state.currentPage !== id) {
+    state.pageStack.push(state.currentPage);
+  }
+  state.currentPage = id;
+  $$('.page').forEach((p) => p.classList.remove('active'));
+  $$('.menu-item').forEach((b) => b.classList.remove('active'));
+  const finalPage = document.getElementById(id);
+  finalPage.classList.add('active');
   const btn = $(`.menu-item[data-page="${id}"]`);
   if (btn) btn.classList.add('active');
-  $('#pageTitle').textContent = btn?.textContent || page.querySelector('h2')?.textContent || 'ConecteBR';
-  $('#pageSubtitle').textContent = 'Pontalina Digital';
-  $('.sidebar').classList.remove('open');
+  $('#pageTitle').textContent = btn?.textContent || finalPage.querySelector('h2')?.textContent || 'ConecteBR';
+  $('#pageSubtitle').textContent = id === 'dashboard' ? 'Portal municipal conectado ao Firebase' : 'Pontalina Digital';
+  $('.sidebar')?.classList.remove('open');
+  $('#btnBack').disabled = state.pageStack.length === 0;
+}
+
+function voltarPagina() {
+  const anterior = state.pageStack.pop();
+  if (anterior) abrirPagina(anterior, { replace: true });
+  else abrirPagina('dashboard', { replace: true });
+}
+
+function iniciarListenersFirebase() {
+  escutarAvisos();
+  escutarCursos();
+  escutarInscricoes();
+  escutarAgendamentos();
+  escutarUpaStatus();
+  escutarEsfEscalas();
+  if (temPermissao('relatorios') || temPermissao('usuarios')) escutarUsuarios();
 }
 
 function escutarUsuarios() {
-  if (!temPermissao('relatorios') && !temPermissao('usuarios')) return;
   const q = query(collection(db, 'usuarios'), orderBy('criadoEm', 'desc'));
-  onSnapshot(q, (snap) => {
+  const unsub = onSnapshot(q, (snap) => {
     state.usuarios = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderRelatorios();
     renderUsuarios();
-  }, (error) => toast('Erro ao carregar usuários: ' + error.message));
+  }, (error) => toast('Erro ao carregar usuários: ' + traduzErro(error.code || error.message)));
+  state.unsubs.push(unsub);
 }
 
 function escutarAvisos() {
-  if (!temPermissao('avisos')) return;
   const q = query(collection(db, 'avisos'), orderBy('criadoEm', 'desc'));
-  onSnapshot(q, (snap) => {
+  const unsub = onSnapshot(q, (snap) => {
     state.avisos = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderAvisos();
-  }, () => {});
+    renderAvisoDestaque();
+    mostrarPopupAvisoSeNecessario();
+  }, (error) => console.warn('Avisos:', error));
+  state.unsubs.push(unsub);
+}
+
+function escutarCursos() {
+  const q = query(collection(db, 'cursos'), orderBy('criadoEm', 'desc'));
+  const unsub = onSnapshot(q, (snap) => {
+    const firestoreCursos = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.cursos = [...firestoreCursos, ...cursosPadrao.filter((padrao) => !firestoreCursos.some((c) => c.nome === padrao.nome))];
+    renderCursos();
+  }, () => {
+    state.cursos = [...cursosPadrao];
+    renderCursos();
+  });
+  state.unsubs.push(unsub);
+}
+
+function escutarInscricoes() {
+  const base = collection(db, 'inscricoes_cetec');
+  const q = temPermissao('cetec') || temPermissao('relatorios')
+    ? query(base, orderBy('criadoEm', 'desc'))
+    : query(base, where('uid', '==', state.firebaseUser.uid));
+  const unsub = onSnapshot(q, (snap) => {
+    state.inscricoes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.inscricoes.sort((a, b) => (b.criadoEm?.seconds || 0) - (a.criadoEm?.seconds || 0));
+    renderInscricoes();
+    renderRelatorios();
+  }, (error) => console.warn('Inscrições:', error));
+  state.unsubs.push(unsub);
+}
+
+function escutarAgendamentos() {
+  const base = collection(db, 'agendamentos');
+  const q = temPermissao('agendamentos') || temPermissao('relatorios')
+    ? query(base, orderBy('criadoEm', 'desc'))
+    : query(base, where('uid', '==', state.firebaseUser.uid));
+  const unsub = onSnapshot(q, (snap) => {
+    state.agendamentos = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.agendamentos.sort((a, b) => (b.criadoEm?.seconds || 0) - (a.criadoEm?.seconds || 0));
+    renderAgendamentos();
+    renderRelatorios();
+  }, (error) => console.warn('Agendamentos:', error));
+  state.unsubs.push(unsub);
+}
+
+function escutarUpaStatus() {
+  const unsub = onSnapshot(doc(db, 'upa', 'status'), (snap) => {
+    if (snap.exists()) state.upaStatus = { ...state.upaStatus, ...snap.data() };
+    renderUpa();
+  }, () => renderUpa());
+  state.unsubs.push(unsub);
+}
+
+function escutarEsfEscalas() {
+  const unsub = onSnapshot(collection(db, 'esf'), (snap) => {
+    state.esfEscalas = {};
+    snap.docs.forEach((d) => { state.esfEscalas[d.id] = d.data(); });
+    renderEsf();
+  }, () => renderEsf());
+  state.unsubs.push(unsub);
 }
 
 function renderRelatorios() {
@@ -188,9 +339,11 @@ function renderRelatorios() {
     const d = u.criadoEm?.toDate?.();
     return d && d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
   }).length;
+  $('#statAgendamentos').textContent = state.agendamentos.length;
+  $('#statInscricoes').textContent = state.inscricoes.length;
   $('#relatorioTabela').innerHTML = usuarios.map((u) => `
     <tr>
-      <td>${u.nomeCompleto || '-'}</td><td>${u.celular || '-'}</td><td>${u.email || '-'}</td>
+      <td>${esc(u.nomeCompleto || '-')}</td><td>${esc(u.celular || '-')}</td><td>${esc(u.email || '-')}</td>
       <td>${u.isAdminGeral ? 'ADM Geral' : (Object.values(u.permissoes || {}).some(Boolean) ? 'ADM' : 'Usuário')}</td>
       <td>${u.ativo ? 'Sim' : 'Não'}</td><td>${formatDate(u.criadoEm)}</td>
     </tr>
@@ -204,15 +357,15 @@ function renderUsuarios() {
   $('#usuariosLista').innerHTML = usuarios.map((u) => {
     const disabled = isAdminGeral() ? '' : 'disabled';
     const perms = Object.keys(permissoesPadrao).map((perm) => `
-      <label class="check"><input type="checkbox" data-user="${u.id}" data-perm="${perm}" ${u.permissoes?.[perm] ? 'checked' : ''} ${disabled}> ${perm}</label>
+      <label class="check"><input type="checkbox" data-user="${esc(u.id)}" data-perm="${perm}" ${u.permissoes?.[perm] ? 'checked' : ''} ${disabled}> ${perm}</label>
     `).join('');
     return `
       <div class="user-item">
         <div class="user-row">
-          <div><strong>${u.nomeCompleto || 'Sem nome'}</strong><br><span class="muted small">${u.email || '-'} • ${u.celular || '-'}</span></div>
+          <div><strong>${esc(u.nomeCompleto || 'Sem nome')}</strong><br><span class="muted small">${esc(u.email || '-')} • ${esc(u.celular || '-')}</span></div>
           <div class="actions">
-            <button class="ghost" data-save-user="${u.id}" ${disabled}>Salvar</button>
-            <button class="${u.ativo ? 'danger-outline' : 'primary'}" data-toggle-active="${u.id}" ${disabled}>${u.ativo ? 'Bloquear' : 'Ativar'}</button>
+            <button class="ghost" data-save-user="${esc(u.id)}" ${disabled}>Salvar</button>
+            <button class="${u.ativo ? 'danger-outline' : 'primary'}" data-toggle-active="${esc(u.id)}" ${disabled}>${u.ativo ? 'Bloquear' : 'Ativar'}</button>
           </div>
         </div>
         <div class="perm-grid">${perms}</div>
@@ -223,14 +376,139 @@ function renderUsuarios() {
 
 function renderAvisos() {
   const alvo = $('#listaAvisos');
+  if (alvo) {
+    alvo.innerHTML = state.avisos.map((a) => `
+      <div class="notice-item">
+        ${a.imagemData ? `<img class="notice-thumb" src="${a.imagemData}" alt="Cartaz do aviso" />` : ''}
+        <div><strong>${esc(a.titulo || 'Aviso')}</strong><p>${esc(a.mensagem || '-')}</p><span class="muted small">${formatDateTime(a.criadoEm)} • ${a.ativo === false ? 'desligado' : 'ligado'}</span></div>
+      </div>
+    `).join('') || '<p class="muted">Nenhum aviso cadastrado.</p>';
+  }
+}
+
+function renderAvisoDestaque() {
+  const alvo = $('#avisoDestaque');
   if (!alvo) return;
-  alvo.innerHTML = state.avisos.map((a) => `
-    <div class="notice-item"><strong>${a.mensagem || '-'}</strong><br><span class="muted small">${formatDate(a.criadoEm)}</span></div>
-  `).join('') || '<p class="muted">Nenhum aviso cadastrado.</p>';
+  const aviso = state.avisos.find((a) => a.ativo !== false);
+  if (!aviso) {
+    alvo.classList.add('hidden');
+    alvo.innerHTML = '';
+    return;
+  }
+  alvo.classList.remove('hidden');
+  alvo.innerHTML = `
+    <div>
+      <p class="eyebrow dark">Central de Avisos</p>
+      <h2>${esc(aviso.titulo || 'Aviso importante')}</h2>
+      <p>${esc(aviso.mensagem || '')}</p>
+      <span class="muted small">Publicado em ${formatDateTime(aviso.criadoEm)}</span>
+    </div>
+    ${aviso.imagemData ? `<button class="primary" data-show-aviso="${esc(aviso.id)}">Ver cartaz</button>` : ''}
+  `;
+}
+
+function mostrarPopupAvisoSeNecessario() {
+  const aviso = state.avisos.find((a) => a.ativo !== false && a.imagemData);
+  if (!aviso) return;
+  const visto = localStorage.getItem(`aviso_visto_${aviso.id}`);
+  if (visto) return;
+  abrirPopupAviso(aviso);
+}
+
+function abrirPopupAviso(aviso) {
+  $('#popupAvisoTitulo').textContent = aviso.titulo || 'Aviso importante';
+  $('#popupAvisoMensagem').textContent = aviso.mensagem || '';
+  const img = $('#popupAvisoImagem');
+  if (aviso.imagemData) {
+    img.src = aviso.imagemData;
+    img.classList.remove('hidden');
+  } else {
+    img.classList.add('hidden');
+    img.removeAttribute('src');
+  }
+  $('#avisoPopup').dataset.avisoId = aviso.id;
+  $('#avisoPopup').classList.remove('hidden');
+}
+
+function fecharPopupAviso() {
+  const id = $('#avisoPopup').dataset.avisoId;
+  if (id) localStorage.setItem(`aviso_visto_${id}`, '1');
+  $('#avisoPopup').classList.add('hidden');
+}
+
+function renderCursos() {
+  const select = $('#cursoSelect');
+  if (!select) return;
+  select.innerHTML = state.cursos.map((curso) => `<option value="${esc(curso.id)}">${esc(curso.nome)}${curso.descricao ? ` - ${esc(curso.descricao)}` : ''}</option>`).join('') || '<option value="">Nenhum curso disponível</option>';
+}
+
+function renderInscricoes() {
+  const minhas = $('#minhasInscricoes');
+  if (minhas) {
+    const lista = state.inscricoes.filter((i) => i.uid === state.firebaseUser.uid || temPermissao('cetec'));
+    minhas.innerHTML = lista.filter((i) => i.uid === state.firebaseUser.uid).map((i) => `
+      <div class="notice-item"><div><strong>${esc(i.cursoNome)}</strong><br><span class="muted small">${formatDateTime(i.criadoEm)} • ${esc(i.status || 'inscrito')}</span></div></div>
+    `).join('') || '<p class="muted">Você ainda não possui inscrições.</p>';
+  }
+  const admin = $('#listaInscritos');
+  if (admin && temPermissao('cetec')) {
+    admin.innerHTML = state.inscricoes.map((i) => `
+      <div class="notice-item"><div><strong>${esc(i.nomeCompleto || '-')}</strong><p>${esc(i.cursoNome || '-')}</p><span class="muted small">${esc(i.email || '')} • ${esc(i.celular || '')} • ${formatDateTime(i.criadoEm)}</span></div></div>
+    `).join('') || '<p class="muted">Nenhuma inscrição encontrada.</p>';
+  }
+}
+
+function renderAgendamentos() {
+  const meus = $('#meusAgendamentos');
+  if (meus) {
+    const lista = state.agendamentos.filter((a) => a.uid === state.firebaseUser.uid);
+    meus.innerHTML = lista.map((a) => `
+      <div class="notice-item"><div><strong>${esc(a.posto || '-')}</strong><p>${esc(a.motivo || '-')}</p><span class="muted small">${esc(a.status || 'pendente')} • ${formatDateTime(a.criadoEm)}</span></div>${a.status === 'pendente' ? `<button class="danger-outline" data-cancel-agendamento="${esc(a.id)}">Cancelar</button>` : ''}</div>
+    `).join('') || '<p class="muted">Nenhuma solicitação feita.</p>';
+  }
+  const admin = $('#adminAgendamentos');
+  if (admin && temPermissao('agendamentos')) {
+    const filtro = $('#filtroAgendamentoPosto')?.value || '';
+    const lista = state.agendamentos.filter((a) => !filtro || a.posto === filtro);
+    admin.innerHTML = lista.map((a) => `
+      <div class="notice-item"><div><strong>${esc(a.nomeCompleto || '-')}</strong><p>${esc(a.posto || '-')} • ${esc(a.motivo || '-')}</p><span class="muted small">${esc(a.celular || '')} • ${formatDateTime(a.criadoEm)} • ${esc(a.status || 'pendente')}</span></div><div class="actions"><button class="primary" data-status-agendamento="${esc(a.id)}" data-status="confirmado">Confirmar</button><button class="ghost" data-status-agendamento="${esc(a.id)}" data-status="concluido">Concluir</button></div></div>
+    `).join('') || '<p class="muted">Nenhuma solicitação encontrada.</p>';
+  }
+}
+
+function renderUpa() {
+  const fila = Number(state.upaStatus.fila || 0);
+  $('#filaAtual').textContent = String(fila).padStart(2, '0');
+  $('#esperaEstimada').textContent = `~${fila * 5} min`;
+  $('#plantaoClinico').textContent = state.upaStatus.plantaoClinico || 'A confirmar';
+  $('#plantaoPediatra').textContent = state.upaStatus.plantaoPediatra || 'A confirmar';
+  $('#plantaoClinicoInput').value = state.upaStatus.plantaoClinico || '';
+  $('#plantaoPediatraInput').value = state.upaStatus.plantaoPediatra || '';
+  const badge = $('#salaVermelhaBadge');
+  if (state.upaStatus.salaVermelha === false) {
+    badge.textContent = 'Sala vermelha ocupada';
+    badge.className = 'badge red';
+  } else {
+    badge.textContent = 'Sala vermelha disponível';
+    badge.className = 'badge green';
+  }
+  const escala = state.upaStatus.escala || {};
+  $('#escalaSemana').innerHTML = diasSemana.map(([key, label]) => `<div class="week-day"><strong>${label}</strong><span>${esc(escala[key] || 'A confirmar')}</span></div>`).join('');
+  diasSemana.forEach(([key, label]) => {
+    const inputId = `escala${key[0].toUpperCase()}${key.slice(1)}`.replace('Terca','Terca');
+    const input = document.getElementById(inputId);
+    if (input) input.value = escala[key] || '';
+  });
 }
 
 function renderEsf() {
-  $('#listaEsf').innerHTML = esfUnidades.map(([nome, desc]) => `<div class="unit-item"><strong>${nome}</strong><p class="muted">${desc}</p></div>`).join('');
+  const alvo = $('#listaEsf');
+  if (!alvo) return;
+  alvo.innerHTML = esfUnidades.map(([nome, desc]) => {
+    const id = normalizeId(nome);
+    const escala = state.esfEscalas[id] || {};
+    return `<div class="unit-item"><strong>${esc(nome)}</strong><p class="muted">${esc(desc)}</p><p><strong>Médico:</strong> ${esc(escala.medico || 'A confirmar')}</p><p><strong>Horário:</strong> ${esc(escala.horario || 'A confirmar')}</p></div>`;
+  }).join('');
 }
 
 function exportarCsv() {
@@ -251,7 +529,7 @@ function exportarCsv() {
 async function salvarPermissoesUsuario(uid) {
   if (!isAdminGeral()) return toast('Somente o ADM geral pode alterar permissões.');
   const usuario = state.usuarios.find((u) => u.id === uid);
-  if (!usuario?.isAdminGeral && uid === state.firebaseUser.uid) return toast('Não altere suas permissões por aqui.');
+  if (usuario?.isAdminGeral && uid === state.firebaseUser.uid) return toast('Não altere seu ADM geral por aqui.');
   const permissoes = { ...permissoesPadrao };
   $$(`input[data-user="${uid}"][data-perm]`).forEach((input) => permissoes[input.dataset.perm] = input.checked);
   const virouAdmin = Object.values(permissoes).some(Boolean);
@@ -271,6 +549,39 @@ async function alternarAtivo(uid) {
   toast(usuario.ativo ? 'Usuário bloqueado.' : 'Usuário ativado.');
 }
 
+async function imagemParaDataUrl(file) {
+  if (!file) return '';
+  if (!file.type.startsWith('image/')) throw new Error('Selecione uma imagem válida.');
+  const img = await new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = URL.createObjectURL(file);
+  });
+  const max = 1200;
+  const scale = Math.min(1, max / Math.max(img.width, img.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.width * scale);
+  canvas.height = Math.round(img.height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  URL.revokeObjectURL(img.src);
+  return canvas.toDataURL('image/jpeg', 0.76);
+}
+
+function aplicarEstadoNotificacao() {
+  const box = $('#notificationBox');
+  if (!box) return;
+  const ativo = localStorage.getItem('notificacoesAtivadas') === '1' || Notification?.permission === 'granted';
+  if (ativo) box.classList.add('hidden');
+  else box.classList.remove('hidden');
+}
+
+async function salvarUpaStatus(parcial) {
+  if (!temPermissao('upa')) return toast('Sem permissão para alterar UPA.');
+  await setDoc(doc(db, 'upa', 'status'), { ...parcial, atualizadoEm: serverTimestamp() }, { merge: true });
+}
+
 function configurarEventos() {
   $$('.auth-tab').forEach((tab) => tab.addEventListener('click', () => {
     $$('.auth-tab').forEach((b) => b.classList.remove('active'));
@@ -287,9 +598,8 @@ function configurarEventos() {
 
   $('#loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, $('#loginEmail').value, $('#loginSenha').value);
-    } catch (error) { toast('Erro no login: ' + traduzErro(error.code)); }
+    try { await signInWithEmailAndPassword(auth, $('#loginEmail').value, $('#loginSenha').value); }
+    catch (error) { toast('Erro no login: ' + traduzErro(error.code)); }
   });
 
   $('#cadastroForm').addEventListener('submit', async (e) => {
@@ -332,39 +642,203 @@ function configurarEventos() {
 
   $('#btnLogout').addEventListener('click', () => signOut(auth));
   $('#btnMobileMenu').addEventListener('click', () => $('.sidebar').classList.toggle('open'));
+  $('#btnBack').addEventListener('click', voltarPagina);
+  $('#btnHome').addEventListener('click', () => abrirPagina('dashboard'));
   $$('.menu-item').forEach((btn) => btn.addEventListener('click', () => abrirPagina(btn.dataset.page)));
-  $$('[data-open]').forEach((btn) => btn.addEventListener('click', () => abrirPagina(btn.dataset.open)));
 
-  $$('[data-triagem]').forEach((btn) => btn.addEventListener('click', () => {
+  $('[data-triagem-next]').addEventListener('click', () => {
+    $('#triagemPergunta1').classList.add('hidden');
+    $('#triagemPergunta2').classList.remove('hidden');
+  });
+  $$('[data-triagem-final]').forEach((btn) => btn.addEventListener('click', () => {
     const result = $('#triagemResult');
     result.classList.remove('hidden');
-    result.innerHTML = btn.dataset.triagem === 'upa'
-      ? '<h3>Vá para a UPA</h3><p>Procure atendimento de urgência imediatamente.</p>'
-      : '<h3>Vá ao Posto de Saúde</h3><p>Procure a unidade do seu bairro para atendimento programado.</p>';
+    result.innerHTML = btn.dataset.triagemFinal === 'upa'
+      ? '<h3>Vá para a UPA</h3><p>Procure atendimento de urgência imediatamente.</p><div class="actions"><button class="primary" data-open="upa">Ver Fila da UPA Agora</button><button class="ghost" data-refazer-triagem>Refazer</button></div>'
+      : '<h3>Vá ao Posto de Saúde</h3><p>Procure a unidade do seu bairro para atendimento programado.</p><div class="actions"><button class="primary" data-open="esf">Ver Postos de Saúde</button><button class="ghost" data-refazer-triagem>Refazer</button></div>';
   }));
 
-  $('#btnFilaMais').addEventListener('click', () => { state.fila += 1; atualizarFila(); });
-  $('#btnFilaMenos').addEventListener('click', () => { state.fila = Math.max(0, state.fila - 1); atualizarFila(); });
+  $('#agendamentoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await addDoc(collection(db, 'agendamentos'), {
+        uid: state.firebaseUser.uid,
+        nomeCompleto: state.perfil.nomeCompleto || '',
+        celular: state.perfil.celular || '',
+        email: state.perfil.email || state.firebaseUser.email || '',
+        posto: $('#agendaPosto').value,
+        motivo: $('#agendaMotivo').value,
+        observacao: $('#agendaObs').value,
+        status: 'pendente',
+        criadoEm: serverTimestamp()
+      });
+      e.target.reset();
+      toast('Solicitação enviada.');
+    } catch (error) { toast('Erro ao solicitar: ' + traduzErro(error.code)); }
+  });
 
-  $('#agendamentoForm').addEventListener('submit', (e) => { e.preventDefault(); toast('Solicitação registrada visualmente. Podemos ligar ao Firestore na próxima etapa.'); e.target.reset(); });
+  $('#avisoImagem').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    const preview = $('#avisoPreview');
+    if (!file) return preview.classList.add('hidden');
+    try {
+      preview.src = await imagemParaDataUrl(file);
+      preview.classList.remove('hidden');
+    } catch (error) { toast(error.message); }
+  });
+
+  $('#btnLimparAvisoImagem').addEventListener('click', () => {
+    $('#avisoImagem').value = '';
+    $('#avisoPreview').removeAttribute('src');
+    $('#avisoPreview').classList.add('hidden');
+  });
+
   $('#avisoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!temPermissao('avisos')) return toast('Sem permissão.');
-    await setDoc(doc(collection(db, 'avisos')), { mensagem: $('#avisoMensagem').value, criadoEm: serverTimestamp(), autorUid: state.firebaseUser.uid });
-    $('#avisoMensagem').value = '';
-    toast('Aviso salvo.');
+    try {
+      const file = $('#avisoImagem').files?.[0];
+      const imagemData = file ? await imagemParaDataUrl(file) : '';
+      await addDoc(collection(db, 'avisos'), {
+        titulo: $('#avisoTitulo').value || 'Aviso importante',
+        mensagem: $('#avisoMensagem').value,
+        imagemData,
+        ativo: true,
+        criadoEm: serverTimestamp(),
+        autorUid: state.firebaseUser.uid
+      });
+      e.target.reset();
+      $('#avisoPreview').classList.add('hidden');
+      toast('Aviso ligado.');
+    } catch (error) { toast('Erro ao salvar aviso: ' + traduzErro(error.code || error.message)); }
+  });
+
+  $('#btnDesligarAvisos').addEventListener('click', async () => {
+    if (!temPermissao('avisos')) return toast('Sem permissão.');
+    const ativos = state.avisos.filter((a) => a.ativo !== false);
+    await Promise.all(ativos.map((a) => updateDoc(doc(db, 'avisos', a.id), { ativo: false })));
+    toast('Avisos desligados.');
+  });
+
+  $('#cursoInscricaoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const curso = state.cursos.find((c) => c.id === $('#cursoSelect').value);
+    if (!curso) return toast('Escolha um curso.');
+    const id = `${state.firebaseUser.uid}_${normalizeId(curso.id)}`;
+    try {
+      await setDoc(doc(db, 'inscricoes_cetec', id), {
+        uid: state.firebaseUser.uid,
+        nomeCompleto: state.perfil.nomeCompleto || '',
+        celular: state.perfil.celular || '',
+        email: state.perfil.email || state.firebaseUser.email || '',
+        cursoId: curso.id,
+        cursoNome: curso.nome,
+        status: 'inscrito',
+        criadoEm: serverTimestamp()
+      }, { merge: false });
+      toast('Inscrição confirmada.');
+    } catch (error) { toast('Erro na inscrição: ' + traduzErro(error.code)); }
+  });
+
+  $('#cursoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!temPermissao('cetec')) return toast('Sem permissão.');
+    await addDoc(collection(db, 'cursos'), {
+      nome: $('#cursoNome').value,
+      descricao: $('#cursoDescricao').value,
+      ativo: true,
+      criadoEm: serverTimestamp(),
+      autorUid: state.firebaseUser.uid
+    });
+    e.target.reset();
+    toast('Curso disponibilizado.');
+  });
+
+  $('#plantaoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await salvarUpaStatus({ plantaoClinico: $('#plantaoClinicoInput').value || 'A confirmar', plantaoPediatra: $('#plantaoPediatraInput').value || 'A confirmar' });
+    toast('Plantão atualizado.');
+  });
+
+  $('#escalaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const escala = {
+      segunda: $('#escalaSegunda').value,
+      terca: $('#escalaTerca').value,
+      quarta: $('#escalaQuarta').value,
+      quinta: $('#escalaQuinta').value,
+      sexta: $('#escalaSexta').value,
+      sabado: $('#escalaSabado').value,
+      domingo: $('#escalaDomingo').value
+    };
+    await salvarUpaStatus({ escala });
+    toast('Escala salva.');
+  });
+
+  $('#btnFilaMais').addEventListener('click', () => salvarUpaStatus({ fila: Number(state.upaStatus.fila || 0) + 1 }));
+  $('#btnFilaMenos').addEventListener('click', () => salvarUpaStatus({ fila: Math.max(0, Number(state.upaStatus.fila || 0) - 1) }));
+  $('#btnToggleSala').addEventListener('click', () => salvarUpaStatus({ salaVermelha: !(state.upaStatus.salaVermelha !== false) }));
+
+  $('#esfForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!temPermissao('esf')) return toast('Sem permissão.');
+    const unidade = $('#esfUnidade').value;
+    await setDoc(doc(db, 'esf', normalizeId(unidade)), {
+      unidade,
+      medico: $('#esfMedico').value,
+      horario: $('#esfHorario').value,
+      atualizadoEm: serverTimestamp(),
+      autorUid: state.firebaseUser.uid
+    }, { merge: true });
+    e.target.reset();
+    toast('ESF atualizado.');
+  });
+
+  $('#denunciaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await addDoc(collection(db, 'denuncias'), {
+      uid: state.firebaseUser.uid,
+      nomeCompleto: state.perfil.nomeCompleto || '',
+      celular: state.perfil.celular || '',
+      texto: $('#denunciaTexto').value,
+      status: 'enviado',
+      criadoEm: serverTimestamp()
+    });
+    e.target.reset();
+    toast('Denúncia enviada.');
   });
 
   $('#relatorioBusca').addEventListener('input', renderRelatorios);
   $('#usuariosBusca').addEventListener('input', renderUsuarios);
+  $('#filtroAgendamentoPosto').addEventListener('change', renderAgendamentos);
   $('#btnExportCsv').addEventListener('click', exportarCsv);
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
+    const open = e.target.closest('[data-open]');
+    if (open) abrirPagina(open.dataset.open);
+    const showAviso = e.target.closest('[data-show-aviso]');
+    if (showAviso) {
+      const aviso = state.avisos.find((a) => a.id === showAviso.dataset.showAviso);
+      if (aviso) abrirPopupAviso(aviso);
+    }
+    const refazer = e.target.closest('[data-refazer-triagem]');
+    if (refazer) {
+      $('#triagemPergunta1').classList.remove('hidden');
+      $('#triagemPergunta2').classList.add('hidden');
+      $('#triagemResult').classList.add('hidden');
+    }
     const save = e.target.closest('[data-save-user]');
     const toggle = e.target.closest('[data-toggle-active]');
+    const cancelAgenda = e.target.closest('[data-cancel-agendamento]');
+    const statusAgenda = e.target.closest('[data-status-agendamento]');
     if (save) salvarPermissoesUsuario(save.dataset.saveUser);
     if (toggle) alternarAtivo(toggle.dataset.toggleActive);
+    if (cancelAgenda) updateDoc(doc(db, 'agendamentos', cancelAgenda.dataset.cancelAgendamento), { status: 'cancelado' });
+    if (statusAgenda) updateDoc(doc(db, 'agendamentos', statusAgenda.dataset.statusAgendamento), { status: statusAgenda.dataset.status });
   });
+
+  $('#btnFecharAvisoPopup').addEventListener('click', fecharPopupAviso);
+  $('#btnEntendiAviso').addEventListener('click', fecharPopupAviso);
 
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -382,13 +856,14 @@ function configurarEventos() {
   $('#btnNotify').addEventListener('click', async () => {
     if (!('Notification' in window)) return toast('Este navegador não suporta notificações.');
     const result = await Notification.requestPermission();
-    toast(result === 'granted' ? 'Notificações ativadas.' : 'Notificações não autorizadas.');
+    if (result === 'granted') {
+      localStorage.setItem('notificacoesAtivadas', '1');
+      aplicarEstadoNotificacao();
+      toast('Notificações ativadas.');
+    } else {
+      toast('Notificações não autorizadas.');
+    }
   });
-}
-
-function atualizarFila() {
-  $('#filaAtual').textContent = String(state.fila).padStart(2, '0');
-  $('#esperaEstimada').textContent = `~${state.fila * 5} min`;
 }
 
 function traduzErro(code) {
@@ -400,18 +875,18 @@ function traduzErro(code) {
     'auth/email-already-in-use': 'este e-mail já está cadastrado.',
     'auth/weak-password': 'a senha precisa ter pelo menos 6 caracteres.',
     'auth/popup-closed-by-user': 'login cancelado.',
-    'permission-denied': 'sem permissão no Firebase.'
+    'permission-denied': 'sem permissão no Firebase.',
+    'missing or insufficient permissions': 'sem permissão no Firebase.'
   };
   return mapa[code] || code || 'erro desconhecido.';
 }
 
 configurarEventos();
-atualizarFila();
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try { await carregarPerfil(user); }
-    catch (error) { toast('Erro ao carregar perfil: ' + traduzErro(error.code)); }
+    catch (error) { toast('Erro ao carregar perfil: ' + traduzErro(error.code || error.message)); }
   } else {
     fecharApp();
   }

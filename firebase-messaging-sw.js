@@ -27,8 +27,8 @@ try {
   console.log('Messaging não configurado:', error);
 }
 
-const CACHE_NAME = 'conectebr-v1';
-const CORE_FILES = ['./', './index.html', './style.css', './app.js', './firebase.js', './manifest.json'];
+const CACHE_NAME = 'conectebr-v2';
+const CORE_FILES = ['./', './index.html', './style.css?v=2', './app.js?v=2', './firebase.js', './manifest.json'];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

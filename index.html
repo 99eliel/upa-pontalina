@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>ConecteBR - Pontalina Digital</title>
-  <meta name="description" content="Portal digital de serviços públicos, saúde, avisos, agendamentos e gestão municipal." />
+  <meta name="description" content="Portal digital de serviços públicos, saúde, avisos, agendamentos, cursos e gestão municipal." />
   <meta name="theme-color" content="#0056b3" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="stylesheet" href="./style.css" />
@@ -88,6 +88,17 @@
     </div>
   </section>
 
+  <section id="avisoPopup" class="modal hidden">
+    <div class="modal-card notice-modal-card">
+      <button class="close-x" id="btnFecharAvisoPopup" type="button" aria-label="Fechar aviso">×</button>
+      <p class="eyebrow dark">Aviso importante</p>
+      <h2 id="popupAvisoTitulo">ConecteBR</h2>
+      <p id="popupAvisoMensagem"></p>
+      <img id="popupAvisoImagem" class="notice-image hidden" alt="Cartaz do aviso" />
+      <button class="primary full" id="btnEntendiAviso" type="button">Entendi, fechar aviso</button>
+    </div>
+  </section>
+
   <div id="appShell" class="app hidden">
     <aside class="sidebar">
       <div class="side-brand">
@@ -104,8 +115,12 @@
         <button class="menu-item" data-page="upa">UPA 24h</button>
         <button class="menu-item" data-page="esf">ESF</button>
         <button class="menu-item" data-page="laboratorio">Laboratório</button>
+        <button class="menu-item" data-page="farmacia">Farmácia</button>
         <button class="menu-item" data-page="cetec">CETEC</button>
         <button class="menu-item" data-page="servicos">Serviços</button>
+        <button class="menu-item" data-page="engenharia">Engenharia</button>
+        <button class="menu-item" data-page="meioambiente">Meio Ambiente</button>
+        <button class="menu-item" data-page="educacao">Educação</button>
         <button class="menu-item admin-only perm-avisos" data-page="avisos">Avisos</button>
         <button class="menu-item admin-only perm-relatorios" data-page="relatorios">Relatórios</button>
         <button class="menu-item admin-only perm-usuarios" data-page="usuarios">Gestão de Usuários</button>
@@ -114,10 +129,14 @@
 
     <section class="content">
       <header class="topbar">
-        <button id="btnMobileMenu" class="ghost mobile-only">☰</button>
-        <div>
-          <h2 id="pageTitle">Início</h2>
-          <p id="pageSubtitle">Portal municipal conectado ao Firebase</p>
+        <div class="topbar-left">
+          <button id="btnMobileMenu" class="ghost icon-btn mobile-only" type="button">☰</button>
+          <button id="btnBack" class="ghost icon-btn" type="button">←</button>
+          <button id="btnHome" class="ghost" type="button">Início</button>
+          <div>
+            <h2 id="pageTitle">Início</h2>
+            <p id="pageSubtitle">Portal municipal conectado ao Firebase</p>
+          </div>
         </div>
         <div class="userbox">
           <div>
@@ -134,15 +153,26 @@
           <div>
             <p class="eyebrow">Bem-vindo</p>
             <h1>Portal Digital de Pontalina</h1>
-            <p>Acesse serviços, informações de saúde, avisos e áreas administrativas liberadas para sua conta.</p>
+            <p>Acesse serviços, informações de saúde, avisos, cursos e áreas administrativas liberadas para sua conta.</p>
           </div>
-          <button class="primary" id="btnNotify" type="button">Ativar notificações</button>
+          <div id="notificationBox" class="notification-box">
+            <strong>Passo 1: fique informado</strong>
+            <span>Ative as notificações para receber avisos importantes.</span>
+            <button class="primary light" id="btnNotify" type="button">Ativar notificações</button>
+          </div>
         </div>
+
+        <div id="avisoDestaque" class="notice-highlight hidden"></div>
+
         <div class="grid cards">
           <button class="service-card" data-open="saude"><span>🏥</span><strong>Saúde</strong><small>UPA, ESF, laboratório e agendamentos</small></button>
-          <button class="service-card" data-open="servicos"><span>🏛️</span><strong>Serviços municipais</strong><small>IPTU, NFS-e, certidão e alvarás</small></button>
           <button class="service-card" data-open="cetec"><span>🎓</span><strong>CETEC</strong><small>Cursos e inscrições</small></button>
-          <button class="service-card" data-open="upa"><span>🚑</span><strong>UPA 24h</strong><small>Fila e informações de plantão</small></button>
+          <button class="service-card" data-open="servicos"><span>🏛️</span><strong>Serviços municipais</strong><small>IPTU, NFS-e, certidão e alvarás</small></button>
+          <button class="service-card" data-open="engenharia"><span>🏗️</span><strong>Engenharia</strong><small>Alvarás, projetos e habite-se</small></button>
+          <button class="service-card" data-open="meioambiente"><span>🌱</span><strong>Meio Ambiente</strong><small>Denúncias e solicitações</small></button>
+          <button class="service-card" data-open="educacao"><span>📚</span><strong>Educação</strong><small>Matrículas e comunicados</small></button>
+          <button class="service-card" data-open="esportes"><span>⚽</span><strong>Esportes</strong><small>Eventos e projetos</small></button>
+          <button class="service-card" data-open="infraestrutura"><span>🚧</span><strong>Infraestrutura</strong><small>Obras e manutenção urbana</small></button>
         </div>
       </section>
 
@@ -153,52 +183,105 @@
           <button class="service-card" data-open="agendamentos"><span>📅</span><strong>Agendar consulta</strong><small>Solicitação de atendimento</small></button>
           <button class="service-card" data-open="upa"><span>🚑</span><strong>UPA 24h</strong><small>Fila e escala</small></button>
           <button class="service-card" data-open="esf"><span>🏘️</span><strong>Postos de Saúde</strong><small>Unidades ESF</small></button>
+          <button class="service-card" data-open="laboratorio"><span>🧪</span><strong>Laboratório</strong><small>Horário de coleta</small></button>
+          <button class="service-card" data-open="farmacia"><span>💊</span><strong>Farmácia Básica</strong><small>Informações e atendimento</small></button>
         </div>
       </section>
 
       <section id="triagem" class="page">
         <div class="panel">
           <h2>Auto Triagem</h2>
-          <p>Você está com dor forte no peito, falta de ar grave, desmaio, dormência no braço ou sangramento intenso?</p>
-          <div class="actions"><button class="danger" data-triagem="upa">Sim</button><button class="primary" data-triagem="posto">Não</button></div>
+          <div id="triagemPergunta1">
+            <p>Você está sentindo dor forte no peito, falta de ar grave, desmaio, dormência no braço ou sangramento intenso?</p>
+            <div class="actions"><button class="danger" data-triagem-final="upa">Sim</button><button class="primary" data-triagem-next>Não</button></div>
+          </div>
+          <div id="triagemPergunta2" class="hidden">
+            <p>Você está com febre alta que não baixa, dor abdominal forte ou sofreu corte que precisa de pontos?</p>
+            <div class="actions"><button class="danger" data-triagem-final="upa">Sim</button><button class="primary" data-triagem-final="posto">Não</button></div>
+          </div>
           <div id="triagemResult" class="result hidden"></div>
         </div>
       </section>
 
       <section id="agendamentos" class="page">
-        <div class="panel">
-          <h2>Agendar Consulta</h2>
-          <p class="alert">O agendamento só é válido se for feito na unidade referente ao seu bairro.</p>
-          <form id="agendamentoForm" class="form-grid">
-            <label>Posto do bairro
-              <select id="agendaPosto" required>
-                <option value="">Escolha seu posto...</option>
-                <option>ESF 201 - Rural</option><option>ESF 301 - Jardim Frei Walter</option><option>ESF 302 - Santa Rita de Cássia</option><option>ESF 303 - Dr. Antônio Carlos</option><option>ESF 304 - Lázaro Teodoro</option><option>ESF 305 - Aluísio Borges</option>
-              </select>
-            </label>
-            <label>Necessidade
-              <select id="agendaMotivo" required>
-                <option>Consulta de Rotina / Avaliação</option><option>Renovar Receita</option><option>Pré-Natal</option><option>Apresentar Exames Prontos</option><option>Outros motivos não urgentes</option>
-              </select>
-            </label>
-            <button class="primary" type="submit">Solicitar agendamento</button>
-          </form>
-          <p class="muted small">Nesta versão, o módulo visual já está pronto. A gravação em Firestore pode ser ligada quando você quiser controlar as solicitações online.</p>
+        <div class="grid two">
+          <div class="panel">
+            <h2>Agendar Consulta</h2>
+            <p class="alert">O agendamento só é válido se for feito na unidade referente ao seu bairro.</p>
+            <form id="agendamentoForm" class="form-grid">
+              <label>Posto do bairro
+                <select id="agendaPosto" required>
+                  <option value="">Escolha seu posto...</option>
+                  <option>ESF 201 - Rural</option><option>ESF 301 - Jardim Frei Walter</option><option>ESF 302 - Santa Rita de Cássia</option><option>ESF 303 - Dr. Antônio Carlos</option><option>ESF 304 - Lázaro Teodoro</option><option>ESF 305 - Aluísio Borges</option>
+                </select>
+              </label>
+              <label>Necessidade
+                <select id="agendaMotivo" required>
+                  <option>Consulta de Rotina / Avaliação</option><option>Renovar Receita (Uso Contínuo)</option><option>Pré-Natal</option><option>Apresentar Exames Prontos</option><option>Outros motivos não urgentes</option>
+                </select>
+              </label>
+              <label>Observação opcional
+                <input id="agendaObs" type="text" placeholder="Ex: melhor período, observação simples..." />
+              </label>
+              <button class="primary" type="submit">Solicitar agendamento</button>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Minhas solicitações</h3>
+            <div id="meusAgendamentos" class="list"></div>
+          </div>
+        </div>
+        <div class="panel admin-only perm-agendamentos">
+          <h3>Solicitações Pendentes</h3>
+          <div class="table-head"><select id="filtroAgendamentoPosto"><option value="">Ver todos os postos</option><option>ESF 201 - Rural</option><option>ESF 301 - Jardim Frei Walter</option><option>ESF 302 - Santa Rita de Cássia</option><option>ESF 303 - Dr. Antônio Carlos</option><option>ESF 304 - Lázaro Teodoro</option><option>ESF 305 - Aluísio Borges</option></select></div>
+          <div id="adminAgendamentos" class="list"></div>
         </div>
       </section>
 
       <section id="upa" class="page">
-        <div class="section-head"><h2>UPA 24h</h2><p>Informações públicas e área administrativa conforme permissão.</p></div>
+        <div class="section-head"><h2>UPA 24h</h2><p>Fila, sala vermelha, plantão e escala da semana.</p></div>
         <div class="grid two">
-          <div class="panel center-panel"><span class="badge green">Sala vermelha disponível</span><h3>Fila de espera</h3><div id="filaAtual" class="big-number">00</div><p>Espera estimada: <strong id="esperaEstimada">~0 min</strong></p></div>
+          <div class="panel center-panel"><span id="salaVermelhaBadge" class="badge green">Sala vermelha disponível</span><h3>Fila de espera</h3><div id="filaAtual" class="big-number">00</div><p>Espera estimada: <strong id="esperaEstimada">~0 min</strong></p></div>
           <div class="panel"><h3>Plantão atual</h3><p><strong>Clínico Geral:</strong> <span id="plantaoClinico">A confirmar</span></p><p><strong>Pediatra:</strong> <span id="plantaoPediatra">A confirmar</span></p></div>
         </div>
-        <div class="panel admin-only perm-upa"><h3>Controle da UPA</h3><div class="actions"><button class="primary" id="btnFilaMais">Entrada</button><button class="ghost" id="btnFilaMenos">Saída</button><button class="danger">Alertar sala vermelha</button></div></div>
+        <div class="panel"><h3>Escala da Semana</h3><div id="escalaSemana" class="week-grid"></div></div>
+        <div class="panel admin-only perm-upa"><h3>Controle da UPA</h3><div class="actions"><button class="primary" id="btnFilaMais">Entrada</button><button class="ghost" id="btnFilaMenos">Saída</button><button class="danger" id="btnToggleSala">Alternar sala vermelha</button></div><form id="plantaoForm" class="form-grid compact"><label>Clínico Geral<input id="plantaoClinicoInput" placeholder="Nome do clínico" /></label><label>Pediatra<input id="plantaoPediatraInput" placeholder="Nome do pediatra" /></label><button class="primary" type="submit">Atualizar plantão</button></form><form id="escalaForm" class="form-grid compact"><h4>Editar escala da semana</h4><label>Segunda-feira<input id="escalaSegunda" /></label><label>Terça-feira<input id="escalaTerca" /></label><label>Quarta-feira<input id="escalaQuarta" /></label><label>Quinta-feira<input id="escalaQuinta" /></label><label>Sexta-feira<input id="escalaSexta" /></label><label>Sábado<input id="escalaSabado" /></label><label>Domingo<input id="escalaDomingo" /></label><button class="primary" type="submit">Salvar semana</button></form></div>
       </section>
 
-      <section id="esf" class="page"><div class="panel"><h2>Postos de Saúde (ESF)</h2><div id="listaEsf" class="unit-list"></div></div></section>
+      <section id="esf" class="page">
+        <div class="panel"><h2>Postos de Saúde (ESF)</h2><p class="muted">Selecione sua unidade para informações de atendimento.</p><div id="listaEsf" class="unit-list"></div></div>
+        <div class="panel admin-only perm-esf"><h3>Editar escala dos postos</h3><form id="esfForm" class="form-grid compact"><label>Unidade<select id="esfUnidade"><option>ESF 201 - Rural</option><option>ESF 301 - Jardim Frei Walter</option><option>ESF 302 - Santa Rita de Cássia</option><option>ESF 303 - Dr. Antônio Carlos</option><option>ESF 304 - Lázaro Teodoro</option><option>ESF 305 - Aluísio Borges</option></select></label><label>Médico responsável<input id="esfMedico" /></label><label>Horário de atendimento<input id="esfHorario" /></label><button class="primary" type="submit">Salvar alterações</button></form></div>
+      </section>
+
       <section id="laboratorio" class="page"><div class="panel"><h2>Laboratório Municipal</h2><p><strong>Horário de coleta:</strong> Segunda a sexta-feira, 07:00 às 09:30.</p><p class="muted">Necessário jejum conforme orientação do pedido médico.</p></div></section>
-      <section id="cetec" class="page"><div class="panel"><h2>CETEC - Cursos</h2><p>Módulo preparado para inscrições e lista de inscritos.</p></div></section>
+      <section id="farmacia" class="page"><div class="panel"><h2>Farmácia Básica</h2><p>Módulo preparado para informações da Farmácia Básica.</p><p class="muted">Você pode adicionar estoque, avisos de medicamentos e horários em uma próxima etapa.</p></div></section>
+
+      <section id="cetec" class="page">
+        <div class="grid two">
+          <div class="panel">
+            <h2>CETEC - Cursos</h2>
+            <p>Faça sua inscrição em um curso disponível.</p>
+            <form id="cursoInscricaoForm" class="form-grid">
+              <label>Selecione o curso
+                <select id="cursoSelect" required></select>
+              </label>
+              <button class="primary" type="submit">Confirmar inscrição</button>
+            </form>
+            <h3>Minhas inscrições</h3>
+            <div id="minhasInscricoes" class="list"></div>
+          </div>
+          <div class="panel admin-only perm-cetec">
+            <h3>Admin CETEC</h3>
+            <form id="cursoForm" class="form-grid compact">
+              <label>Nome do curso<input id="cursoNome" required placeholder="Ex: Informática Básica" /></label>
+              <label>Descrição<input id="cursoDescricao" placeholder="Ex: Turma noturna, 20 vagas..." /></label>
+              <button class="primary" type="submit">Disponibilizar curso</button>
+            </form>
+            <h3>Lista de inscritos</h3>
+            <div id="listaInscritos" class="list"></div>
+          </div>
+        </div>
+      </section>
 
       <section id="servicos" class="page">
         <div class="section-head"><h2>Serviços municipais</h2><p>Links úteis para o cidadão.</p></div>
@@ -210,14 +293,31 @@
         </div>
       </section>
 
+      <section id="engenharia" class="page"><div class="panel"><h2>Serviços de Engenharia</h2><details open><summary>Aprovação e Alvará</summary><ul><li>Requerimento assinado pelo proprietário.</li><li>Cópia do CPF e RG.</li><li>ART ou RRT assinado.</li><li>Certidão de inteiro teor.</li><li>Projeto Arquitetônico.</li></ul></details><details><summary>Emissão de Habite-se</summary><ul><li>Requerimento solicitando Habite-se.</li><li>Alvará de Construção.</li></ul></details><details><summary>Desmembramento</summary><ul><li>Requerimento assinado.</li><li>CPF, RG e ART.</li><li>Certidão de inteiro teor.</li><li>Projeto e memorial descritivo.</li></ul></details></div></section>
+      <section id="meioambiente" class="page"><div class="panel"><h2>Meio Ambiente</h2><p>Faça uma denúncia ou solicitação ambiental.</p><form id="denunciaForm" class="form-grid"><label>Descrição<input id="denunciaTexto" required placeholder="Descreva a situação..." /></label><button class="primary" type="submit">Enviar denúncia</button></form></div></section>
+      <section id="educacao" class="page"><div class="panel"><h2>Educação</h2><h3>Matrículas Escolares</h3><p class="muted">Área preparada para comunicados, calendário e matrículas.</p></div></section>
+      <section id="esportes" class="page"><div class="panel"><h2>Esportes</h2><p class="muted">Área preparada para eventos, campeonatos e projetos esportivos.</p></div></section>
+      <section id="infraestrutura" class="page"><div class="panel"><h2>Infraestrutura e Obras</h2><p class="muted">Área preparada para avisos de obras, manutenções e solicitações.</p></div></section>
+
       <section id="avisos" class="page admin-only perm-avisos">
-        <div class="panel"><h2>Central de Avisos</h2><p>Área liberada para administradores com permissão de avisos.</p><form id="avisoForm" class="form-grid"><label>Mensagem do aviso<input id="avisoMensagem" type="text" required placeholder="Ex: Vacinação amanhã na unidade..." /></label><button class="primary" type="submit">Salvar aviso</button></form><div id="listaAvisos" class="list"></div></div>
+        <div class="panel">
+          <h2>Central de Avisos</h2>
+          <p>Cadastre mensagens e cartazes. Se tiver imagem, o aviso também pode aparecer como pop-up para o cidadão.</p>
+          <form id="avisoForm" class="form-grid">
+            <label>Título do aviso<input id="avisoTitulo" type="text" placeholder="Ex: Vacinação" /></label>
+            <label>Mensagem do aviso<input id="avisoMensagem" type="text" required placeholder="Ex: Vacinação amanhã na unidade..." /></label>
+            <label>Adicionar imagem / cartaz opcional<input id="avisoImagem" type="file" accept="image/*" /></label>
+            <img id="avisoPreview" class="notice-image hidden" alt="Prévia do aviso" />
+            <div class="actions"><button class="primary" type="submit">Ligar aviso</button><button class="ghost" id="btnLimparAvisoImagem" type="button">Remover imagem</button><button class="danger-outline" id="btnDesligarAvisos" type="button">Desligar todos</button></div>
+          </form>
+          <div id="listaAvisos" class="list"></div>
+        </div>
       </section>
 
       <section id="relatorios" class="page admin-only perm-relatorios">
-        <div class="section-head"><h2>Relatórios</h2><p>Relatório de usuários cadastrados no sistema.</p></div>
-        <div class="grid stats"><div class="stat"><span id="statTotal">0</span><small>Total</small></div><div class="stat"><span id="statAdmins">0</span><small>Administradores</small></div><div class="stat"><span id="statAtivos">0</span><small>Ativos</small></div><div class="stat"><span id="statMes">0</span><small>Cadastros no mês</small></div></div>
-        <div class="panel"><div class="table-head"><input id="relatorioBusca" placeholder="Buscar por nome, e-mail ou celular" /><button class="primary" id="btnExportCsv">Exportar CSV</button></div><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Celular</th><th>E-mail</th><th>Perfil</th><th>Ativo</th><th>Cadastro</th></tr></thead><tbody id="relatorioTabela"></tbody></table></div></div>
+        <div class="section-head"><h2>Relatórios</h2><p>Relatórios de usuários, cursos, agendamentos e avisos.</p></div>
+        <div class="grid stats"><div class="stat"><span id="statTotal">0</span><small>Usuários</small></div><div class="stat"><span id="statAdmins">0</span><small>Administradores</small></div><div class="stat"><span id="statAtivos">0</span><small>Ativos</small></div><div class="stat"><span id="statMes">0</span><small>Cadastros no mês</small></div><div class="stat"><span id="statAgendamentos">0</span><small>Agendamentos</small></div><div class="stat"><span id="statInscricoes">0</span><small>Inscrições</small></div></div>
+        <div class="panel"><div class="table-head"><input id="relatorioBusca" placeholder="Buscar por nome, e-mail ou celular" /><button class="primary" id="btnExportCsv">Exportar usuários CSV</button></div><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Celular</th><th>E-mail</th><th>Perfil</th><th>Ativo</th><th>Cadastro</th></tr></thead><tbody id="relatorioTabela"></tbody></table></div></div>
       </section>
 
       <section id="usuarios" class="page admin-only perm-usuarios">
@@ -227,6 +327,6 @@
     </section>
   </div>
 
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=2"></script>
 </body>
 </html>

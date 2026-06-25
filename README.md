@@ -1,48 +1,32 @@
 # ConecteBR - Pontalina Digital
 
-Sistema PWA para centralizar serviços digitais, saúde, avisos e módulos administrativos da cidade.
+Portal digital municipal com login Firebase, painel administrativo por permissões, avisos com imagem, agendamentos, cursos CETEC, UPA 24h, ESF, relatórios e gestão de usuários.
 
-## Recursos desta versão
+## Principais funções
 
-- Login com e-mail/senha pelo Firebase Authentication.
-- Login com conta Google.
+- Login com Google e e-mail/senha.
 - Cadastro com nome completo e celular.
-- Criação automática do usuário na coleção `usuarios`.
-- Controle de acesso por permissões.
-- ADM geral com acesso total.
-- Gestão de usuários para liberar permissões por módulo.
-- Relatório de usuários cadastrados.
-- Exportação CSV dos usuários.
-- Layout responsivo para celular.
-- PWA preparado para GitHub Pages.
+- ADM geral único com liberação de permissões por usuário.
+- Gestão de usuários.
+- Relatórios de usuários, agendamentos e inscrições.
+- Central de avisos com mensagem, cartaz/imagem e pop-up.
+- Botões de voltar e início.
+- Notificações com aviso removido após ativação.
+- Inscrição em cursos do CETEC.
+- Administração de cursos e lista de inscritos.
+- Solicitação de agendamento em ESF.
+- Controle de fila, plantão e escala da UPA.
+- Escala de postos ESF.
+- Serviços municipais, engenharia, educação, meio ambiente, esportes e infraestrutura.
 
-## Arquivos principais
+## Como publicar no GitHub Pages
 
-- `index.html`: estrutura do aplicativo.
-- `style.css`: visual e responsividade.
-- `app.js`: lógica de login, cadastro, painel, relatórios e permissões.
-- `firebase.js`: configuração do Firebase.
-- `manifest.json`: configuração PWA.
-- `firebase-messaging-sw.js`: service worker/cache/notificações.
+Envie todos os arquivos para a raiz do repositório `upa-pontalina`.
 
-## Publicação no GitHub Pages
+Depois acesse:
 
-Suba todos os arquivos na raiz do repositório e publique pela branch `main`.
+`https://99eliel.github.io/upa-pontalina/`
 
-URL esperada:
+## Importante
 
-```txt
-https://99eliel.github.io/upa-pontalina/
-```
-
-## Firebase necessário
-
-1. Authentication com Google e e-mail/senha ativados.
-2. Domínio autorizado: `99eliel.github.io`.
-3. Firestore com coleção `usuarios`.
-4. Seu documento de usuário com `isAdminGeral: true` e `role: "admin_geral"`.
-5. Regras do Firestore já publicadas.
-
-## Observação
-
-Se o projeto Firebase usado for outro, altere os dados dentro do arquivo `firebase.js` e também dentro do `firebase-messaging-sw.js`.
+Antes de testar todas as funções novas, atualize as regras do Firestore usando o arquivo `FIREBASE_REGRAS.md`.
